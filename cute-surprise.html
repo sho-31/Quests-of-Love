@@ -23,10 +23,12 @@
     animation: glow 2s infinite alternate;
   }
 
-  h2 {
-    font-size: 1.5rem;
-    font-weight: normal;
-    margin-bottom: 30px;
+  p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 20px auto;
+    line-height: 1.8;
+    padding: 0 15px;
   }
 
   @keyframes glow {
@@ -66,15 +68,20 @@
 <body>
 
   <h1>💖 I Love You, Kitty Divi 💖</h1>
-  <h2>Kitty Divi, you light up my life 🌸💫</h2>
+  <p>
+    My dearest Kitty Divi, you are the sparkle in my days, the warmth in my nights, 
+    and the sweetest part of my every moment.  
+    With you, every day feels magical, like a gentle dream I never want to wake from.  
+    Thank you for being my heart’s happiest place. 💕
+  </p>
 
   <button class="kitty-btn" onclick="startSparkleMode()">✨ Kitty Sparkle Mode</button>
 
 <script>
-  function createFloatingItem(type) {
+  function createFloatingItem(symbol) {
     const el = document.createElement('div');
     el.classList.add('floating');
-    el.textContent = type;
+    el.textContent = symbol;
     el.style.fontSize = '2rem';
     el.style.left = Math.random() * 100 + 'vw';
     el.style.animationDuration = (4 + Math.random() * 3) + 's';
@@ -83,10 +90,10 @@
   }
 
   function startSparkleMode() {
+    const symbols = ['💖', '🎈'];
     const interval = setInterval(() => {
-      const types = ['💖', '💕', '💗', '💓', '💞', '💘', '🎀', '🌸'];
-      const randomType = types[Math.floor(Math.random() * types.length)];
-      createFloatingItem(randomType);
+      const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+      createFloatingItem(randomSymbol);
     }, 300);
 
     setTimeout(() => clearInterval(interval), 8000);
