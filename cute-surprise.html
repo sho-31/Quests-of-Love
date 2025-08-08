@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surprise for Kitty Divi 💝</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #ffe6f0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    overflow-x: hidden;
+    text-align: center;
+    color: #d63384;
+  }
+  h1 {
+    font-size: 2.5rem;
+    margin-top: 20px;
+    animation: fadeInDown 1s ease;
+  }
+  #messageBox {
+    font-size: 1.5rem;
+    margin: 20px 0;
+    min-height: 60px;
+  }
+  @keyframes fadeInDown {
+    from {opacity: 0; transform: translateY(-30px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  @keyframes float {
+    0%, 100% {transform: translateY(0);}
+    50% {transform: translateY(-15px);}
+  }
+  /* Floating hearts background */
+  .heart {
+    position: fixed;
+    bottom: -50px;
+    font-size: 1.5rem;
+    animation: rise 6s linear infinite;
+    opacity: 0.7;
+  }
+  @keyframes rise {
+    0% {transform: translateY(0) scale(1);}
+    100% {transform: translateY(-110vh) scale(1.5);}
+  }
+  /* Heart popping game */
+  #gameArea {
+    position: relative;
+    height: 300px;
+    background-color: #ffd6e8;
+    border-radius: 20px;
+    margin: 20px;
+    overflow: hidden;
+  }
+  .pop-heart {
+    position: absolute;
+    font-size: 2rem;
+    cursor: pointer;
+    animation: fall 5s linear forwards;
+  }
+  @keyframes fall {
+    0% {top: -40px;}
+    100% {top: 100%;}
+  }
+</style>
+</head>
+<body>
+
+<h1>💖 Surprise for Kitty Divi 💖</h1>
+<div id="messageBox"></div>
+
+<h2>Pop the Hearts Game 🎯</h2>
+<div id="gameArea"></div>
+
+<script>
+  // Sweet messages
+  const messages = [
+    "Kitty Divi, you’re the most magical part of my life ✨",
+    "I’d give you all the stars if I could ⭐💫",
+    "You’re cuter than Hello Kitty herself! 🐱🎀",
+    "Every beat of my heart says your name 💗",
+    "With you, every moment feels like a dream 🌸"
+  ];
+
+  let msgIndex = 0;
+  function showNextMessage() {
+    const box = document.getElementById('messageBox');
+    box.textContent = messages[msgIndex];
+    box.style.animation = 'fadeInDown 1s ease';
+    msgIndex = (msgIndex + 1) % messages.length;
+  }
+  setInterval(showNextMessage, 2500);
+  showNextMessage();
+
+  // Floating background hearts
+  function createFloatingHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.textContent = '💖';
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.animationDuration = (3 + Math.random() * 5) + 's';
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 8000);
+  }
+  setInterval(createFloatingHeart, 400);
+
+  // Heart popping game
+  let score = 0;
+  function spawnHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('pop-heart');
+    heart.textContent = '💗';
+    heart.style.left = Math.random() * 90 + '%';
+    heart.onclick = () => {
+      score++;
+      heart.remove();
+      if (score >= 10) {
+        alert("Yay! You popped 10 hearts! 🎉💖");
+        score = 0;
+      }
+    };
+    document.getElementById('gameArea').appendChild(heart);
+    setTimeout(() => heart.remove(), 5000);
+  }
+  setInterval(spawnHeart, 1000);
+</script>
+
+</body>
+</html>
