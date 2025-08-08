@@ -11,6 +11,7 @@
     color: #d63384;
     text-align: center;
     padding: 20px;
+    overflow-x: hidden;
   }
   h1 {
     font-size: 2.5rem;
@@ -31,6 +32,7 @@
     border-radius: 20px;
     cursor: pointer;
     transition: transform 0.2s;
+    animation: fadeInUp 1s ease;
   }
   button:hover {
     transform: scale(1.1);
@@ -43,39 +45,26 @@
     animation: fadeIn 0.5s ease;
   }
   @keyframes fadeInDown {
-    from {opacity: 0; transform: translateY(-20px);}
-    to {opacity: 1; transform: translateY(0);}
+    from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);}
+  }
+  @keyframes fadeInUp {
+    from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);}
   }
   @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
+    from {opacity: 0;} to {opacity: 1;}
   }
   @keyframes float {
-    0%, 100% {transform: translateY(0);}
-    50% {transform: translateY(-10px);}
+    0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);}
   }
-  /* Memory Game */
-  .game-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 80px);
-    gap: 10px;
-    justify-content: center;
-    margin-top: 20px;
+  @keyframes confetti {
+    0% {transform: translateY(0) rotate(0deg); opacity: 1;}
+    100% {transform: translateY(100vh) rotate(360deg); opacity: 0;}
   }
-  .card {
-    width: 80px;
-    height: 80px;
-    background-color: #ffb6d9;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    cursor: pointer;
-  }
-  .hidden {
-    background-color: #ffb6d9;
-    color: transparent;
+  .heart {
+    position: fixed;
+    top: -10px;
+    font-size: 1.5rem;
+    animation: confetti 4s linear infinite;
   }
 </style>
 </head>
@@ -84,9 +73,7 @@
   <img src="https://i.pinimg.com/originals/42/7f/32/427f32f6d3d301f58c2bc962d17cf420.jpg" alt="Hello Kitty">
   <div id="messageBox"></div>
   <button onclick="showMessage()">Send Sweet Message</button>
-  <button onclick="startMemoryGame()">Play Memory Game</button>
-
-  <div id="gameContainer"></div>
+  <button onclick="tapChallenge()">Tap the Heart Game</button>
 
   <script>
     const messages = [
@@ -102,39 +89,32 @@
       const box = document.getElementById('messageBox');
       box.textContent = randomMessage;
       box.style.animation = 'fadeIn 0.5s ease';
+      launchConfetti();
     }
 
-    function startMemoryGame() {
-      const emojis = ['💖','🎀','🐱','🌸','🍓','🌈','🦋','☁️'];
-      const cards = [...emojis, ...emojis].sort(() => 0.5 - Math.random());
-      const container = document.getElementById('gameContainer');
-      container.innerHTML = '<div class="game-grid">' +
-        cards.map((emoji, i) => `<div class="card hidden" data-emoji="${emoji}" onclick="flipCard(this)"></div>`).join('') +
-        '</div>';
-      window.firstCard = null;
-      window.lockBoard = false;
+    function tapChallenge() {
+      let count = 0;
+      const gameTime = 5000;
+      const heartBtn = document.createElement('button');
+      heartBtn.textContent = '💖 Tap me!';
+      heartBtn.style.fontSize = '2rem';
+      heartBtn.onclick = () => count++;
+      document.body.appendChild(heartBtn);
+      setTimeout(() => {
+        alert(`You tapped ${count} times! Great job Kitty Divi! 🎀`);
+        heartBtn.remove();
+      }, gameTime);
     }
 
-    function flipCard(card) {
-      if (window.lockBoard || !card.classList.contains('hidden')) return;
-      card.textContent = card.dataset.emoji;
-      card.classList.remove('hidden');
-      if (!window.firstCard) {
-        window.firstCard = card;
-      } else {
-        if (window.firstCard.dataset.emoji === card.dataset.emoji) {
-          window.firstCard = null;
-        } else {
-          window.lockBoard = true;
-          setTimeout(() => {
-            card.textContent = '';
-            card.classList.add('hidden');
-            window.firstCard.textContent = '';
-            window.firstCard.classList.add('hidden');
-            window.firstCard = null;
-            window.lockBoard = false;
-          }, 800);
-        }
+    function launchConfetti() {
+      for (let i = 0; i < 20; i++) {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.textContent = ['💖','🎀','🌸','🦋'][Math.floor(Math.random()*4)];
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (2 + Math.random() * 3) + 's';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
       }
     }
   </script>
