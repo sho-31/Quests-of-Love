@@ -3,119 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kitty Divi 💖</title>
+<title>Kitty Divi's Dreamland 💖</title>
 <style>
   body {
     font-family: 'Comic Sans MS', cursive, sans-serif;
-    background-color: #ffe6f0;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(180deg, #ffe6f0, #ffd1e8, #fff0f5);
     color: #d63384;
     text-align: center;
-    padding: 20px;
     overflow-x: hidden;
   }
+
   h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    animation: colorChange 3s infinite alternate;
+    font-size: 3rem;
+    margin-top: 30px;
+    color: #ff1493;
+    text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
+    animation: glow 2s infinite alternate;
   }
-  img {
-    width: 150px;
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    animation: float 3s ease-in-out infinite;
-    z-index: 5;
+
+  @keyframes glow {
+    from { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493; }
+    to { text-shadow: 0 0 40px #ff69b4, 0 0 60px #ff1493; }
   }
-  button {
-    background-color: #ff99cc;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 1.2rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  button:hover {
-    transform: scale(1.1);
-    background-color: #ff66b2;
-  }
-  #messageBox {
-    font-size: 1.3rem;
+
+  img.main-kitty {
+    width: 220px;
     margin: 20px 0;
-    min-height: 40px;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  #messageBox {
+    font-size: 1.4rem;
+    margin: 15px auto;
+    min-height: 50px;
+    max-width: 80%;
     animation: fadeIn 0.5s ease;
   }
-  .heart {
-    position: fixed;
-    color: #ff66b2;
-    font-size: 1.5rem;
-    animation: floatUp 5s linear;
-    bottom: -20px;
-  }
-  @keyframes float {
-    0%, 100% {transform: translateY(0);} 
-    50% {transform: translateY(-10px);} 
-  }
-  @keyframes floatUp {
-    0% {transform: translateY(0) scale(1); opacity: 1;}
-    100% {transform: translateY(-100vh) scale(1.5); opacity: 0;}
-  }
+
   @keyframes fadeIn {
-    from {opacity: 0;} to {opacity: 1;}
+    from {opacity: 0;}
+    to {opacity: 1;}
   }
-  @keyframes colorChange {
-    0% {color: #d63384;}
-    50% {color: #ff66b2;}
-    100% {color: #ff3399;}
+
+  button {
+    background: linear-gradient(45deg, #ff99cc, #ff66b2);
+    border: none;
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 1.2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
+  }
+
+  /* Floating hearts & cats */
+  .floating {
+    position: fixed;
+    animation: floatUp 7s linear infinite;
+    bottom: -100px;
+    z-index: 10;
+    opacity: 0.9;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(0.8); opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
   }
 </style>
 </head>
 <body>
-  <h1>💖 Welcome Kitty Divi 💖</h1>
-  <div id="messageBox"></div>
-  <button onclick="showMessage()">Send Sweet Message</button>
-  <button onclick="tapHeart()">💖 Tap the Heart</button>
+
+  <h1>💖 Welcome to Kitty Divi's Dreamland 💖</h1>
+  <img class="main-kitty" src="https://i.pinimg.com/originals/42/7f/32/427f32f6d3d301f58c2bc962d17cf420.jpg" alt="Hello Kitty">
   
-  <img src="https://upload.wikimedia.org/wikipedia/en/0/05/Hello_Kitty_character_portrait.png" alt="Hello Kitty">
+  <div id="messageBox"></div>
+  
+  <button onclick="showMessage()">💌 Sweet Message</button>
+  <button onclick="tapHeart()">💖 Tap the Heart</button>
 
-  <audio id="popSound" src="https://www.myinstants.com/media/sounds/pop-sound-effect.mp3" preload="auto"></audio>
+<script>
+  const messages = [
+    "Kitty Divi, you’re the dream I never want to wake from ✨",
+    "You’re sweeter than a hundred cotton candies 🍭",
+    "You make my heart do happy dances 💃💕",
+    "Every thought of you is wrapped in pink love 💖",
+    "You're my forever Hello Kitty 🌸"
+  ];
 
-  <script>
-    const messages = [
-      "You are my sunshine on a cloudy day ☀️",
-      "Kitty Divi, you’re the cutest! 💕",
-      "I miss you more than cookies miss milk 🍪🥛",
-      "Every second with you is my favorite ❤️",
-      "If hugs were stars, I’d give you the whole sky 🌌"
-    ];
+  let heartTaps = 0;
 
-    let heartTaps = 0;
+  function showMessage() {
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    const box = document.getElementById('messageBox');
+    box.textContent = randomMessage;
+    box.style.animation = 'fadeIn 0.5s ease';
+    spawnFloatingItem('💖');
+  }
 
-    function showMessage() {
-      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-      const box = document.getElementById('messageBox');
-      box.textContent = randomMessage;
-      box.style.animation = 'fadeIn 0.5s ease';
+  function tapHeart() {
+    heartTaps++;
+    spawnFloatingItem('🐱'); // pink/white cat emoji animation
+    if (heartTaps >= 3) {
+      window.location.href = 'cute-surprise.html';
     }
+  }
 
-    function tapHeart() {
-      heartTaps++;
-      document.getElementById('popSound').play();
-      spawnHeart();
-      if (heartTaps >= 3) {
-        window.location.href = 'cute-surprise.html';
-      }
-    }
+  function spawnFloatingItem(symbol) {
+    const el = document.createElement('div');
+    el.classList.add('floating');
+    el.textContent = symbol;
+    el.style.fontSize = '2rem';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (5 + Math.random() * 3) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 8000);
+  }
 
-    function spawnHeart() {
-      const heart = document.createElement('div');
-      heart.className = 'heart';
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.textContent = '💖';
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 5000);
-    }
-  </script>
+  // Background continuous floating cats
+  setInterval(() => {
+    const cats = ['🐱', '😺', '😻'];
+    const randomCat = cats[Math.floor(Math.random() * cats.length)];
+    spawnFloatingItem(randomCat);
+  }, 2000);
+</script>
+
 </body>
 </html>
