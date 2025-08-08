@@ -7,222 +7,113 @@
 <style>
   body {
     font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: linear-gradient(to bottom, #ffe6f0, #ffccdd);
-    color: #d63384;
+    background: linear-gradient(180deg, #ffe6f0, #ffd1e8);
     text-align: center;
-    padding: 20px;
-    overflow: hidden;
+    color: #d63384;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
   }
-  h1.big-message {
+
+  h1 {
     font-size: 3rem;
-    font-weight: bold;
-    color: #ff3399;
-    text-shadow: 0 0 10px #fff, 0 0 20px #ff66b2;
+    margin-top: 40px;
+    color: #ff1493;
+    text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
     animation: glow 2s infinite alternate;
-    margin-bottom: 10px;
   }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: normal;
+    margin-bottom: 30px;
+  }
+
   @keyframes glow {
-    from { text-shadow: 0 0 10px #fff, 0 0 20px #ff99cc; }
-    to { text-shadow: 0 0 20px #ff66b2, 0 0 30px #ff3399; }
+    from { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493; }
+    to { text-shadow: 0 0 40px #ff69b4, 0 0 60px #ff1493; }
   }
-  #messages {
-    font-size: 1.4rem;
-    height: 60px;
-    margin-top: 10px;
-    animation: fadeIn 1s ease;
-  }
-  @keyframes fadeIn {
-    from {opacity: 0;} to {opacity: 1;}
-  }
-  /* Balloons */
-  .balloon {
-    position: fixed;
-    bottom: -100px;
-    animation: floatUp 6s linear forwards;
-    font-size: 2rem;
-  }
-  @keyframes floatUp {
-    to { transform: translateY(-120vh); }
-  }
-  /* Confetti */
-  .confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    animation: fall 3s linear forwards;
-  }
-  @keyframes fall {
-    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-  }
-  /* Bubbles */
-  canvas {
-    position:absolute;
-    top:0;
-    left:0;
-    z-index:-1;
-  }
-  /* Toggle Button */
-  button {
-    background: linear-gradient(45deg, #ff99cc, #ff66b2);
+
+  .kitty-btn {
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
     border: none;
-    padding: 12px 25px;
-    margin: 15px;
+    padding: 15px 40px;
     font-size: 1.2rem;
     color: white;
-    border-radius: 25px;
+    border-radius: 30px;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(255, 102, 178, 0.5);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+    transition: all 0.3s ease;
   }
-  button:hover {
+  .kitty-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 15px rgba(255, 102, 178, 0.7);
+    box-shadow: 0 8px 25px rgba(255, 20, 147, 0.6);
   }
-  /* Hello Kitty images floating */
+
+  .floating {
+    position: fixed;
+    animation: floatUp 6s linear infinite;
+    bottom: -100px;
+    z-index: 10;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(0.8); opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+  }
+
   .kitty-img {
-    position: absolute;
-    width: 80px;
-    animation: kittyFloat 5s ease-in-out infinite;
-  }
-  @keyframes kittyFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
+    width: 60px;
+    height: auto;
   }
 </style>
 </head>
 <body>
 
-<h1 class="big-message">💖 I Love You, Kitty Divi 💖</h1>
-<div id="messages"></div>
+  <h1>💖 I Love You, Kitty Divi 💖</h1>
+  <h2>Kitty Divi, you light up my life 🌸💫</h2>
 
-<!-- Game Area -->
-<canvas id="gameCanvas"></canvas>
-
-<!-- Toggle Button -->
-<button onclick="kittySparkleMode()">✨ Kitty Sparkle Mode</button>
+  <button class="kitty-btn" onclick="startSparkleMode()">✨ Kitty Sparkle Mode</button>
 
 <script>
-/* Sweet Messages */
-const sweetMessages = [
-  "Kitty Divi, you light up my life 💡💕",
-  "You’re more beautiful than a thousand sunsets 🌅",
-  "Life is sweeter with you in it 🍭",
-  "I’d rather be with you than anywhere else 💞",
-  "Every heartbeat says your name 💓"
-];
-let msgIndex = 0;
-function updateMessage() {
-  document.getElementById('messages').textContent = sweetMessages[msgIndex];
-  msgIndex = (msgIndex + 1) % sweetMessages.length;
-}
-setInterval(updateMessage, 3000);
-updateMessage();
+  const kittyImages = [
+    "images/hello1.png",
+    "images/hello2.png",
+    "images/hello3.png",
+    "images/hello4.png"
+  ];
 
-/* Balloons */
-function spawnBalloon() {
-  const balloon = document.createElement('div');
-  balloon.className = 'balloon';
-  balloon.style.left = Math.random() * 100 + 'vw';
-  balloon.textContent = '🎈';
-  document.body.appendChild(balloon);
-  setTimeout(() => balloon.remove(), 6000);
-}
-setInterval(spawnBalloon, 2000);
+  function createFloatingItem(type) {
+    const el = document.createElement('div');
+    el.classList.add('floating');
 
-/* Confetti */
-function spawnConfetti() {
-  for (let i = 0; i < 15; i++) {
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = Math.random() * 100 + 'vw';
-    c.style.top = '-10px';
-    c.style.backgroundColor = ['#ff66b2', '#ff99cc', '#ffd1dc'][Math.floor(Math.random()*3)];
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 3000);
-  }
-}
-setInterval(spawnConfetti, 5000);
-
-/* Bubble Pop Game */
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-let bubbles = [];
-
-function createBubble() {
-  const bubble = {
-    x: Math.random() * canvas.width,
-    y: canvas.height + 50,
-    r: Math.random() * 30 + 20,
-    speed: Math.random() * 2 + 1
-  };
-  bubbles.push(bubble);
-}
-setInterval(createBubble, 1000);
-
-canvas.addEventListener('click', function(e) {
-  const rect = canvas.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
-  bubbles = bubbles.filter(b => {
-    const dist = Math.hypot(mouseX - b.x, mouseY - b.y);
-    if (dist < b.r) {
-      popEffect(b.x, b.y);
-      return false;
+    if (type === 'kitty') {
+      const img = document.createElement('img');
+      img.src = kittyImages[Math.floor(Math.random() * kittyImages.length)];
+      img.className = 'kitty-img';
+      el.appendChild(img);
+    } else {
+      el.textContent = type;
+      el.style.fontSize = '2rem';
     }
-    return true;
-  });
-});
 
-function popEffect(x, y) {
-  const pop = document.createElement('div');
-  pop.style.position = 'absolute';
-  pop.style.left = x + 'px';
-  pop.style.top = y + 'px';
-  pop.textContent = '💖';
-  pop.style.fontSize = '1.5rem';
-  document.body.appendChild(pop);
-  setTimeout(() => pop.remove(), 500);
-}
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (4 + Math.random() * 3) + 's';
+    document.body.appendChild(el);
 
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  bubbles.forEach(b => {
-    b.y -= b.speed;
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,182,193,0.5)';
-    ctx.fill();
-  });
-  bubbles = bubbles.filter(b => b.y + b.r > 0);
-  requestAnimationFrame(animate);
-}
-animate();
-
-/* Kitty Sparkle Mode */
-function kittySparkleMode() {
-  for (let i = 0; i < 8; i++) {
-    const kitty = document.createElement('img');
-    kitty.src = "https://upload.wikimedia.org/wikipedia/en/0/05/Hello_Kitty_character_portrait.png";
-    kitty.className = 'kitty-img';
-    kitty.style.left = Math.random() * 90 + 'vw';
-    kitty.style.top = Math.random() * 80 + 'vh';
-    document.body.appendChild(kitty);
-    setTimeout(() => kitty.remove(), 5000);
+    setTimeout(() => el.remove(), 7000);
   }
-  for (let i = 0; i < 30; i++) {
-    const sparkle = document.createElement('div');
-    sparkle.textContent = '✨';
-    sparkle.style.position = 'absolute';
-    sparkle.style.left = Math.random() * 100 + 'vw';
-    sparkle.style.top = Math.random() * 100 + 'vh';
-    sparkle.style.fontSize = '1.2rem';
-    sparkle.style.opacity = 0.8;
-    document.body.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 2000);
+
+  function startSparkleMode() {
+    const interval = setInterval(() => {
+      const types = ['💖', '🎈', 'kitty'];
+      const randomType = types[Math.floor(Math.random() * types.length)];
+      createFloatingItem(randomType);
+    }, 300);
+
+    setTimeout(() => clearInterval(interval), 8000);
   }
-}
 </script>
+
 </body>
 </html>
