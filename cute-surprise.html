@@ -3,128 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Surprise for Kitty Divi 💝</title>
+<title>Cute Surprise for Kitty Divi 💖</title>
 <style>
   body {
-    margin: 0;
-    padding: 0;
-    background-color: #ffe6f0;
     font-family: 'Comic Sans MS', cursive, sans-serif;
-    overflow-x: hidden;
-    text-align: center;
+    background-color: #ffe6f0;
     color: #d63384;
+    text-align: center;
+    padding: 20px;
+    overflow: hidden;
   }
   h1 {
     font-size: 2.5rem;
+    animation: glow 2s infinite alternate;
+  }
+  #messages {
+    font-size: 1.2rem;
+    height: 60px;
     margin-top: 20px;
-    animation: fadeInDown 1s ease;
+    animation: fadeIn 1s ease;
   }
-  #messageBox {
-    font-size: 1.5rem;
-    margin: 20px 0;
-    min-height: 60px;
+  @keyframes glow {
+    0% { text-shadow: 0 0 5px #ff66b2; }
+    100% { text-shadow: 0 0 20px #ff3399; }
   }
-  @keyframes fadeInDown {
-    from {opacity: 0; transform: translateY(-30px);}
-    to {opacity: 1; transform: translateY(0);}
+  @keyframes fadeIn {
+    from {opacity: 0;} to {opacity: 1;}
   }
-  @keyframes float {
-    0%, 100% {transform: translateY(0);}
-    50% {transform: translateY(-15px);}
-  }
-  /* Floating hearts background */
-  .heart {
+  /* Floating balloons */
+  .balloon {
     position: fixed;
-    bottom: -50px;
-    font-size: 1.5rem;
-    animation: rise 6s linear infinite;
-    opacity: 0.7;
-  }
-  @keyframes rise {
-    0% {transform: translateY(0) scale(1);}
-    100% {transform: translateY(-110vh) scale(1.5);}
-  }
-  /* Heart popping game */
-  #gameArea {
-    position: relative;
-    height: 300px;
-    background-color: #ffd6e8;
-    border-radius: 20px;
-    margin: 20px;
-    overflow: hidden;
-  }
-  .pop-heart {
-    position: absolute;
+    bottom: -100px;
+    animation: floatUp 6s linear forwards;
     font-size: 2rem;
+  }
+  @keyframes floatUp {
+    0% {transform: translateY(0);}
+    100% {transform: translateY(-120vh);}
+  }
+  /* Bubbles game */
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255,182,193,0.7);
     cursor: pointer;
-    animation: fall 5s linear forwards;
+  }
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: pink;
+    animation: fall 3s linear forwards;
   }
   @keyframes fall {
-    0% {top: -40px;}
-    100% {top: 100%;}
+    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
 
-<h1>💖 Surprise for Kitty Divi 💖</h1>
-<div id="messageBox"></div>
+<h1>🎀 Surprise for Kitty Divi 🎀</h1>
+<div id="messages"></div>
 
-<h2>Pop the Hearts Game 🎯</h2>
-<div id="gameArea"></div>
+<!-- Game Area -->
+<canvas id="gameCanvas" style="position:absolute; top:0; left:0; z-index:-1;"></canvas>
+
+<!-- Background Music -->
+<audio id="bgMusic" src="https://www.bensound.com/bensound-music/bensound-littleidea.mp3" loop></audio>
+<button onclick="toggleMusic()">🎵 Toggle Music</button>
 
 <script>
-  // Sweet messages
-  const messages = [
-    "Kitty Divi, you’re the most magical part of my life ✨",
-    "I’d give you all the stars if I could ⭐💫",
-    "You’re cuter than Hello Kitty herself! 🐱🎀",
-    "Every beat of my heart says your name 💗",
-    "With you, every moment feels like a dream 🌸"
-  ];
+/* Sweet Messages Scroller */
+const sweetMessages = [
+  "Kitty Divi, you light up my life 💡💕",
+  "You’re more beautiful than a thousand sunsets 🌅",
+  "Life is sweeter with you in it 🍭",
+  "I’d rather be with you than anywhere else 💞",
+  "Every heartbeat says your name 💓"
+];
+let msgIndex = 0;
+function updateMessage() {
+  document.getElementById('messages').textContent = sweetMessages[msgIndex];
+  msgIndex = (msgIndex + 1) % sweetMessages.length;
+}
+setInterval(updateMessage, 3000);
+updateMessage();
 
-  let msgIndex = 0;
-  function showNextMessage() {
-    const box = document.getElementById('messageBox');
-    box.textContent = messages[msgIndex];
-    box.style.animation = 'fadeInDown 1s ease';
-    msgIndex = (msgIndex + 1) % messages.length;
-  }
-  setInterval(showNextMessage, 2500);
-  showNextMessage();
+/* Floating Balloons */
+function spawnBalloon() {
+  const balloon = document.createElement('div');
+  balloon.className = 'balloon';
+  balloon.style.left = Math.random() * 100 + 'vw';
+  balloon.textContent = '🎈';
+  document.body.appendChild(balloon);
+  setTimeout(() => balloon.remove(), 6000);
+}
+setInterval(spawnBalloon, 2000);
 
-  // Floating background hearts
-  function createFloatingHeart() {
-    const heart = document.createElement('div');
-    heart.classList.add('heart');
-    heart.textContent = '💖';
-    heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.animationDuration = (3 + Math.random() * 5) + 's';
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 8000);
+/* Confetti bursts */
+function spawnConfetti() {
+  for (let i = 0; i < 15; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.top = '-10px';
+    c.style.backgroundColor = ['#ff66b2', '#ff99cc', '#ffd1dc'][Math.floor(Math.random()*3)];
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
   }
-  setInterval(createFloatingHeart, 400);
+}
+setInterval(spawnConfetti, 5000);
 
-  // Heart popping game
-  let score = 0;
-  function spawnHeart() {
-    const heart = document.createElement('div');
-    heart.classList.add('pop-heart');
-    heart.textContent = '💗';
-    heart.style.left = Math.random() * 90 + '%';
-    heart.onclick = () => {
-      score++;
-      heart.remove();
-      if (score >= 10) {
-        alert("Yay! You popped 10 hearts! 🎉💖");
-        score = 0;
-      }
-    };
-    document.getElementById('gameArea').appendChild(heart);
-    setTimeout(() => heart.remove(), 5000);
+/* Bubble Pop Game */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let bubbles = [];
+
+function createBubble() {
+  const bubble = {
+    x: Math.random() * canvas.width,
+    y: canvas.height + 50,
+    r: Math.random() * 30 + 20,
+    speed: Math.random() * 2 + 1
+  };
+  bubbles.push(bubble);
+}
+setInterval(createBubble, 1000);
+
+canvas.addEventListener('click', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+  bubbles = bubbles.filter(b => {
+    const dist = Math.hypot(mouseX - b.x, mouseY - b.y);
+    if (dist < b.r) {
+      popEffect(b.x, b.y);
+      return false;
+    }
+    return true;
+  });
+});
+
+function popEffect(x, y) {
+  const pop = document.createElement('div');
+  pop.style.position = 'absolute';
+  pop.style.left = x + 'px';
+  pop.style.top = y + 'px';
+  pop.textContent = '💖';
+  pop.style.fontSize = '1.5rem';
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 500);
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  bubbles.forEach(b => {
+    b.y -= b.speed;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,182,193,0.5)';
+    ctx.fill();
+  });
+  bubbles = bubbles.filter(b => b.y + b.r > 0);
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* Music Control */
+function toggleMusic() {
+  const music = document.getElementById('bgMusic');
+  if (music.paused) {
+    music.play();
+  } else {
+    music.pause();
   }
-  setInterval(spawnHeart, 1000);
+}
 </script>
-
 </body>
 </html>
