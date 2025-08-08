@@ -96,6 +96,21 @@
     from { opacity: 0.2; transform: scale(1); }
     to { opacity: 1; transform: scale(1.5); }
   }
+
+  /* Jumping Kitty */
+  #jumpingCat {
+    position: fixed;
+    width: 80px;
+    z-index: 20;
+    pointer-events: none;
+    transition: transform 1s ease-in-out;
+    animation: kittyBounce 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes kittyBounce {
+    from { transform: translateY(0) scale(1); }
+    to { transform: translateY(-15px) scale(1.05); }
+  }
 </style>
 </head>
 <body>
@@ -108,6 +123,9 @@
 
 <button onclick="showMessage()">💌 Sweet Message</button>
 <button onclick="tapHeart()">💖 Tap the Heart</button>
+
+<!-- Jumping kitty -->
+<img id="jumpingCat" src="https://upload.wikimedia.org/wikipedia/en/0/05/Hello_Kitty_character_portrait.png" alt="Jumping Kitty">
 
 <script>
   const messages = [
@@ -145,13 +163,11 @@
     setTimeout(() => el.remove(), 8000);
   }
 
-  // Background cute cats & hearts
   setInterval(() => {
     const symbols = ['🐱', '😺', '😻', '💖', '🌸'];
     spawnFloating(symbols[Math.floor(Math.random() * symbols.length)]);
   }, 1500);
 
-  // Twinkling stars
   for (let i = 0; i < 50; i++) {
     const star = document.createElement('div');
     star.classList.add('star');
@@ -160,6 +176,27 @@
     star.style.animationDuration = (1 + Math.random() * 2) + 's';
     document.body.appendChild(star);
   }
+
+  // Jumping kitty movement
+  const jumpingCat = document.getElementById('jumpingCat');
+
+  function jumpAround() {
+    const winWidth = window.innerWidth;
+    const winHeight = window.innerHeight;
+
+    let randomX = Math.random() * (winWidth - 100);
+    let randomY = Math.random() * (winHeight - 150);
+
+    if (Math.random() < 0.3) {
+      const msgBox = document.getElementById('messageBox').getBoundingClientRect();
+      randomX = msgBox.left + msgBox.width / 2 - 40;
+      randomY = msgBox.top - 60;
+    }
+
+    jumpingCat.style.transform = `translate(${randomX}px, ${randomY}px)`;
+  }
+
+  setInterval(jumpAround, 2000);
 </script>
 
 </body>
