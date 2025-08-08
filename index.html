@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hello Kitty — For Kitty Divi 💖</title>
+  <style>
+    :root{
+      --pink-1:#ffeef6;
+      --pink-2:#ffb6d5;
+      --pink-3:#ff7fbf;
+      --accent:#ffd6e8;
+      --white:#fff;
+      --shadow: 0 8px 30px rgba(255,95,160,0.12);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,var(--pink-1),#fff);display:flex;align-items:center;justify-content:center;padding:32px}
+
+    .card{width:980px;max-width:96vw;background:var(--white);border-radius:20px;padding:28px;box-shadow:var(--shadow);display:grid;grid-template-columns:360px 1fr;gap:24px}
+
+    /* LEFT: Portrait */
+    .left{display:flex;flex-direction:column;align-items:center;gap:18px;padding:12px}
+    .kitty-portrait{width:280px;height:280px;border-radius:18px;background:linear-gradient(180deg,var(--pink-2),var(--pink-3));display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 10px 30px rgba(255,0,150,0.08);}
+    .kitty-portrait svg{width:220px;height:220px}
+    .name{font-size:28px;font-weight:700;color:#7a0a3a;margin-top:6px}
+    .subtitle{font-size:13px;color:#7a0a3a;opacity:0.9}
+
+    /* RIGHT: content */
+    .right{padding:8px 6px;display:flex;flex-direction:column;gap:12px}
+    .controls{display:flex;gap:10px;align-items:center}
+    .btn{background:linear-gradient(180deg,var(--pink-3),var(--pink-2));border:none;padding:12px 16px;border-radius:12px;color:var(--white);font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(255,95,160,0.14)}
+    .btn.ghost{background:transparent;color:#b20b5e;border:2px solid rgba(178,11,94,0.08)}
+
+    .message-box{background:linear-gradient(180deg,#fff, var(--accent));padding:18px;border-radius:14px;min-height:110px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:18px;color:#6d0033;font-weight:600}
+
+    .small-row{display:flex;gap:10px}
+
+    .panel{background:linear-gradient(180deg,var(--pink-1),#fff);padding:12px;border-radius:12px;border:1px dashed rgba(255,90,150,0.08)}
+
+    .game{display:flex;flex-direction:column;gap:8px}
+    input[type=number], input[type=text]{padding:10px;border-radius:10px;border:2px solid rgba(255,90,150,0.12);outline:none}
+    .muted{font-size:13px;color:#8b4965}
+
+    footer{grid-column:1/-1;text-align:center;color:#9b486f;font-size:13px;padding-top:8px}
+
+    /* confetti */
+    .confetti{position:fixed;left:0;top:0;pointer-events:none;width:100%;height:100%;z-index:999}
+
+    @media (max-width:880px){.card{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <div class="left">
+      <div class="kitty-portrait" aria-hidden="true">
+        <!-- Cute cat SVG (original, not copyrighted Hello Kitty art) -->
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(100,100)">
+            <!-- ears -->
+            <path d="M-70,-30 L-100,-80 L-40,-50 Z" fill="#fff" stroke="#7a0a3a" stroke-width="3"/>
+            <path d="M70,-30 L100,-80 L40,-50 Z" fill="#fff" stroke="#7a0a3a" stroke-width="3"/>
+            <!-- head -->
+            <circle r="70" fill="#fff" stroke="#7a0a3a" stroke-width="3"/>
+            <!-- bow -->
+            <ellipse cx="42" cy="-30" rx="18" ry="12" fill="#ff3fa7"/>
+            <ellipse cx="60" cy="-24" rx="9" ry="6" fill="#ff3fa7"/>
+            <circle cx="50" cy="-22" r="6" fill="#ffd6e8"/>
+            <!-- face -->
+            <ellipse rx="8" ry="6" cx="-20" cy="-2" fill="#7a0a3a"/>
+            <ellipse rx="8" ry="6" cx="20" cy="-2" fill="#7a0a3a"/>
+            <ellipse rx="6" ry="3" cx="0" cy="18" fill="#7a0a3a"/>
+            <!-- whiskers -->
+            <path d="M-34,6 L-70,6" stroke="#7a0a3a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M-34,12 L-70,18" stroke="#7a0a3a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M34,6 L70,6" stroke="#7a0a3a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M34,12 L70,18" stroke="#7a0a3a" stroke-width="2" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="name">Hello, Kitty Divi 💕</div>
+      <div class="subtitle">A tiny surprise to make wedding-day boredom softer.</div>
+
+      <div class="panel" style="width:100%;margin-top:6px;text-align:center">
+        <div style="font-weight:700;color:#7a0a3a">Quick pick-me-up</div>
+        <div class="muted" style="margin-top:6px">Tap the heart to get a new sweet message.</div>
+        <div style="margin-top:10px">
+          <button class="btn" id="msgBtn">💖 Send me a sweet message</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="right">
+      <div class="message-box" id="messageBox">Welcome, Kitty Divi — ready for tiny happiness?</div>
+
+      <div class="small-row">
+        <div class="panel" style="flex:1">
+          <div style="font-weight:700;margin-bottom:8px">Boredom busters</div>
+          <div class="game">
+            <button class="btn ghost" id="jokeBtn">Tell me a cute joke</button>
+            <button class="btn ghost" id="fortuneBtn">Spin a tiny fortune</button>
+          </div>
+        </div>
+
+        <div class="panel" style="width:260px">
+          <div style="font-weight:700;margin-bottom:8px">Mini game: Guess</div>
+          <div class="muted">Pick a number 1–10. I'll try to guess yours ✨</div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <input type="number" id="guessInput" min="1" max="10" placeholder="1–10" />
+            <button class="btn" id="guessBtn">Check</button>
+          </div>
+          <div id="guessResult" class="muted" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:6px">
+        <div style="font-weight:700;margin-bottom:8px">Notes & custom message</div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="customInput" placeholder="Write something for Kitty Divi..." />
+          <button class="btn" id="customBtn">Show</button>
+        </div>
+        <div class="muted" style="margin-top:8px">Type a little secret or inside-joke — I'll make it sparkle.</div>
+      </div>
+
+      <div class="panel" style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+        <div>
+          <div style="font-weight:800">Little extras</div>
+          <div class="muted" style="margin-top:6px">Confetti, subtle animations, and a soft palette to centre her.</div>
+        </div>
+        <div>
+          <button class="btn ghost" id="confettiBtn">Celebrate 🎉</button>
+        </div>
+      </div>
+
+      <footer>Made with lots of pink & a tiny heart — for Kitty Divi.</footer>
+    </div>
+  </div>
+
+  <canvas class="confetti" id="confettiCanvas"></canvas>
+
+  <script>
+    // --- Messages, jokes, fortunes ---
+    const messages = [
+      "Hey Kitty Divi — if the ceremony runs long, remember you carry a universe of hugs inside you.",
+      "You're the softest part of today. Breathe, sip, smile. 💕",
+      "If anyone tries to dull your sparkle, flash them your best grin — it works every time.",
+      "Small secret: you make ordinary things feel like secret holidays.",
+      "Kitty Divi — your laugh is a song; hum it silently and let it brighten your corner.",
+      "You deserve a pink cake and a nap. Preferably both.",
+      "Sending a tiny invisible bouquet — smells like confidence and cotton candy.",
+      "If you need to escape for 30 seconds, close your eyes and imagine us stealing fries together.",
+      "You're stronger than you feel and kinder than you know. That's enough today.",
+      "A tiny cheer: You. Are. Amazing. Repeat.",
+    ];
+
+    const jokes = [
+      "Why did the cat sit on the computer? To keep an eye on the mouse! 🐱🖱️",
+      "What do you call a cat who loves bowling? An alley cat! 🎳",
+      "Why are cats good at video games? Because they have nine lives! 🎮",
+    ];
+
+    const fortunes = [
+      "A sweet surprise finds you before the cake is cut.",
+      "Someone will think of you and smile today.",
+      "A tiny choice will lead to a small, happy change.",
+      "Collect a memory, not a worry — one step at a time.",
+      "Today’s best accessory: your calmness.",
+    ];
+
+    // helpers
+    function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+    const messageBox = document.getElementById('messageBox');
+    const msgBtn = document.getElementById('msgBtn');
+    msgBtn.addEventListener('click', ()=> showMessage());
+
+    function showMessage(text){
+      const content = text ?? rand(messages);
+      messageBox.textContent = content;
+      animatePulse();
+    }
+
+    // Jokes
+    document.getElementById('jokeBtn').addEventListener('click', ()=>{
+      messageBox.textContent = rand(jokes);
+      animatePulse();
+    });
+
+    // Fortune
+    document.getElementById('fortuneBtn').addEventListener('click', ()=>{
+      messageBox.textContent = rand(fortunes);
+      animatePulse();
+    });
+
+    // Custom message
+    document.getElementById('customBtn').addEventListener('click', ()=>{
+      const val = document.getElementById('customInput').value.trim();
+      if(!val){ messageBox.textContent = 'Type a sweet note and tap Show ✨'; return }
+      messageBox.textContent = '✨ ' + val + ' ✨';
+      document.getElementById('customInput').value='';
+      animatePulse();
+    });
+
+    // Guess mini-game: we "try to guess" the user's number
+    const secret = Math.floor(Math.random()*10)+1; // computer picks secret
+    document.getElementById('guessBtn').addEventListener('click', ()=>{
+      const v = Number(document.getElementById('guessInput').value);
+      const res = document.getElementById('guessResult');
+      if(!v || v<1 || v>10){ res.textContent='Pick a number between 1 and 10, please.'; return }
+      if(v === secret){ res.textContent = 'Woah — we matched! Good vibes. 💖'; confettiBurst(); }
+      else if(v < secret) res.textContent = 'Close — try a slightly bigger number.';
+      else res.textContent = 'A bit high — try a smaller number.';
+    });
+
+    // Confetti (simple)
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiPieces = [];
+    function resize(){ confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; }
+    window.addEventListener('resize', resize); resize();
+
+    function confettiBurst(){
+      for(let i=0;i<80;i++){ confettiPieces.push({x: Math.random()*innerWidth, y:-20, vx:(Math.random()-0.5)*4, vy:Math.random()*5+2, r:Math.random()*6+4, rot:Math.random()*360, vr: (Math.random()-0.5)*10, color: `hsl(${320+Math.random()*40},80%,65%)`}) }
+      if(!animating) animateConfetti();
+    }
+
+    let animating=false;
+    function animateConfetti(){ animating=true; ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+      for(let i=confettiPieces.length-1;i>=0;i--){ const p = confettiPieces[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.rot += p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle = p.color; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.6); ctx.restore();
+        if(p.y > innerHeight+40){ confettiPieces.splice(i,1); }
+      }
+      if(confettiPieces.length>0) requestAnimationFrame(animateConfetti); else animating=false;
+    }
+
+    document.getElementById('confettiBtn').addEventListener('click', ()=>{ confettiBurst(); });
+
+    // small pulse animation for messageBox
+    function animatePulse(){ messageBox.animate([{transform:'scale(0.99)'},{transform:'scale(1.02)'},{transform:'scale(1)'}],{duration:420,easing:'cubic-bezier(.2,.9,.2,1)'}); }
+
+    // on-load greeting
+    setTimeout(()=> showMessage('Hi Kitty Divi — a tiny site made just for you. Tap the heart 💖'),700);
+
+    // keyboard shortcut: press H for a hug message
+    window.addEventListener('keydown',(e)=>{ if(e.key.toLowerCase()==='h') showMessage(); })
+
+    // expose small functions for fast edits
+    window.__KITTY = { showMessage, confettiBurst, messages };
+  </script>
+</body>
+</html>
