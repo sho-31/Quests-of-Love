@@ -7,30 +7,34 @@
 <style>
   body {
     font-family: 'Comic Sans MS', cursive, sans-serif;
-    background-color: #ffe6f0;
+    background: linear-gradient(to bottom, #ffe6f0, #ffccdd);
     color: #d63384;
     text-align: center;
     padding: 20px;
     overflow: hidden;
   }
-  h1 {
-    font-size: 2.5rem;
+  h1.big-message {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ff3399;
+    text-shadow: 0 0 10px #fff, 0 0 20px #ff66b2;
     animation: glow 2s infinite alternate;
-  }
-  #messages {
-    font-size: 1.2rem;
-    height: 60px;
-    margin-top: 20px;
-    animation: fadeIn 1s ease;
+    margin-bottom: 10px;
   }
   @keyframes glow {
-    0% { text-shadow: 0 0 5px #ff66b2; }
-    100% { text-shadow: 0 0 20px #ff3399; }
+    from { text-shadow: 0 0 10px #fff, 0 0 20px #ff99cc; }
+    to { text-shadow: 0 0 20px #ff66b2, 0 0 30px #ff3399; }
+  }
+  #messages {
+    font-size: 1.4rem;
+    height: 60px;
+    margin-top: 10px;
+    animation: fadeIn 1s ease;
   }
   @keyframes fadeIn {
     from {opacity: 0;} to {opacity: 1;}
   }
-  /* Floating balloons */
+  /* Balloons */
   .balloon {
     position: fixed;
     bottom: -100px;
@@ -38,43 +42,67 @@
     font-size: 2rem;
   }
   @keyframes floatUp {
-    0% {transform: translateY(0);}
-    100% {transform: translateY(-120vh);}
-  }
-  /* Bubbles game */
-  .bubble {
-    position: absolute;
-    border-radius: 50%;
-    background-color: rgba(255,182,193,0.7);
-    cursor: pointer;
+    to { transform: translateY(-120vh); }
   }
   /* Confetti */
   .confetti {
     position: fixed;
     width: 10px;
     height: 10px;
-    background-color: pink;
     animation: fall 3s linear forwards;
   }
   @keyframes fall {
     to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
   }
+  /* Bubbles */
+  canvas {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:-1;
+  }
+  /* Toggle Button */
+  button {
+    background: linear-gradient(45deg, #ff99cc, #ff66b2);
+    border: none;
+    padding: 12px 25px;
+    margin: 15px;
+    font-size: 1.2rem;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 102, 178, 0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(255, 102, 178, 0.7);
+  }
+  /* Hello Kitty images floating */
+  .kitty-img {
+    position: absolute;
+    width: 80px;
+    animation: kittyFloat 5s ease-in-out infinite;
+  }
+  @keyframes kittyFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
 </style>
 </head>
 <body>
 
-<h1>🎀 Surprise for Kitty Divi 🎀</h1>
+<h1 class="big-message">💖 I Love You, Kitty Divi 💖</h1>
 <div id="messages"></div>
 
 <!-- Game Area -->
-<canvas id="gameCanvas" style="position:absolute; top:0; left:0; z-index:-1;"></canvas>
+<canvas id="gameCanvas"></canvas>
 
-<!-- Background Music -->
-<audio id="bgMusic" src="https://www.bensound.com/bensound-music/bensound-littleidea.mp3" loop></audio>
-<button onclick="toggleMusic()">🎵 Toggle Music</button>
+<!-- Toggle Button -->
+<button onclick="kittySparkleMode()">✨ Kitty Sparkle Mode</button>
 
 <script>
-/* Sweet Messages Scroller */
+/* Sweet Messages */
 const sweetMessages = [
   "Kitty Divi, you light up my life 💡💕",
   "You’re more beautiful than a thousand sunsets 🌅",
@@ -90,7 +118,7 @@ function updateMessage() {
 setInterval(updateMessage, 3000);
 updateMessage();
 
-/* Floating Balloons */
+/* Balloons */
 function spawnBalloon() {
   const balloon = document.createElement('div');
   balloon.className = 'balloon';
@@ -101,7 +129,7 @@ function spawnBalloon() {
 }
 setInterval(spawnBalloon, 2000);
 
-/* Confetti bursts */
+/* Confetti */
 function spawnConfetti() {
   for (let i = 0; i < 15; i++) {
     const c = document.createElement('div');
@@ -172,13 +200,27 @@ function animate() {
 }
 animate();
 
-/* Music Control */
-function toggleMusic() {
-  const music = document.getElementById('bgMusic');
-  if (music.paused) {
-    music.play();
-  } else {
-    music.pause();
+/* Kitty Sparkle Mode */
+function kittySparkleMode() {
+  for (let i = 0; i < 8; i++) {
+    const kitty = document.createElement('img');
+    kitty.src = "https://upload.wikimedia.org/wikipedia/en/0/05/Hello_Kitty_character_portrait.png";
+    kitty.className = 'kitty-img';
+    kitty.style.left = Math.random() * 90 + 'vw';
+    kitty.style.top = Math.random() * 80 + 'vh';
+    document.body.appendChild(kitty);
+    setTimeout(() => kitty.remove(), 5000);
+  }
+  for (let i = 0; i < 30; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.textContent = '✨';
+    sparkle.style.position = 'absolute';
+    sparkle.style.left = Math.random() * 100 + 'vw';
+    sparkle.style.top = Math.random() * 100 + 'vh';
+    sparkle.style.fontSize = '1.2rem';
+    sparkle.style.opacity = 0.8;
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 2000);
   }
 }
 </script>
