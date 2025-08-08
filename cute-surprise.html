@@ -61,11 +61,6 @@
     0% { transform: translateY(0) scale(0.8); opacity: 1; }
     100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
   }
-
-  .kitty-img {
-    width: 60px;
-    height: auto;
-  }
 </style>
 </head>
 <body>
@@ -76,37 +71,20 @@
   <button class="kitty-btn" onclick="startSparkleMode()">✨ Kitty Sparkle Mode</button>
 
 <script>
-  const kittyImages = [
-    "images/hello1.png",
-    "images/hello2.png",
-    "images/hello3.png",
-    "images/hello4.png"
-  ];
-
   function createFloatingItem(type) {
     const el = document.createElement('div');
     el.classList.add('floating');
-
-    if (type === 'kitty') {
-      const img = document.createElement('img');
-      img.src = kittyImages[Math.floor(Math.random() * kittyImages.length)];
-      img.className = 'kitty-img';
-      el.appendChild(img);
-    } else {
-      el.textContent = type;
-      el.style.fontSize = '2rem';
-    }
-
+    el.textContent = type;
+    el.style.fontSize = '2rem';
     el.style.left = Math.random() * 100 + 'vw';
     el.style.animationDuration = (4 + Math.random() * 3) + 's';
     document.body.appendChild(el);
-
     setTimeout(() => el.remove(), 7000);
   }
 
   function startSparkleMode() {
     const interval = setInterval(() => {
-      const types = ['💖', '🎈', 'kitty'];
+      const types = ['💖', '💕', '💗', '💓', '💞', '💘', '🎀', '🌸'];
       const randomType = types[Math.floor(Math.random() * types.length)];
       createFloatingItem(randomType);
     }, 300);
