@@ -96,6 +96,34 @@
     from { opacity: 0.2; transform: scale(1); }
     to { opacity: 1; transform: scale(1.5); }
   }
+  /* ========== Responsive adjustments ========== */
+@media (max-width: 720px) {
+  .card{ width: calc(100% - 24px); padding: 18px; border-radius:16px; }
+  h1{ font-size: 22px; margin-top: 12px; }
+  .main-kitty-wrap{ width: 180px; height: 240px; }
+  img#mainKitty{ max-width: 86%; width: 150px; }
+  #messageBox{ font-size: 15px; padding: 12px; min-height: 56px; }
+  .btn{ padding: 14px 20px; font-size: 1rem; border-radius: 22px; }
+  #jumper{ width: 64px !important; height: auto !important; }
+  .floating{ /* hide heavy floaters on small screens to save CPU/bandwidth */ display: none; }
+  .star{ display: none; }
+}
+
+/* tighter mobile for small phones */
+@media (max-width: 420px) {
+  h1{ font-size: 18px; }
+  .main-kitty-wrap{ width: 150px; height: 200px; }
+  img#mainKitty{ width: 120px; }
+  #messageBox{ font-size: 14px; padding: 10px; }
+  .btn{ width: 46%; padding: 12px; font-size: 0.98rem; }
+}
+
+/* Respect users' reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  .floating, .star { display: none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -118,6 +146,23 @@
     "You are the reason my heart beats every moment 🌸",
     "Endlessly grateful to have you as my soulmate 💖" 
   ];
+  /* ========== Mobile detection & adaptive config ========== */
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) || window.innerWidth < 720;
+
+const SPAWN_INTERVAL_DESKTOP = 1600;
+const SPAWN_INTERVAL_MOBILE  = 2600;
+
+const STAR_COUNT_DESKTOP = 40;
+const STAR_COUNT_MOBILE  = 8;   // far fewer on small devices
+
+// jumper timing (longer on mobile so it doesn't move too often)
+const JUMP_DELAY_MIN_DESKTOP = 900;
+const JUMP_DELAY_MAX_DESKTOP = 2200;
+const JUMP_DELAY_MIN_MOBILE  = 1600;
+const JUMP_DELAY_MAX_MOBILE  = 3200;
+
+function randRange(min,max){ return min + Math.random()*(max-min); }
+
 
   let heartTaps = 0;
 
