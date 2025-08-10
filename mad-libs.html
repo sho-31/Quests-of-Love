@@ -111,7 +111,7 @@
 <div class="card" role="main" aria-labelledby="title">
   <header>
     <h1 id="title">Cute Surprise — Mad-Libs 💌</h1>
-    <p>Fill the blanks, or use Random Fill — then let the page craft a short romantic line and a tiny poetic scene using puter.ai.</p>
+    <p>Heyo Love! Fill the blanks, or use Random Fill — then let the page craft a short and soft poetic scene filled with lovely magic</p>
   </header>
 
   <div class="fields" aria-hidden="false">
@@ -252,25 +252,26 @@
     const prompt = `
 Inputs: ADJECTIVE = "{adj}", PLACE = "{place}", NOUN = "{noun}"
 
-Write a short, poetic, romantic scene addressed directly to Divanshi as "you" that uses the three provided words naturally. Use the ADJECTIVE, PLACE, and NOUN exactly as given (these will be substituted before sending). **Do NOT output the literal placeholders** "{adj}", "{place}", "{noun}" or the words adj/place/noun, and do not include any curly braces or labels in the scene.
+Task: Write a short, poetic, romantic scene addressed directly to Divanshi as "you" that uses the three provided words naturally (the words will be substituted before sending). Do NOT output the literal placeholders or any curly braces or the words adj/place/noun.
 
 MANDATORY RULES:
-- The very first sentence of the output MUST begin exactly with: "You and Shourya" (capital Y, capital S). Nothing may appear before this sentence.
-- Do NOT include any opening atmospheric sentence that precedes "You and Shourya" (for example: do not begin with "The {adj}..." or similar).
-- NEVER use first-person pronouns or possessives: do NOT use "I", "me", "my", "mine", "we", "our", "us", or contractions equivalent to those.
-- Address Divanshi using second-person "you" and "your" throughout.
-- Refer to Shourya by name "Shourya" at most twice. After the second occurrence, use only third-person pronouns ("he", "his") if needed.
-- Include the provided ADJECTIVE, PLACE, and NOUN somewhere in the scene (insert the actual words, not the placeholder names).
-- Do NOT include any signature, credit line, metadata, headings, or explanatory text (no "—Shourya", no labels, no code).
+- The very first sentence MUST begin exactly with: "You and Shourya".
+- Any sentence that takes the form "You and ..." must name Shourya (e.g., "You and Shourya ...") — never use PLACE or NOUN (or any inanimate thing) as the co-subject. Examples forbidden: "You and the garden...", "You and the rose...".
+- NEVER use first-person pronouns or possessives: do NOT use "I", "me", "my", "mine", "we", "our", "us", or contractions that imply first person.
+- Address Divanshi only in second person ("you", "your").
+- Refer to Shourya by name at most twice; after the second occurrence use only third-person pronouns ("he", "his") if needed.
+- Include the provided ADJECTIVE, PLACE, and NOUN (the actual words, not placeholders) somewhere in the scene, used naturally as adjective/setting/object.
+- Do NOT include any signature, credit line, headings, labels, or metadata (no "—Shourya").
+- Do NOT output placeholders, braces, or the literal tokens adj/place/noun anywhere.
 
 STYLE & FORMAT:
-- Tone: tender, dreamy, poetic, and human.
+- Tone: tender, dreamy, poetic, human.
 - Use vivid sensory detail (light, touch, scent, sound) and short graceful sentences or very short paragraphs.
 - Length: about 80–160 words total, formatted as 2–4 short paragraphs.
-- Ending: finish with one tender closing line (a single final line). No extra lines after it.
+- Ending: finish with one single tender closing line (one final line). No extra lines after it.
 
 OUTPUT:
-Return ONLY the scene text (plain narrative). Ensure the output contains no placeholders, no curly braces, and follows the rules above.
+Return ONLY the scene text (plain narrative) that strictly follows these rules.
 `.trim();
 
     // call puter.ai.chat robustly
