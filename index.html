@@ -20,6 +20,7 @@
     color: #ff1493;
     text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
     animation: glow 2s infinite alternate;
+    will-change: text-shadow;
   }
 
   @keyframes glow {
@@ -32,6 +33,7 @@
     animation: float 4s ease-in-out infinite;
     margin-top: 15px;
     max-width: 80%;
+    will-change: transform;
   }
 
   @keyframes float {
@@ -63,6 +65,7 @@
     box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
     transition: transform 0.3s, box-shadow 0.3s;
     max-width: 90%;
+    will-change: transform, box-shadow;
   }
 
   button:hover {
@@ -70,7 +73,6 @@
     box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
   }
 
-  /* Cozy Corner Button Specific Style */
   #cozyCornerButton {
     display: inline-block;
     width: calc(340px + 40px);
@@ -79,13 +81,12 @@
     margin-top: 5px;
   }
 
-  /* Floating elements */
   .floating {
     position: fixed;
-    animation: floatUp 8s linear infinite;
     bottom: -100px;
     z-index: 10;
     opacity: 0.9;
+    will-change: transform, opacity;
   }
 
   @keyframes floatUp {
@@ -93,7 +94,6 @@
     100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
   }
 
-  /* Stars */
   .star {
     position: fixed;
     width: 4px;
@@ -101,6 +101,7 @@
     background: white;
     border-radius: 50%;
     animation: twinkle 2s infinite alternate;
+    will-change: transform, opacity;
   }
 
   @keyframes twinkle {
@@ -108,26 +109,14 @@
     to { opacity: 1; transform: scale(1.5); }
   }
 
-  /* Burst stars from tap */
+  /* Burst stars */
   .burst-star {
     position: absolute;
     font-size: 18px;
     pointer-events: none;
-    animation: burstFall 1.5s ease-out forwards;
+    will-change: transform, opacity;
   }
 
-  @keyframes burstFall {
-    0% {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(80px) scale(0.5);
-      opacity: 0;
-    }
-  }
-
-  /* Responsive adjustments */
   @media (max-width: 720px) {
     h1 { font-size: 2rem; }
     #cozyCornerButton { width: calc(100% - 40px); }
@@ -136,11 +125,6 @@
   @media (max-width: 420px) {
     button { font-size: 0.9rem; padding: 10px 16px; }
     #cozyCornerButton { width: calc(100% - 40px); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-    .floating, .star { display: none !important; }
   }
 </style>
 </head>
@@ -186,27 +170,44 @@
     heartTaps++;
     spawnFloating('🐱');
     if (heartTaps >= 3) {
-      heartTaps = 0; // reset
+      heartTaps = 0;
       window.location.href = 'cute-surprise.html';
     }
   }
 
-  function spawnFloating(symbol) {
+  // Reusable floating pool
+  const floatPoolSize = 15;
+  const floatPool = [];
+  for (let i = 0; i < floatPoolSize; i++) {
     const el = document.createElement('div');
     el.classList.add('floating');
-    el.textContent = symbol;
     el.style.fontSize = '2rem';
-    el.style.left = Math.random() * 100 + 'vw';
-    el.style.animationDuration = (5 + Math.random() * 3) + 's';
+    el.style.position = 'fixed';
+    el.style.transition = 'transform 6s linear, opacity 6s';
+    el.style.opacity = '0';
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 8000);
+    floatPool.push(el);
+  }
+  let floatIndex = 0;
+
+  function spawnFloating(symbol) {
+    const el = floatPool[floatIndex];
+    floatIndex = (floatIndex + 1) % floatPoolSize;
+    el.textContent = symbol;
+    el.style.transform = `translate(${Math.random() * 100}vw, 100vh) scale(1)`;
+    el.style.opacity = '1';
+    requestAnimationFrame(() => {
+      el.style.transform = `translate(${Math.random() * 100}vw, -20vh) scale(1.2)`;
+      el.style.opacity = '0';
+    });
   }
 
   setInterval(() => {
     const symbols = ['🐱', '💕', '😺', '😻', '💖', '🌸'];
     spawnFloating(symbols[Math.floor(Math.random() * symbols.length)]);
-  }, 1500);
+  }, 1800);
 
+  // Stars
   for (let i = 0; i < 50; i++) {
     const star = document.createElement('div');
     star.classList.add('star');
@@ -216,40 +217,33 @@
     document.body.appendChild(star);
   }
 
-  // 🌟 Burst star effect from tap
+  // Burst effect
   function createStarBurst(x, y) {
-    const symbols = ["✨", "💕"];
+    const symbols = ["✨", "💫", "🌸", "❤️", "⭐"];
     const count = 7;
-
+    const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const star = document.createElement("span");
       star.className = "burst-star";
       star.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-      document.body.appendChild(star);
-
-      // Start at tap point
       star.style.left = x + "px";
       star.style.top = y + "px";
-
-      // Random spread
-      const offsetX = (Math.random() - 0.5) * 100;
-      const offsetY = Math.random() * 50;
-      setTimeout(() => {
+      frag.appendChild(star);
+      document.body.appendChild(star);
+      const offsetX = (Math.random() - 0.5) * 120;
+      const offsetY = Math.random() * 60;
+      requestAnimationFrame(() => {
         star.style.transition = "transform 1.5s ease-out, opacity 1.5s";
         star.style.transform = `translate(${offsetX}px, ${offsetY + 100}px) scale(0.5)`;
         star.style.opacity = "0";
-      }, 20);
-
-      // Remove after animation
+      });
       setTimeout(() => star.remove(), 1600);
     }
   }
 
-  // Trigger burst on click or tap
   document.addEventListener("click", e => {
     createStarBurst(e.pageX, e.pageY);
   });
-
   document.addEventListener("touchstart", e => {
     if (e.touches.length > 0) {
       createStarBurst(e.touches[0].pageX, e.touches[0].pageY);
