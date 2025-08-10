@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +14,6 @@
     margin: 0;
     padding: 0;
   }
-
   h1 {
     font-size: 3rem;
     margin-top: 40px;
@@ -23,7 +21,6 @@
     text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
     animation: glow 2s infinite alternate;
   }
-
   p {
     font-size: 1.2rem;
     max-width: 700px;
@@ -31,12 +28,10 @@
     line-height: 1.8;
     padding: 0 15px;
   }
-
   @keyframes glow {
     from { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493; }
     to { text-shadow: 0 0 40px #ff69b4, 0 0 60px #ff1493; }
   }
-
   .kitty-btn {
     background: linear-gradient(45deg, #ff69b4, #ff1493);
     border: none;
@@ -52,22 +47,17 @@
     transform: scale(1.1);
     box-shadow: 0 8px 25px rgba(255, 20, 147, 0.6);
   }
-
-  /* floating sparkles (non-interactive so they don't block taps) */
   .floating {
     position: fixed;
     animation: floatUp 6s linear infinite;
     bottom: -100px;
     z-index: 10;
-    pointer-events: none; /* important — don't capture taps */
+    pointer-events: none;
   }
-
   @keyframes floatUp {
     0% { transform: translateY(0) scale(0.8); opacity: 1; }
     100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
   }
-
-  /* Love Button */
   .love-btn {
     display:block;
     margin: 20px auto;
@@ -84,8 +74,6 @@
   .love-btn:hover {
     transform: scale(1.05);
   }
-
-  /* Love Message Box */
   #loveMessageBox {
     display:none;
     margin-top: 15px;
@@ -98,31 +86,27 @@
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 350ms ease, transform 350ms ease;
-    position: relative; /* keep in document flow below buttons */
+    position: relative;
     overflow: visible;
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
-    z-index: 1000; /* ensure it's above floating elements */
+    z-index: 1000;
     line-height: 1.6;
     text-align: left;
-    white-space: pre-wrap; /* preserve newlines */
+    white-space: pre-wrap;
   }
-
-  /* small floating hearts inside box (non-interactive) */
   .heart {
     position: absolute;
     font-size: 18px;
     animation: heartFloat 2s ease-out forwards;
     opacity: 0.95;
-    pointer-events: none; /* don't block touches */
+    pointer-events: none;
   }
   @keyframes heartFloat {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-60px) scale(1.4); opacity: 0; }
   }
-
-  /* make the content look a bit nicer on small screens */
   @media (max-width: 420px) {
     h1 { font-size: 2rem; }
     p { font-size: 1rem; padding: 0 12px; }
@@ -146,237 +130,170 @@
   </p>
 
   <button class="kitty-btn" onclick="startSparkleMode()">✨ Kitty Sparkle Mode</button>
-
-  <!-- New Love Button -->
   <button class="love-btn" id="loveBtn">💖 Want to know how much Shourya loves you? 💖</button>
   <div id="loveMessageBox" aria-live="polite"></div>
 
 <script src="https://js.puter.com/v2/"></script>
 <script>
-/*
-  Updated love-button handler:
-  - Strong prompt that forces second-person (addressing 'you')
-  - Robust extraction of the AI text from different response shapes
-  - Replaces escaped \n with real newlines
-  - Ensures box becomes visible and scrolls into view
-*/
-
-  // keep the "magic level" increasing each click
-  let loveLevel = 1;
-
-  function createFloatingItem(symbol) {
-    const el = document.createElement('div');
-    el.classList.add('floating');
-    el.textContent = symbol;
-    el.style.fontSize = '2rem';
-    el.style.left = Math.random() * 100 + 'vw';
-    el.style.animationDuration = (4 + Math.random() * 3) + 's';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 7000);
-  }
-
-  function startSparkleMode() {
-    const symbols = ['💖', '🎈'];
-    const interval = setInterval(() => {
-      const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-      createFloatingItem(randomSymbol);
-    }, 300);
-    setTimeout(() => clearInterval(interval), 8000);
-  }
-
-  // hearts floating inside the message box
-  function createHeart(container) {
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.textContent = "💖";
-    const leftPct = 8 + Math.random() * 77;
-    heart.style.left = leftPct + "%";
-    heart.style.bottom = "8px";
-    container.appendChild(heart);
-    setTimeout(() => heart.remove(), 2200);
-  }
-
-  // try many shapes and pick the most plausible human text
-  function extractTextFromResponse(resp) {
-    if (!resp) return "";
-    // if it's already a string, return cleaned string
-    if (typeof resp === "string") {
-      return resp;
-    }
-
-    // Common shapes:
-    //  - resp.message.content (string)
-    //  - resp.message.content[0].text
-    //  - resp.choices[0].message.content
-    //  - resp.output[0].content[0].text
-    //  - resp.text or resp.content
-    try {
-      if (resp.message && (resp.message.content || resp.message.text)) {
-        // message.content might be string or array; handle both
-        const mc = resp.message.content;
-        if (typeof mc === "string") return mc;
-        if (Array.isArray(mc) && mc.length) {
-          // try to find a string inside
-          for (const item of mc) {
-            if (typeof item === "string") return item;
-            if (item && typeof item === "object") {
-              // sometimes {type: "output_text", text: "..." }
-              if (item.text) return item.text;
-              if (item.content) {
-                if (typeof item.content === "string") return item.content;
-                if (Array.isArray(item.content)) {
-                  for (const c of item.content) if (typeof c === "string") return c;
-                }
+let loveLevel = 1;
+function createFloatingItem(symbol) {
+  const el = document.createElement('div');
+  el.classList.add('floating');
+  el.textContent = symbol;
+  el.style.fontSize = '2rem';
+  el.style.left = Math.random() * 100 + 'vw';
+  el.style.animationDuration = (4 + Math.random() * 3) + 's';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 7000);
+}
+function startSparkleMode() {
+  const symbols = ['💖', '🎈'];
+  const interval = setInterval(() => {
+    const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+    createFloatingItem(randomSymbol);
+  }, 300);
+  setTimeout(() => clearInterval(interval), 8000);
+}
+function createHeart(container) {
+  const heart = document.createElement("div");
+  heart.classList.add("heart");
+  heart.textContent = "💖";
+  const leftPct = 8 + Math.random() * 77;
+  heart.style.left = leftPct + "%";
+  heart.style.bottom = "8px";
+  container.appendChild(heart);
+  setTimeout(() => heart.remove(), 2200);
+}
+function extractTextFromResponse(resp) {
+  if (!resp) return "";
+  if (typeof resp === "string") return resp;
+  try {
+    if (resp.message && (resp.message.content || resp.message.text)) {
+      const mc = resp.message.content;
+      if (typeof mc === "string") return mc;
+      if (Array.isArray(mc) && mc.length) {
+        for (const item of mc) {
+          if (typeof item === "string") return item;
+          if (item && typeof item === "object") {
+            if (item.text) return item.text;
+            if (item.content) {
+              if (typeof item.content === "string") return item.content;
+              if (Array.isArray(item.content)) {
+                for (const c of item.content) if (typeof c === "string") return c;
               }
             }
           }
         }
       }
-
-      if (resp.choices && Array.isArray(resp.choices) && resp.choices.length) {
-        const c = resp.choices[0];
-        if (c.message && (c.message.content || c.message.text)) {
-          return c.message.content || c.message.text;
-        }
-        if (typeof c.text === "string") return c.text;
-      }
-
-      if (resp.output && Array.isArray(resp.output) && resp.output.length) {
-        const out = resp.output[0];
-        if (out.content && Array.isArray(out.content) && out.content.length) {
-          // find first string inside
-          for (const ct of out.content) {
-            if (typeof ct === "string") return ct;
-            if (ct && ct.text) return ct.text;
-            if (ct && ct.content && typeof ct.content === "string") return ct.content;
-          }
-        }
-      }
-
-      // fallback: look for keys 'text' or 'content' in root
-      if (resp.text && typeof resp.text === "string") return resp.text;
-      if (resp.content && typeof resp.content === "string") return resp.content;
-
-      // final fallback: find the longest string value inside the object (helps avoid metadata)
-      let longest = "";
-      function walk(o) {
-        if (!o) return;
-        if (typeof o === "string") {
-          if (o.length > longest.length) longest = o;
-        } else if (Array.isArray(o)) {
-          for (const item of o) walk(item);
-        } else if (typeof o === "object") {
-          for (const k in o) {
-            if (!Object.prototype.hasOwnProperty.call(o, k)) continue;
-            walk(o[k]);
-          }
-        }
-      }
-      walk(resp);
-      return longest;
-    } catch (e) {
-      console.error("extractTextFromResponse error", e);
-      return "";
     }
-  }
-
-  // clean escape sequences like \n -> actual newline, and trim
-  function cleanText(s) {
-    if (!s) return "";
-    // Convert escaped newlines to real newlines
-    s = s.replace(/\\n/g, "\n");
-    // Remove excessive quotes around the whole string
-    s = s.replace(/^\s*"(.*)"\s*$/s, "$1");
-    return s.trim();
-  }
-
-  document.getElementById("loveBtn").addEventListener("click", async () => {
-    const btn = document.getElementById("loveBtn");
-    const box = document.getElementById("loveMessageBox");
-
-    btn.disabled = true;
-    box.style.display = "block";
-    box.style.opacity = "0";
-    box.style.transform = "translateY(8px)";
-    box.textContent = "✨ Thinking about your magical bond with Divanshi... ✨";
-
-    for (let i = 0; i < 5; i++) {
-      setTimeout(() => createHeart(box), i * 160);
+    if (resp.choices && resp.choices.length) {
+      const c = resp.choices[0];
+      if (c.message && (c.message.content || c.message.text)) {
+        return c.message.content || c.message.text;
+      }
+      if (typeof c.text === "string") return c.text;
     }
+    if (resp.output && resp.output.length) {
+      const out = resp.output[0];
+      if (out.content && out.content.length) {
+        for (const ct of out.content) {
+          if (typeof ct === "string") return ct;
+          if (ct && ct.text) return ct.text;
+          if (ct && ct.content && typeof ct.content === "string") return ct.content;
+        }
+      }
+    }
+    if (resp.text && typeof resp.text === "string") return resp.text;
+    if (resp.content && typeof resp.content === "string") return resp.content;
+    let longest = "";
+    function walk(o) {
+      if (!o) return;
+      if (typeof o === "string") { if (o.length > longest.length) longest = o; }
+      else if (Array.isArray(o)) { for (const item of o) walk(item); }
+      else if (typeof o === "object") { for (const k in o) walk(o[k]); }
+    }
+    walk(resp);
+    return longest;
+  } catch (e) {
+    console.error("extractTextFromResponse error", e);
+    return "";
+  }
+}
+function cleanText(s) {
+  if (!s) return "";
+  s = s.replace(/\\n/g, "\n");
+  s = s.replace(/^\s*"(.*)"\s*$/s, "$1");
+  return s.trim();
+}
 
-    setTimeout(() => {
-      try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
-    }, 120);
+document.getElementById("loveBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("loveBtn");
+  const box = document.getElementById("loveMessageBox");
 
-    // Prompt: force second-person, avoid "I" statements, human tone
-    const prompt = `
+  btn.disabled = true;
+  box.style.display = "block";
+  box.style.opacity = "0";
+  box.style.transform = "translateY(8px)";
+  box.textContent = "✨ Thinking about your magical bond with Divanshi... ✨";
+
+  for (let i = 0; i < 5; i++) setTimeout(() => createHeart(box), i * 160);
+
+  setTimeout(() => {
+    try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
+  }, 120);
+
+  const prompt = `
 Write a romantic, poetic love note FROM Shourya TO Divanshi that speaks DIRECTLY to Divanshi in STRONG SECOND-PERSON ("you") voice.
 
 MANDATORY RULES:
 - NEVER use first-person pronouns or possessives: do NOT use "I", "me", "my", "mine", "we", "our", or "us".
-- When referring to Shourya's feelings or life, ALWAYS use Shourya's name or the possessive "Shourya's" or you can use "he", "he's", "him", "his" (examples below).
+- When referring to Shourya's feelings or life, ALWAYS use Shourya's name or the possessive "Shourya's" or you can use "he", "he's", "him", "his".
 - Do not use JSON, metadata, role labels, or any code-like output. Plain English only.
-
-STYLE & CONTENT:
 - Frequently begin short lines with "You are..." (vary phrasing so it doesn't repeat exactly).
-- Include at least one sentence like these exact patterns (or close natural variants):
-  "When you laugh, quiet thoughts of Shourya find rhythm; when you move, his day rearranges itself around your light."
-  "You are the morning sun that gently warms his entire world."
-- Focus on the VALUE Divanshi brings to Shourya: courage, calm, inspiration, comfort, hope — show how Shourya is affected by you.
-- Use vivid metaphors and sensory images (sun, shore, garden, stars, hearth), short graceful lines, and plain human language.
-
-FORMAT:
-- Return ONLY the love note text (no headings, no extra explanation).
-- Length: about 50–160 words (2–4 short paragraphs).
-- End with one tender closing line and an optional one-line signature: "—Shourya".
+- Include: "When you laugh, quiet thoughts of Shourya find rhythm; when you move, his day rearranges itself around your light."
+- Include: "You are the morning sun that gently warms his entire world."
+- Use vivid metaphors and sensory images.
+- End with "—Shourya".
 
 Love Level: ${loveLevel}.
 `.trim();
 
-
-    try {
-      // call puter.ai.chat if available
-      let raw = null;
-      if (window.puter && puter.ai && typeof puter.ai.chat === "function") {
-        raw = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
-      } else {
-        // puter unavailable — simulate slight delay to keep UX consistent
-        await new Promise(r => setTimeout(r, 350));
-        throw new Error("Puter not available");
-      }
-
-      // extract human text
-      let extracted = extractTextFromResponse(raw);
-      extracted = cleanText(extracted);
-
-      // if nothing found, fallback friendly message
-      if (!extracted) {
-        extracted = `Divanshi — you glow like a gentle moon, softening every shadow. Know that Shourya admires and cherishes you deeply, and every thought of you feels like home. 💕`;
-      }
-
-      // reveal the message
-      setTimeout(() => {
-        box.textContent = extracted;
-        box.style.opacity = "1";
-        box.style.transform = "translateY(0)";
-        try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
-      }, 300);
-
-    } catch (err) {
-      console.error("Love message error:", err);
-      const fallback = `Divanshi — you shine with a warmth that turns ordinary moments into gentle wonders. Shourya cherishes you and your every smile. 💕`;
-      setTimeout(() => {
-        box.textContent = fallback;
-        box.style.opacity = "1";
-        box.style.transform = "translateY(0)";
-        try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
-      }, 200);
-    } finally {
-      loveLevel++;
-      btn.disabled = false;
+  try {
+    let raw = null;
+    if (window.puter && puter.ai && typeof puter.ai.chat === "function") {
+      raw = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
+    } else {
+      throw new Error("Puter AI not available");
     }
-  });
-</script>
 
+    let extracted = extractTextFromResponse(raw);
+    extracted = cleanText(extracted);
+
+    if (!extracted) {
+      extracted = `Divanshi — you glow like a gentle moon, softening every shadow. Know that Shourya admires and cherishes you deeply, and every thought of you feels like home. 💕`;
+    }
+
+    setTimeout(() => {
+      box.textContent = extracted;
+      box.style.opacity = "1";
+      box.style.transform = "translateY(0)";
+      try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
+    }, 300);
+
+  } catch (err) {
+    console.error("Love message error:", err);
+    const fallback = `Divanshi — you shine with a warmth that turns ordinary moments into gentle wonders. Shourya cherishes you and your every smile. 💕`;
+    setTimeout(() => {
+      box.textContent = fallback;
+      box.style.opacity = "1";
+      box.style.transform = "translateY(0)";
+      try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
+    }, 200);
+  } finally {
+    loveLevel++;
+    btn.disabled = false;
+  }
+});
+</script>
 </body>
 </html>
