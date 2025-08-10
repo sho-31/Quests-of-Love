@@ -11,12 +11,12 @@
     background: linear-gradient(180deg, #ffe6f0, #ffd1e8, #fff0f5);
     text-align: center;
     color: #d63384;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   h1 {
-    font-size: 3rem;
-    margin-top: 20px;
+    font-size: 2.5rem;
+    margin: 20px 10px 10px;
     color: #ff1493;
     text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
     animation: glow 2s infinite alternate;
@@ -28,9 +28,10 @@
   }
 
   img.main-kitty {
-    width: 230px;
+    width: 200px;
     animation: float 4s ease-in-out infinite;
     margin-top: 15px;
+    max-width: 80%;
   }
 
   @keyframes float {
@@ -39,10 +40,10 @@
   }
 
   #messageBox {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     margin: 15px auto;
     min-height: 50px;
-    max-width: 80%;
+    max-width: 90%;
     background: rgba(255,255,255,0.6);
     padding: 10px;
     border-radius: 15px;
@@ -52,15 +53,16 @@
   button {
     background: linear-gradient(45deg, #ff99cc, #ff66b2);
     border: none;
-    padding: 12px 25px;
-    margin: 10px;
-    font-size: 1.2rem;
+    padding: 12px 20px;
+    margin: 8px;
+    font-size: 1rem;
     border-radius: 30px;
     cursor: pointer;
     color: white;
     font-weight: bold;
     box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
     transition: transform 0.3s, box-shadow 0.3s;
+    max-width: 90%;
   }
 
   button:hover {
@@ -71,13 +73,13 @@
   /* Cozy Corner Button Specific Style */
   #cozyCornerButton {
     display: inline-block;
-    width: calc(340px + 40px); /* matches two buttons + gap on desktop */
+    width: calc(340px + 40px);
     max-width: calc(100% - 40px);
     background: linear-gradient(45deg, #ffb6c1, #ff69b4);
     margin-top: 5px;
   }
 
-  /* Floating hearts, stars, and cats */
+  /* Floating elements */
   .floating {
     position: fixed;
     animation: floatUp 8s linear infinite;
@@ -91,7 +93,7 @@
     100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
   }
 
-  /* Twinkling stars */
+  /* Stars */
   .star {
     position: fixed;
     width: 4px;
@@ -106,12 +108,14 @@
     to { opacity: 1; transform: scale(1.5); }
   }
 
-  /* ========== Responsive adjustments ========== */
+  /* Responsive adjustments */
   @media (max-width: 720px) {
+    h1 { font-size: 2rem; }
     #cozyCornerButton { width: calc(100% - 40px); }
   }
 
   @media (max-width: 420px) {
+    button { font-size: 0.9rem; padding: 10px 16px; }
     #cozyCornerButton { width: calc(100% - 40px); }
   }
 
@@ -141,9 +145,9 @@
 <script>
   const messages = [
     "Kitty Divi, you are the sacred light of my life✨💖",
-    "If smiles were stars, you’d be the light up the entire universe 🌌",
+    "If smiles were stars, you’d light up the entire universe 🌌",
     "You’re softer and sweeter than a kitten’s first meow 🐱💕",
-    "Your arms is my favorite place and I love you so much 💖",
+    "Your arms are my favorite place and I love you so much 💖",
     "You are the reason my heart beats every moment 🌸",
     "Endlessly grateful to have you as my soulmate 💖",
     "You are the bestest friend of mine! And I love you so much 💖",
@@ -163,6 +167,7 @@
     heartTaps++;
     spawnFloating('🐱');
     if (heartTaps >= 3) {
+      heartTaps = 0; // reset
       window.location.href = 'cute-surprise.html';
     }
   }
@@ -179,7 +184,7 @@
   }
 
   setInterval(() => {
-    const symbols = ['🐱', '💕, '😺', '😻', '💖', '🌸'];
+    const symbols = ['🐱', '💕', '😺', '😻', '💖', '🌸'];
     spawnFloating(symbols[Math.floor(Math.random() * symbols.length)]);
   }, 1500);
 
