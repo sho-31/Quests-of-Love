@@ -310,13 +310,15 @@
 
     // Prompt: force second-person, avoid "I" statements, human tone
     const prompt = `
-Compose a romantic, poetic love note from Shourya to Divanshi that speaks directly to Divanshi using strong second-person language ("Shourya's").
-Make the tone tender, visual, and metaphor-rich. Use short graceful lines and often open lines with "You are..." to create that warm, declarative feeling.
-Example style sentence to imitate: "You are the morning sun that gently warms Shourya's entire world."
-Do NOT write as JSON or include metadata. Avoid long first-person paragraphs — focus on addressing "Shourya's" and describing how Shourya sees and cherishes you.
-End with one unique, tender closing line. Keep the language plain English and heartfelt.
+Write a romantic, poetic love note FROM Shourya TO Divanshi that speaks DIRECTLY to Divanshi in STRONG SECOND-PERSON ("you") voice.
+Focus especially on the VALUE Divanshi brings to Shourya's life — how she makes him braver, calmer, kinder, more hopeful, how his day rearranges around her light, how quiet thoughts find rhythm when she laughs, how small things become meaningful because of her.
+Frequently open short lines with "You are..." (or close variants) and include sentences like the example: "When you laugh, quiet thoughts of his find rhythm; when you move, his day arranges itself around your light."
+Do NOT write as JSON, objects, or metadata. Avoid long "I" paragraphs — describe how Shourya is affected by you (Shourya) using second person. Use vivid metaphors (sun, shore, constellation, garden, light, hearth) and sensory imagery. Keep language plain, natural English.
+Length: ~50–180 words (2–4 short paragraphs). End with one unique tender closing line and an optional one-line signature: "—Shourya".
+Return ONLY the love note text, nothing else.
 Love Level: ${loveLevel}.
 `.trim();
+
 
 
 
