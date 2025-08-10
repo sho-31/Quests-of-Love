@@ -63,6 +63,54 @@
     0% { transform: translateY(0) scale(0.8); opacity: 1; }
     100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
   }
+
+  /* Love Button */
+  .love-btn {
+    display:block;
+    margin: 20px auto;
+    background-color: #ff4d94;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(255,0,102,0.3);
+    transition: transform 0.2s ease;
+  }
+  .love-btn:hover {
+    transform: scale(1.05);
+  }
+
+  /* Love Message Box */
+  #loveMessageBox {
+    display:none;
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #ffe6f0;
+    border-radius: 15px;
+    font-size: 1.1em;
+    color: #b30059;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    opacity: 0;
+    transition: opacity 1s ease;
+    position: relative;
+    overflow: hidden;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .heart {
+    position: absolute;
+    font-size: 16px;
+    animation: heartFloat 2s ease-out forwards;
+    opacity: 0.8;
+  }
+  @keyframes heartFloat {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+  }
 </style>
 </head>
 <body>
@@ -82,6 +130,11 @@
 
   <button class="kitty-btn" onclick="startSparkleMode()">✨ Kitty Sparkle Mode</button>
 
+  <!-- New Love Button -->
+  <button class="love-btn" id="loveBtn">💖 Want to know how much Shourya loves you? 💖</button>
+  <div id="loveMessageBox"></div>
+
+<script src="https://js.puter.com/v2/"></script>
 <script>
   function createFloatingItem(symbol) {
     const el = document.createElement('div');
@@ -100,9 +153,60 @@
       const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
       createFloatingItem(randomSymbol);
     }, 300);
-
     setTimeout(() => clearInterval(interval), 8000);
   }
+
+  // New Love Button Functionality
+  let loveLevel = 1;
+
+  function createHeart(container) {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.textContent = "💖";
+    heart.style.left = Math.random() * 90 + "%";
+    container.appendChild(heart);
+    setTimeout(() => heart.remove(), 2000);
+  }
+
+  document.getElementById("loveBtn").addEventListener("click", async () => {
+    const btn = document.getElementById("loveBtn");
+    const box = document.getElementById("loveMessageBox");
+
+    btn.disabled = true;
+    box.style.display = "block";
+    box.style.opacity = "0";
+    box.textContent = "✨ Thinking about your magical bond with Divanshi... ✨";
+
+    // Floating hearts
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => createHeart(box), i * 200);
+    }
+
+    try {
+      const prompt = `
+      You are writing a romantic love note from Shourya to his beloved Divanshi.
+      Make it poetic, magical, and full of warm emotions.
+      Love Level: ${loveLevel}.
+      Each time the level increases, make the words even more dreamy, enchanting, and heartwarming.
+      Mention how much he adores, respects, and admires Divanshi deeply, with metaphors and gentle imagery.
+      End with something uniquely sweet each time.
+      `;
+
+      const response = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
+
+      setTimeout(() => {
+        box.textContent = response;
+        box.style.opacity = "1";
+      }, 800);
+
+      loveLevel++;
+    } catch (err) {
+      box.textContent = "Oops! Love is in the air, but something went wrong. 💔";
+      console.error(err);
+    }
+
+    btn.disabled = false;
+  });
 </script>
 
 </body>
