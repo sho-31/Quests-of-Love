@@ -1,216 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kitty Divi's Magical Dreamland 💖</title>
-<style>
-  body {
-    margin: 0;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: linear-gradient(180deg, #ffe6f0, #ffd1e8, #fff0f5);
-    text-align: center;
-    color: #d63384;
-    overflow: hidden;
-  }
-
-  h1 {
-    font-size: 3rem;
-    margin-top: 20px;
-    color: #ff1493;
-    text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
-    animation: glow 2s infinite alternate;
-  }
-
-  @keyframes glow {
-    from { text-shadow: 0 0 20px #ffb6c1, 0 0 40px #ff69b4; }
-    to { text-shadow: 0 0 30px #ff69b4, 0 0 60px #ff1493; }
-  }
-
-  img.main-kitty {
-    width: 230px;
-    animation: float 4s ease-in-out infinite;
-    margin-top: 15px;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  #messageBox {
-    font-size: 1.4rem;
-    margin: 15px auto;
-    min-height: 50px;
-    max-width: 80%;
-    background: rgba(255,255,255,0.6);
-    padding: 10px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(255,182,193,0.6);
-  }
-
-  button {
-    background: linear-gradient(45deg, #ff99cc, #ff66b2);
-    border: none;
-    padding: 12px 25px;
-    margin: 10px;
-    font-size: 1.2rem;
-    border-radius: 30px;
-    cursor: pointer;
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-
-  button:hover {
-    transform: scale(1.15) rotate(-2deg);
-    box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
-  }
-
-  /* Cozy Corner Button Specific Style */
-  #cozyCornerButton {
-    display: inline-block;
-    width: calc( (2 * 170px) + 40px ); /* matches two buttons + gap */
-    max-width: calc(100% - 40px);
-    background: linear-gradient(45deg, #ffb6c1, #ff69b4);
-    margin-top: 5px;
-  }
-
-  /* Floating hearts, stars, and cats */
-  .floating {
-    position: fixed;
-    animation: floatUp 8s linear infinite;
-    bottom: -100px;
-    z-index: 10;
-    opacity: 0.9;
-  }
-
-  @keyframes floatUp {
-    0% { transform: translateY(0) scale(0.8); opacity: 1; }
-    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
-  }
-
-  /* Twinkling stars */
-  .star {
-    position: fixed;
-    width: 4px;
-    height: 4px;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle 2s infinite alternate;
-  }
-
-  @keyframes twinkle {
-    from { opacity: 0.2; transform: scale(1); }
-    to { opacity: 1; transform: scale(1.5); }
-  }
-
-  /* ========== Responsive adjustments ========== */
-@media (max-width: 720px) {
-  .card{ width: calc(100% - 24px); padding: 18px; border-radius:16px; }
-  h1{ font-size: 22px; margin-top: 12px; }
-  .main-kitty-wrap{ width: 180px; height: 240px; }
-  img#mainKitty{ max-width: 86%; width: 150px; }
-  #messageBox{ font-size: 15px; padding: 12px; min-height: 56px; }
-  .btn{ padding: 14px 20px; font-size: 1rem; border-radius: 22px; }
-  #jumper{ width: 64px !important; height: auto !important; }
-  .floating{ display: none; }
-  .star{ display: none; }
-  #cozyCornerButton { width: calc(100% - 40px); }
-}
-
-/* tighter mobile for small phones */
-@media (max-width: 420px) {
-  h1{ font-size: 18px; }
-  .main-kitty-wrap{ width: 150px; height: 200px; }
-  img#mainKitty{ width: 120px; }
-  #messageBox{ font-size: 14px; padding: 10px; }
-  .btn{ width: 46%; padding: 12px; font-size: 0.98rem; }
-  #cozyCornerButton { width: calc(100% - 40px); }
-}
-
-/* Respect users' reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-  .floating, .star { display: none !important; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #total {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
 
-<h1>🌸 Welcome to Kitty Divi's Magical Dreamland 🌸</h1>
+    <h1>Bill Generator</h1>
+    <div class="form-group">
+        <label for="item">Item</label>
+        <input type="text" id="item">
+    </div>
+    <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" min="1">
+    </div>
+    <div class="form-group">
+        <label for="price">Price</label>
+        <input type="number" id="price" min="0">
+    </div>
+    <button onclick="addItem()">Add Item</button>
 
-<img class="main-kitty" src="https://i.pinimg.com/originals/42/7f/32/427f32f6d3d301f58c2bc962d17cf420.jpg" alt="Hello Kitty">
+    <table id="billTable">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
-<div id="messageBox">✨ Tap a button for magic ✨</div>
+    <div id="total">Grand Total: ₹0</div>
 
-<button onclick="showMessage()">💌 Sweet Message</button>
-<button onclick="tapHeart()">💖 Tap the Heart 3 times</button>
+    <script>
+        let grandTotal = 0;
 
-<!-- New Cozy Corner Button -->
-<a href="https://drive.google.com/drive/folders/10Otp417XF-dRbFpfYi9yeKpCYfN98sbO">
-  <button id="cozyCornerButton">🏡 To Cozy Corner</button>
-</a>
+        function addItem() {
+            const item = document.getElementById("item").value.trim();
+            const quantity = parseInt(document.getElementById("quantity").value);
+            const price = parseFloat(document.getElementById("price").value);
 
-<script>
-  const messages = [
-    "Kitty Divi, you are the sacred light of my life✨💖",
-    "If smiles were stars, you’d be the light up the entire universe 🌌",
-    "You’re softer ans sweeter than a kitten’s first meow 🐱💕",
-    "Your arms is my favorite place and I love you so much 💖",
-    "You are the reason my heart beats every moment 🌸",
-    "Endlessly grateful to have you as my soulmate 💖" ,
-    "You are the bestest friend of mine! And I love you so much 💖",
-    "You are perfect just the way you are ✨💖",
-    "I love you to the moon and back 🌌"
-  ];
+            if (!item || isNaN(quantity) || isNaN(price) || quantity <= 0 || price < 0) {
+                alert("Please enter valid item, quantity, and price.");
+                return;
+            }
 
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) || window.innerWidth < 720;
+            const total = quantity * price;
+            grandTotal += total;
 
-  function randRange(min,max){ return min + Math.random()*(max-min); }
+            const tableBody = document.querySelector("#billTable tbody");
+            const row = document.createElement("tr");
 
-  let heartTaps = 0;
+            row.innerHTML = `
+                <td>${item}</td>
+                <td>${quantity}</td>
+                <td>₹${price.toFixed(2)}</td>
+                <td>₹${total.toFixed(2)}</td>
+            `;
 
-  function showMessage() {
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    document.getElementById('messageBox').textContent = randomMessage;
-    spawnFloating('💖');
-  }
+            tableBody.appendChild(row);
 
-  function tapHeart() {
-    heartTaps++;
-    spawnFloating('🐱');
-    if (heartTaps >= 3) {
-      window.location.href = 'cute-surprise.html';
-    }
-  }
+            document.getElementById("total").textContent = `Grand Total: ₹${grandTotal.toFixed(2)}`;
 
-  function spawnFloating(symbol) {
-    const el = document.createElement('div');
-    el.classList.add('floating');
-    el.textContent = symbol;
-    el.style.fontSize = '2rem';
-    el.style.left = Math.random() * 100 + 'vw';
-    el.style.animationDuration = (5 + Math.random() * 3) + 's';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 8000);
-  }
-
-  setInterval(() => {
-    const symbols = ['🐱', '😺', '😻', '💖', '🌸'];
-    spawnFloating(symbols[Math.floor(Math.random() * symbols.length)]);
-  }, 1500);
-
-  for (let i = 0; i < 50; i++) {
-    const star = document.createElement('div');
-    star.classList.add('star');
-    star.style.left = Math.random() * 100 + 'vw';
-    star.style.top = Math.random() * 100 + 'vh';
-    star.style.animationDuration = (1 + Math.random() * 2) + 's';
-    document.body.appendChild(star);
-  }
-</script>
+            document.getElementById("item").value = "";
+            document.getElementById("quantity").value = "";
+            document.getElementById("price").value = "";
+        }
+    </script>
 
 </body>
 </html>
