@@ -330,7 +330,7 @@ journalText.addEventListener('keydown', (e) => {
   }
 });
 
-/* ---------- Send flow ---------- */
+/* ---------- Send flow (FIXED: include many placeholder names so template gets the mood) ---------- */
 sendBtn.addEventListener('click', async () => {
   const text = journalText.value.trim();
 
@@ -350,14 +350,25 @@ sendBtn.addEventListener('click', async () => {
 
   // find mood object
   const mood = moods.find(m => m.key === selectedMoodKey) || {};
+
+  // ---- FIX: include multiple commonly-used placeholder names so the template always receives the label ----
+  const label = (mood.label || selectedMoodKey || '').toString();
   const templateParams = {
+    // common names (so any template using any of these will receive the value)
+    mood: label,
+    mood_tag: label,
+    mood_label: label,
+    mood_name: label,
     mood_key: mood.key || selectedMoodKey,
-    mood_label: mood.label || selectedMoodKey,
+
+    // emoji + color + message + timestamp
     mood_emoji: mood.emoji || '',
     mood_color: mood.color || '#ff99cc',
     mood_message: text,
     timestamp: new Date().toLocaleString()
   };
+  // small debug (console only)
+  console.log('Sending templateParams:', templateParams);
 
   sendBtn.disabled = true;
   sendBtn.textContent = "Sending...";
@@ -370,11 +381,11 @@ sendBtn.addEventListener('click', async () => {
     comfortMessage.textContent = shortAffirm;
     comfortMessage.classList.add('show');
 
-    // keep journal open so Divi sees feedback; optionally auto-close:
-    // setTimeout(closeJournal, 1500);
-
     // clear text input
     journalText.value = '';
+
+    // optionally keep journal open so Divi sees feedback; you can auto-close if you want:
+    // setTimeout(closeJournal, 1400);
   } catch (err) {
     console.error('EmailJS send failed', err);
     alert("Oops — something went wrong while sending. Try again.");
