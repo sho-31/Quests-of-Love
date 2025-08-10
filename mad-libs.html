@@ -250,26 +250,27 @@
 
     // build prompt (kept focused + concise)
     const prompt = `
-Inputs: ADJECTIVE = "{adj}", PLACE = "{place}", NOUN = "{noun}".
+Inputs: ADJECTIVE = "{adj}", PLACE = "{place}", NOUN = "{noun}"
 
-Task: Write a short, poetic, romantic scene between Shourya and Divanshi (addressed directly to Divanshi as "you") that uses the three inputs naturally in the prose. The scene should feel wholesome and intimate — sensory details, soft metaphors, simple dialogue or actions allowed — and read like a tiny romantic short story told to the reader (Divanshi).
+Write a short, poetic, romantic scene between Shourya and Divanshi addressed directly to Divanshi as "you". Use the three inputs naturally: include "{adj}" as an adjective, mention the place "{place}", and include the noun "{noun}" somewhere in the prose.
 
 MANDATORY RULES:
-- NEVER use first-person pronouns or possessives anywhere: do NOT use "I", "me", "my", "mine", "we", "our", or "us" (including contractions such as "I'm", "we're", etc.).
-- Address Divanshi directly with second-person "you" throughout (e.g., "you", "your").
-- Always refer to Shourya by name ("Shourya") or by third-person pronouns ("he", "his"); do NOT use first-person for Shourya.
-- Include the three inputs exactly as provided: use "{adj}" as an adjective, place "{place}", and noun "{noun}" somewhere in the scene.
-- Include **at least one sentence** that begins with the phrase: "You and Shourya" (exact capitalization not required).
-- Do not include any metadata, labels, role descriptions, or code—plain narrative text only.
+- The very first sentence of the scene MUST begin with the words: "You and Shourya".
+- Do NOT include any opening sentence or paragraph that begins with "The {adj}" or any other atmospheric line before the required "You and Shourya" sentence — the scene must start immediately with "You and Shourya..."
+- NEVER use first-person pronouns or possessives: do NOT use "I", "me", "my", "mine", "we", "our", "us", or contractions like "I'm", "we're".
+- Address Divanshi using second-person "you" and "your" throughout.
+- Refer to Shourya only by name ("Shourya") or by third-person pronouns ("he", "his"); do NOT use first-person for Shourya.
+- Include the inputs exactly as provided: use "{adj}", "{place}", and "{noun}" somewhere in the scene.
+- Do NOT include any signature or credit line (no "—Shourya" or similar).
 
 STYLE & FORMAT:
-- Tone: tender, dreamy, poetic, human — avoid cliches that feel mechanical.
-- Use vivid sensory imagery (light, touch, scent, sound) and short graceful sentences or very short paragraphs.
-- Length: about 80–160 words, 2–4 short paragraphs.
-- Ending: finish with one tender closing line (a single line) and optionally one-line signature: "—Shourya".
+- Tone: tender, dreamy, poetic, and human.
+- Use vivid sensory details (light, touch, scent, sound) and short graceful sentences or very short paragraphs.
+- Length: about 80–160 words total, formatted as 2–4 short paragraphs.
+- Ending: finish with one tender closing line (a single final line). No signature, no extra lines.
 
 OUTPUT:
-- Return ONLY the scene text that meets the rules above.
+Return ONLY the scene text (plain narrative, no headings, no explanations, no code).
 
 `.trim();
 
