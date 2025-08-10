@@ -252,23 +252,24 @@
     const prompt = `
 Inputs: ADJECTIVE = "{adj}", PLACE = "{place}", NOUN = "{noun}"
 
-Task: Write a short, poetic, romantic scene addressed directly to Divanshi as "you" that uses the three provided words naturally (the words will be substituted before sending). Do NOT output the literal placeholders or any curly braces or the words adj/place/noun.
+Write a short, poetic, romantic scene addressed directly to Divanshi as "you". The scene must use the provided PLACE exactly as the setting (do NOT describe any other place or unrelated setting). Use the ADJECTIVE and NOUN naturally in the prose. Substitute the inputs before sending; do NOT output the literal placeholders or curly braces.
 
 MANDATORY RULES:
 - The very first sentence MUST begin exactly with: "You and Shourya".
-- Any sentence that takes the form "You and ..." must name Shourya (e.g., "You and Shourya ...") — never use PLACE or NOUN (or any inanimate thing) as the co-subject. Examples forbidden: "You and the garden...", "You and the rose...".
-- NEVER use first-person pronouns or possessives: do NOT use "I", "me", "my", "mine", "we", "our", "us", or contractions that imply first person.
+- Any sentence beginning with "You and ..." must refer only to Shourya (e.g., "You and Shourya") — never use a place, object, or anything else as the co-subject (e.g., avoid "You and the garden...").
+- NEVER use first-person pronouns or possessives: do NOT use "I", "me", "my", "mine", "we", "our", "us", or contractions equivalent to these.
 - Address Divanshi only in second person ("you", "your").
-- Refer to Shourya by name at most twice; after the second occurrence use only third-person pronouns ("he", "his") if needed.
-- Include the provided ADJECTIVE, PLACE, and NOUN (the actual words, not placeholders) somewhere in the scene, used naturally as adjective/setting/object.
-- Do NOT include any signature, credit line, headings, labels, or metadata (no "—Shourya").
-- Do NOT output placeholders, braces, or the literal tokens adj/place/noun anywhere.
+- Refer to Shourya by name at most twice; after the second occurrence, use only "he" or "his".
+- Focus the scene on the relationship and togetherness of you two; when describing shared qualities or moments, use inclusive phrasing like "you two" or "your togetherness".
+- Include the ADJECTIVE, PLACE, and NOUN (actual substituted words) somewhere naturally in the scene.
+- Do NOT include any signature, credit line, headings, or metadata.
+- Do NOT output any placeholders, curly braces, or literal token names.
 
 STYLE & FORMAT:
 - Tone: tender, dreamy, poetic, human.
-- Use vivid sensory detail (light, touch, scent, sound) and short graceful sentences or very short paragraphs.
-- Length: about 80–160 words total, formatted as 2–4 short paragraphs.
-- Ending: finish with one single tender closing line (one final line). No extra lines after it.
+- Use vivid sensory details (light, touch, scent, sound) and short graceful sentences or 2–4 short paragraphs.
+- Length: about 80–160 words total.
+- Ending: finish with one single tender closing line (no signature or extra lines).
 
 OUTPUT:
 Return ONLY the scene text (plain narrative) that strictly follows these rules.
