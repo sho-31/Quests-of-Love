@@ -3,225 +3,463 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cute Surprise 💌</title>
+<title>Cute Surprise for Kitty Divi 💖</title>
+<link rel="preconnect" href="https://js.puter.com/">
 <style>
-  body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: linear-gradient(180deg, #ffe6f0, #ffd1e8);
-    text-align: center;
-    color: #d63384;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+  :root{
+    --pink-1: #fff0f6;
+    --pink-2: #ffd6ea;
+    --accent-1: #ff69b4;
+    --accent-2: #ff1493;
+    --glass-bg: rgba(255,255,255,0.55);
+    --card-shadow: 0 10px 30px rgba(213, 51, 132, 0.12);
+    --glass-border: rgba(255,20,147,0.12);
   }
 
-  h1 {
-    font-size: 2.5rem;
-    margin-top: 30px;
-    color: #ff1493;
-    text-shadow: 0 0 10px #ff69b4;
+  /* page */
+  html,body{height:100%;margin:0;font-family: "Comic Sans MS", "Comic Sans", cursive, system-ui;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.22), transparent 10%),
+      radial-gradient(900px 450px at 90% 80%, rgba(255,255,255,0.18), transparent 8%),
+      linear-gradient(180deg,var(--pink-1),var(--pink-2));
+    color:#b30059;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    overflow-x:hidden;
   }
 
-  p {
-    font-size: 1.1rem;
-    margin: 15px auto;
-    max-width: 600px;
-    line-height: 1.6;
+  /* main card */
+  .stage{
+    width:100%;
+    max-width:980px;
+    border-radius:20px;
+    padding:28px;
+    box-sizing:border-box;
+    background: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0.22));
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--glass-border);
+    position:relative;
+    backdrop-filter: blur(6px) saturate(120%);
+    overflow:visible;
   }
 
-  .input-group {
-    margin: 10px 0;
+  h1{
+    margin:0 0 12px 0;
+    font-size:2.6rem;
+    color:var(--accent-2);
+    text-shadow: 0 0 18px rgba(255,105,180,0.25);
+    letter-spacing:0.6px;
+  }
+  p.lead{
+    margin:0 0 18px 0;
+    max-width:780px;
+    font-size:1.05rem;
+    color: #9a0e55;
+    line-height:1.6;
   }
 
-  input {
-    padding: 10px 15px;
-    border-radius: 25px;
-    border: 2px solid #ff69b4;
-    font-size: 1rem;
-    width: 70%;
-    max-width: 300px;
-    text-align: center;
-    margin: 5px;
+  /* bento row with buttons */
+  .btn-row{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    justify-content:center;
+    margin:18px 0;
+    width:100%;
+    box-sizing:border-box;
   }
 
-  .buttons {
-    margin-top: 15px;
+  /* make container responsive */
+  .btn-wrap{
+    width:100%;
+    max-width:640px;
+    margin:0 auto;
   }
 
-  button {
-    background: linear-gradient(45deg, #ff69b4, #ff1493);
+  .action-btn{
+    flex:1 1 0;
+    min-width:140px;
+    padding:14px 18px;
+    font-size:1.05rem;
+    border-radius:999px;
     border: none;
-    padding: 12px 25px;
-    font-size: 1rem;
-    color: white;
-    border-radius: 30px;
-    cursor: pointer;
-    margin: 5px;
-    transition: all 0.3s ease;
+    color: #fff;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition: transform .22s ease, box-shadow .22s ease;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    box-shadow: 0 6px 18px rgba(255,20,147,0.18);
+    white-space:nowrap;
+  }
+  .action-btn:active{ transform: translateY(1px) scale(.995); }
+  .action-btn:focus{ outline:3px solid rgba(255,20,147,0.12); outline-offset:3px; }
+
+  .action-btn.secondary{
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+    color: var(--accent-2);
+    border: 1px solid rgba(255,20,147,0.08);
+    box-shadow: 0 4px 12px rgba(155,20,115,0.06);
   }
 
-  button:hover {
-    transform: scale(1.05);
+  /* ensure both look identical in size even if text differs */
+  .btn-row .action-btn{ height:56px; box-sizing:border-box; }
+
+  /* love button slightly different */
+  .love-btn{
+    display:block;
+    margin:18px auto 8px auto;
+    padding:12px 20px;
+    font-size:1.05rem;
+    border-radius:18px;
+    border:none;
+    cursor:pointer;
+    background: linear-gradient(90deg, #ff7ab2, #ff2a96);
+    color:white;
+    box-shadow: 0 8px 24px rgba(255,20,147,0.22);
+    transition: transform .18s ease;
+  }
+  .love-btn:active{ transform: translateY(1px); }
+  .love-btn[disabled]{ opacity:0.6; cursor:progress; }
+
+  /* love message box (glass) */
+  #loveMessageBox{
+    margin:16px auto 6px;
+    padding:18px;
+    max-width:820px;
+    border-radius:14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,245,250,0.6));
+    color:#9a0e55;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    border:1px solid rgba(255,20,147,0.06);
+    min-height:72px;
+    opacity:0;
+    transform: translateY(8px);
+    transition: opacity .35s ease, transform .35s ease;
+    position:relative;
+    overflow:visible;
+    font-size:1.05rem;
+    line-height:1.6;
   }
 
-  #result {
-    margin-top: 25px;
-    padding: 15px;
-    background-color: #fff0f5;
-    border-radius: 15px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 1.2rem;
-    box-shadow: 0 4px 10px rgba(255, 20, 147, 0.2);
-    min-height: 50px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+  /* little loader bar */
+  .loader{
+    width:80px;
+    height:6px;
+    border-radius:999px;
+    overflow:hidden;
+    background: rgba(255,20,147,0.08);
+    margin-left:8px;
+    display:inline-block;
+    vertical-align:middle;
+  }
+  .loader > span{
+    display:block;
+    height:100%;
+    width:30%;
+    background: linear-gradient(90deg,#ff8cc0,#ff2a96);
+    animation: slide 1s linear infinite;
+  }
+  @keyframes slide{
+    0%{ transform: translateX(-10px); }
+    100%{ transform: translateX(90px); }
   }
 
-  #poem {
-    font-size: 1rem;
-    margin-top: 10px;
-    font-style: italic;
-    color: #c71585;
+  /* floating sparkle elements (purely decorative) */
+  .sparkle {
+    position: absolute;
+    width:14px;height:14px;
+    filter: blur(.6px);
+    pointer-events:none;
+    opacity:.95;
+    transform: translate(-50%,-50%) rotate(0deg);
+    animation: twinkle 3.2s infinite;
+  }
+  @keyframes twinkle{
+    0%{ transform: translate(-50%,-50%) scale(.8); opacity:.9; }
+    50%{ transform: translate(-50%,-50%) scale(1.2) rotate(12deg); opacity:1; }
+    100%{ transform: translate(-50%,-50%) scale(.8) rotate(-5deg); opacity:.9; }
   }
 
-  .back-link {
-    display: inline-block;
-    margin-top: 25px;
-    color: #ff1493;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  /* Floating hearts animation */
+  /* tiny hearts inside message */
   .heart {
-    position: fixed;
-    font-size: 24px;
-    animation: floatUp 4s ease-in forwards;
-    pointer-events: none;
-    z-index: 9999;
+    position:absolute;
+    font-size:18px;
+    animation: heartFloat 2.2s ease-out forwards;
+    opacity:0.95;
+    pointer-events:none;
+  }
+  @keyframes heartFloat {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
   }
 
-  @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
+  /* typing effect container */
+  .typed { display:inline-block; white-space:pre-wrap; word-break:break-word; }
+
+  /* responsive */
+  @media (max-width:720px){
+    .stage{ padding:18px; border-radius:16px; }
+    h1{ font-size:2rem; }
+    .btn-row{ gap:10px; }
+    .btn-row{ max-width:100%; }
+    .btn-wrap{ max-width:520px; }
+  }
+  @media (max-width:420px){
+    .btn-row{ flex-direction:column; gap:12px; }
+    .action-btn{ height:56px; }
   }
 </style>
-<script src="https://js.puter.com/v2/"></script>
 </head>
 <body>
+  <div class="stage" role="main" aria-labelledby="page-title">
+    <h1 id="page-title">💖 Little Magic for Kitty Divi 💖</h1>
+    <p class="lead">
+      A tiny dreamy corner to send soft words, sparkling joy, and secret Mad-Libs adventures.
+      Tap the buttons below to sprinkle sparkle or create a custom romantic surprise.
+    </p>
 
-<h1>Cute Surprise 💌</h1>
-<p>Fill in the blanks and let the magic unfold into a romantic surprise.</p>
+    <!-- buttons -->
+    <div class="btn-wrap">
+      <div class="btn-row" role="group" aria-label="Main actions">
+        <button class="action-btn" id="sparkBtn" title="Start Kitty Sparkle Mode" aria-pressed="false">
+          ✨ Kitty Sparkle Mode
+        </button>
 
-<div class="input-group">
-  <input type="text" id="adj" placeholder="Adjective (e.g., glowing)">
-</div>
-<div class="input-group">
-  <input type="text" id="place" placeholder="Place (e.g., moonlit garden)">
-</div>
-<div class="input-group">
-  <input type="text" id="noun" placeholder="Noun (e.g., rose)">
-</div>
+        <!-- Mad-Libs: uses same class to ensure same size. Redirects to mad-libs.html -->
+        <button class="action-btn" id="madLibsBtn" title="Open Mad-Libs" onclick="window.location.href='mad-libs.html'">
+          📚 Mad-Libs
+        </button>
+      </div>
+    </div>
 
-<div class="buttons">
-  <button id="randomBtn">Random Fill 🎲</button>
-  <button id="generateBtn">Write My Love Story ✨</button>
-</div>
+    <!-- love button -->
+    <button id="loveBtn" class="love-btn" aria-controls="loveMessageBox">
+      💖 Want to know how much Shourya loves you? <span class="loader" aria-hidden="true"><span></span></span>
+    </button>
 
-<div id="result">
-  <div id="sentence"></div>
-  <div id="poem"></div>
-</div>
+    <!-- message box -->
+    <div id="loveMessageBox" role="status" aria-live="polite"></div>
 
-<div class="buttons">
-  <button id="tryAgainBtn" style="display:none;">Try Again 🔄</button>
-</div>
+    <!-- decorative sparkles (absolute) -->
+    <svg id="decorSparkles" style="position:absolute; inset:0; pointer-events:none;" width="100%" height="100%" viewBox="0 0 200 120" preserveAspectRatio="none" aria-hidden="true">
+      <!-- simple decorative shapes; JS will clone these -->
+      <defs>
+        <g id="flake">
+          <circle cx="5" cy="5" r="2.2" fill="#ffd6ea" opacity="0.9" />
+          <circle cx="12" cy="5" r="1.6" fill="#fff7fb" opacity="0.8"/>
+        </g>
+      </defs>
+    </svg>
+  </div>
 
-<a href="index.html" class="back-link">← Back to Main Page</a>
-
-<script>
-  const resultDiv = document.getElementById('result');
-  const sentenceDiv = document.getElementById('sentence');
-  const poemDiv = document.getElementById('poem');
-  const tryAgainBtn = document.getElementById('tryAgainBtn');
-
-  const randomWords = {
-    adj: ["sparkling", "glowing", "gentle", "soft", "radiant", "blushing"],
-    place: ["moonlit garden", "quiet beach", "cozy café", "starlit meadow"],
-    noun: ["rose", "letter", "kiss", "memory", "butterfly"]
-  };
-
-  document.getElementById('randomBtn').addEventListener('click', () => {
-    document.getElementById('adj').value = pickRandom(randomWords.adj);
-    document.getElementById('place').value = pickRandom(randomWords.place);
-    document.getElementById('noun').value = pickRandom(randomWords.noun);
-  });
-
-  function pickRandom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
-  document.getElementById('generateBtn').addEventListener('click', async () => {
-    const adj = document.getElementById('adj').value.trim();
-    const place = document.getElementById('place').value.trim();
-    const noun = document.getElementById('noun').value.trim();
-
-    if (!adj || !place || !noun) {
-      sentenceDiv.textContent = "Please fill in all three fields ❤️";
-      resultDiv.style.opacity = 1;
-      return;
+  <script src="https://js.puter.com/v2/"></script>
+  <script>
+    /* Helper utilities */
+    const rand = (min,max) => Math.random()*(max-min)+min;
+    function spawnFloating(symbol='💖', opts={}) {
+      const el = document.createElement('div');
+      el.className = 'floating-emoji';
+      el.textContent = symbol;
+      el.style.position = 'fixed';
+      el.style.left = (rand(6,92)) + 'vw';
+      el.style.bottom = '-30px';
+      el.style.fontSize = (rand(18,36)) + 'px';
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.95';
+      el.style.transform = 'translateY(0) scale(0.9)';
+      el.style.zIndex = 9999;
+      document.body.appendChild(el);
+      const duration = rand(2600,4200);
+      el.animate([
+        { transform: 'translateY(0) scale(.9)', opacity:1 },
+        { transform: `translateY(-${rand(34,90)}vh) scale(${rand(1,1.35)})`, opacity:0 }
+      ], { duration, easing:'cubic-bezier(.22,.9,.32,1)', iterations:1, fill:'forwards' });
+      setTimeout(()=>el.remove(), duration+80);
     }
 
-    sentenceDiv.textContent = "Crafting something sweet... 💕";
-    poemDiv.textContent = "";
-    resultDiv.style.opacity = 1;
+    /* decorative sparkles scattered around the card */
+    (function placeSparkles(){
+      const container = document.querySelector('.stage');
+      if(!container) return;
+      const n = 7;
+      for(let i=0;i<n;i++){
+        const s = document.createElement('div');
+        s.className='sparkle';
+        s.style.left = (10 + Math.random()*80) + '%';
+        s.style.top = (6 + Math.random()*76) + '%';
+        s.style.width = (8 + Math.random()*18) + 'px';
+        s.style.height = (8 + Math.random()*18) + 'px';
+        s.style.background = `radial-gradient(circle at 40% 35%, rgba(255,255,255,0.9), ${i%2? 'rgba(255,200,230,0.55)':'rgba(255,150,200,0.55)'})`;
+        s.style.borderRadius = '50%';
+        s.style.opacity = (0.6 + Math.random()*0.35);
+        s.style.transformOrigin = 'center';
+        s.style.animationDuration = (3 + Math.random()*3) + 's';
+        container.appendChild(s);
+      }
+    })();
 
-    triggerHearts();
+    /* Buttons */
+    const sparkBtn = document.getElementById('sparkBtn');
+    const madBtn = document.getElementById('madLibsBtn'); // just in case for extra interactions
+    const loveBtn = document.getElementById('loveBtn');
+    const loveBox = document.getElementById('loveMessageBox');
 
-    const prompt = `
-    On a ${place} beneath a ${adj} sky, you found a ${noun} that reminded me of you. 
-    1) Rewrite this into one short romantic sentence, under 20 words, addressed directly to the reader.
-    2) Then write a tiny poetic scene (max 2 sentences) inspired by it.
-    `;
-
-    try {
-      const response = await puter.ai.chat({
-        model: "gpt-4.1-mini",
-        messages: [
-          { role: "system", content: "You are a romantic storyteller. Keep it poetic, short, and sweet." },
-          { role: "user", content: prompt }
-        ]
-      });
-
-      const output = response.output_text.split("\n").filter(l => l.trim() !== "");
-      sentenceDiv.textContent = output[0] || "You are my sweetest dream. 💖";
-      poemDiv.textContent = output[1] || "";
-      tryAgainBtn.style.display = "inline-block";
-    } catch (err) {
-      console.error(err);
-      sentenceDiv.textContent = "Even without AI, you’re still my everything. 💗";
-      poemDiv.textContent = "";
+    /* Sparkle mode: lively floating emoticons */
+    function startSparkleMode(duration = 7000) {
+      sparkBtn.setAttribute('aria-pressed','true');
+      const symbols = ['💖','✨','🎀','🎈','🌸'];
+      const interval = setInterval(()=> {
+        spawnFloating(symbols[Math.floor(Math.random()*symbols.length)]);
+      }, 160);
+      // create a few larger sparkles near the card
+      let mini = setInterval(()=> spawnFloating('🌟',{big:true}), 420);
+      setTimeout(() => { clearInterval(interval); clearInterval(mini); sparkBtn.setAttribute('aria-pressed','false'); }, duration);
     }
-  });
+    sparkBtn.addEventListener('click', ()=> startSparkleMode(8000));
 
-  tryAgainBtn.addEventListener('click', () => {
-    document.getElementById('generateBtn').click();
-  });
-
-  function triggerHearts() {
-    for (let i = 0; i < 5; i++) {
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.style.left = Math.random() * 100 + "vw";
-      heart.style.top = "80vh";
-      heart.textContent = "💖";
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 4000);
+    /* helper: small hearts inside message box */
+    function createHeartIn(box) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '💖';
+      heart.style.left = (10 + Math.random()*80) + '%';
+      heart.style.bottom = (8 + Math.random()*10) + 'px';
+      box.appendChild(heart);
+      setTimeout(()=> heart.remove(), 2200);
     }
-  }
-</script>
 
+    /* animate typed reveal */
+    async function typeReveal(container, text, speed = 18) {
+      container.textContent = '';
+      container.classList.add('typed');
+      for(let i=0;i<text.length;i++){
+        container.textContent += text[i];
+        if(i%6===0) await new Promise(r=>setTimeout(r, speed));
+      }
+    }
+
+    /* Extract textual response from various puter outputs (robust) */
+    function extractTextFromResponse(resp) {
+      if(!resp) return '';
+      if(typeof resp === 'string') return resp;
+      try{
+        if(resp.output_text) return resp.output_text;
+        if(resp.message && (resp.message.content || resp.message.text)) {
+          const mc = resp.message.content || resp.message.text;
+          if(typeof mc === 'string') return mc;
+        }
+        // fallback deep search
+        let longest = '';
+        function walk(o){
+          if(!o) return;
+          if(typeof o === 'string'){ if(o.length>longest.length) longest=o; }
+          else if(Array.isArray(o)) o.forEach(walk);
+          else if(typeof o === 'object') Object.values(o).forEach(walk);
+        }
+        walk(resp);
+        return longest;
+      }catch(e){ return ''; }
+    }
+
+    /* Clean text */
+    function cleanText(s){ if(!s) return ''; return s.replace(/\\n/g, '\n').trim(); }
+
+    /* Love-button click: improved prompt + UI + puter.js integration */
+    let loveLevel = 1;
+    loveBtn.addEventListener('click', async () => {
+      if(loveBtn.disabled) return;
+      loveBtn.disabled = true;
+      loveBox.style.opacity = '0';
+      loveBox.style.transform = 'translateY(8px)';
+      loveBox.textContent = '';
+      loveBox.setAttribute('aria-hidden','false');
+
+      // show temporary status and hearts
+      const status = document.createElement('div');
+      status.style.display='flex';
+      status.style.alignItems='center';
+      const text = document.createElement('span');
+      text.textContent = '✨ Shaping a warm love note... ';
+      const load = document.createElement('span');
+      load.className = 'loader';
+      status.appendChild(text);
+      status.appendChild(load);
+      loveBox.appendChild(status);
+      loveBox.style.opacity = '1';
+      loveBox.style.transform = 'translateY(0)';
+
+      for(let i=0;i<5;i++) setTimeout(()=> createHeartIn(loveBox), i*140);
+
+      // build a friendly, strict prompt that respects earlier rules
+      const prompt = `
+Write a warm, poetic love note FROM Shourya TO Divanshi that addresses Divanshi directly (use "you").
+MANDATORY:
+- Do NOT use first-person pronouns like "I", "me", "my", "we", "our". When referencing the lover's feelings, use "Shourya" or "his" or "he".
+- Keep it about 50–140 words, 2–4 short paragraphs.
+- Frequently begin short lines with "You are..." (vary phrasing).
+- Include at least one sentence very close to:
+"When you laugh, quiet thoughts of Shourya find rhythm; when you move, his day rearranges itself around your light."
+- End with a tender closing line and optional signature "—Shourya".
+Tone: tender, sensory, human, not robotic.
+Love Level: ${loveLevel}.
+      `.trim();
+
+      let raw = null;
+      try {
+        if(window.puter && puter.ai && typeof puter.ai.chat === 'function'){
+          // call in the most compatible style
+          try {
+            raw = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
+          } catch(e){
+            // fallback older signature
+            raw = await puter.ai.chat({ model: "gpt-4.1-nano", messages: [{role:'user', content: prompt}] });
+          }
+        } else {
+          // simulate delay to show UX even if puter is unavailable
+          await new Promise(r=>setTimeout(r, 900));
+          throw new Error('Puter not available');
+        }
+
+        let extracted = extractTextFromResponse(raw);
+        extracted = cleanText(extracted);
+        if(!extracted){
+          extracted = `Divanshi — you glow like a gentle moon, softening every shadow. Shourya's heart finds quiet home in your laughter and light. —Shourya`;
+        }
+
+        // display typed reveal
+        loveBox.innerHTML = '';
+        const lines = extracted.split('\n').filter(l=>l.trim()!=='');
+        for(let i=0;i<lines.length;i++){
+          const para = document.createElement('div');
+          para.style.marginBottom = '8px';
+          // type each paragraph
+          await typeReveal(para, lines[i], 12);
+          loveBox.appendChild(para);
+        }
+
+      } catch (err) {
+        // graceful fallback
+        loveBox.innerHTML = '';
+        await typeReveal(loveBox, 'Divanshi — you turn ordinary moments into gentle wonders. Shourya cherishes every smile of yours. —Shourya', 12);
+        console.warn('Love message error:', err);
+      } finally {
+        loveLevel++;
+        // final little hearts sprinkle
+        for(let i=0;i<6;i++) setTimeout(()=> createHeartIn(loveBox), i*160);
+        loveBtn.disabled = false;
+      }
+    });
+
+    /* Accessibility: keyboard activation */
+    sparkBtn.addEventListener('keyup', e => { if(e.key === 'Enter' || e.key === ' ') startSparkleMode(8000); });
+    madBtn.addEventListener('keyup', e => { if(e.key === 'Enter' || e.key === ' ') window.location.href='mad-libs.html'; });
+
+  </script>
 </body>
 </html>
