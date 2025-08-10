@@ -152,14 +152,6 @@
 
 <script src="https://js.puter.com/v2/"></script>
 <script>
-/*
-  Updated love-button handler:
-  - Strong prompt that forces second-person (addressing 'you')
-  - Robust extraction of the AI text from different response shapes
-  - Replaces escaped \n with real newlines
-  - Ensures box becomes visible and scrolls into view
-*/
-
   // keep the "magic level" increasing each click
   let loveLevel = 1;
 
@@ -198,28 +190,17 @@
   // try many shapes and pick the most plausible human text
   function extractTextFromResponse(resp) {
     if (!resp) return "";
-    // if it's already a string, return cleaned string
     if (typeof resp === "string") {
       return resp;
     }
-
-    // Common shapes:
-    //  - resp.message.content (string)
-    //  - resp.message.content[0].text
-    //  - resp.choices[0].message.content
-    //  - resp.output[0].content[0].text
-    //  - resp.text or resp.content
     try {
       if (resp.message && (resp.message.content || resp.message.text)) {
-        // message.content might be string or array; handle both
         const mc = resp.message.content;
         if (typeof mc === "string") return mc;
         if (Array.isArray(mc) && mc.length) {
-          // try to find a string inside
           for (const item of mc) {
             if (typeof item === "string") return item;
             if (item && typeof item === "object") {
-              // sometimes {type: "output_text", text: "..." }
               if (item.text) return item.text;
               if (item.content) {
                 if (typeof item.content === "string") return item.content;
@@ -231,7 +212,6 @@
           }
         }
       }
-
       if (resp.choices && Array.isArray(resp.choices) && resp.choices.length) {
         const c = resp.choices[0];
         if (c.message && (c.message.content || c.message.text)) {
@@ -239,11 +219,9 @@
         }
         if (typeof c.text === "string") return c.text;
       }
-
       if (resp.output && Array.isArray(resp.output) && resp.output.length) {
         const out = resp.output[0];
         if (out.content && Array.isArray(out.content) && out.content.length) {
-          // find first string inside
           for (const ct of out.content) {
             if (typeof ct === "string") return ct;
             if (ct && ct.text) return ct.text;
@@ -251,12 +229,8 @@
           }
         }
       }
-
-      // fallback: look for keys 'text' or 'content' in root
       if (resp.text && typeof resp.text === "string") return resp.text;
       if (resp.content && typeof resp.content === "string") return resp.content;
-
-      // final fallback: find the longest string value inside the object (helps avoid metadata)
       let longest = "";
       function walk(o) {
         if (!o) return;
@@ -282,10 +256,8 @@
   // clean escape sequences like \n -> actual newline, and trim
   function cleanText(s) {
     if (!s) return "";
-    // Convert escaped newlines to real newlines
     s = s.replace(/\\n/g, "\n");
-    // Remove excessive quotes around the whole string
-    s = s.replace(/^\s*"(.)"\s$/s, "$1");
+    s = s.replace(/^\s*"(.*)"\s*$/, "$1");
     return s.trim();
   }
 
@@ -307,7 +279,6 @@
       try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
     }, 120);
 
-    // Prompt: force second-person, avoid "I" statements, human tone
     const prompt = `
 Write a romantic, poetic love note FROM Shourya TO Divanshi that speaks DIRECTLY to Divanshi in STRONG SECOND-PERSON ("you") voice.
 
@@ -332,28 +303,22 @@ FORMAT:
 Love Level: ${loveLevel}.
 `.trim();
 
-
     try {
-      // call puter.ai.chat if available
       let raw = null;
       if (window.puter && puter.ai && typeof puter.ai.chat === "function") {
         raw = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
       } else {
-        // puter unavailable — simulate slight delay to keep UX consistent
         await new Promise(r => setTimeout(r, 350));
         throw new Error("Puter not available");
       }
 
-      // extract human text
       let extracted = extractTextFromResponse(raw);
       extracted = cleanText(extracted);
 
-      // if nothing found, fallback friendly message
       if (!extracted) {
-        extracted = Divanshi — you glow like a gentle moon, softening every shadow. Know that Shourya admires and cherishes you deeply, and every thought of you feels like home. 💕;
+        extracted = `Divanshi — you glow like a gentle moon, softening every shadow. Know that Shourya admires and cherishes you deeply, and every thought of you feels like home. 💕`;
       }
 
-      // reveal the message
       setTimeout(() => {
         box.textContent = extracted;
         box.style.opacity = "1";
@@ -363,7 +328,7 @@ Love Level: ${loveLevel}.
 
     } catch (err) {
       console.error("Love message error:", err);
-      const fallback = Divanshi — you shine with a warmth that turns ordinary moments into gentle wonders. Shourya cherishes you and your every smile. 💕;
+      const fallback = `Divanshi — you shine with a warmth that turns ordinary moments into gentle wonders. Shourya cherishes you and your every smile. 💕`;
       setTimeout(() => {
         box.textContent = fallback;
         box.style.opacity = "1";
