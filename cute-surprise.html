@@ -310,13 +310,15 @@
 
     // Prompt: force second-person, avoid "I" statements, human tone
     const prompt = `
-Compose a romantic, poetic love note **from Shourya to Divanshi** that speaks directly *to Divanshi* using **second-person** perspective. 
-Use "you" and address how Shourya sees, admires, and cherishes her. 
-**Do not** write primarily in the first person (avoid starting sentences with "I"). 
-Use warm metaphors and gentle imagery (stars, light, gardens, breeze) and short sweet lines.
-End with one unique, tender closing line. Keep the tone affectionate, simple, and clearly written in plain English (no JSON, no metadata).
+const prompt = `
+Compose a romantic, poetic love note from Shourya to Divanshi that speaks directly to Divanshi using strong second-person language ("you").
+Make the tone tender, visual, and metaphor-rich. Use short graceful lines and often open lines with "You are..." to create that warm, declarative feeling.
+Example style sentence to imitate: "You are the morning sun that gently warms Shourya's entire world."
+Do NOT write as JSON or include metadata. Avoid long first-person paragraphs — focus on addressing "you" and describing how Shourya sees and cherishes you.
+End with one unique, tender closing line. Keep the language plain English and heartfelt.
 Love Level: ${loveLevel}.
 `.trim();
+
 
     try {
       // call puter.ai.chat if available
