@@ -139,6 +139,7 @@
 <div>
   <button onclick="showMessage()">💌 Sweet Message</button>
   <button onclick="tapHeart()">💖 Tap the Heart 3 times</button>
+<button onclick="goMoodPage()">❓ What's the mood today?</button>
 </div>
 
 <a href="https://drive.google.com/drive/folders/10Otp417XF-dRbFpfYi9yeKpCYfN98sbO" target="_blank">
@@ -174,6 +175,10 @@
       window.location.href = 'cute-surprise.html';
     }
   }
+function goMoodPage() {
+  window.location.href = 'mood-select.html';  // redirect to mood selection page
+}
+
 
   // Reusable floating pool
   const floatPoolSize = 15;
