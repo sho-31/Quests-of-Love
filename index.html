@@ -68,6 +68,15 @@
     box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
   }
 
+  /* Cozy Corner Button Specific Style */
+  #cozyCornerButton {
+    display: inline-block;
+    width: calc( (2 * 170px) + 40px ); /* matches two buttons + gap */
+    max-width: calc(100% - 40px);
+    background: linear-gradient(45deg, #ffb6c1, #ff69b4);
+    margin-top: 5px;
+  }
+
   /* Floating hearts, stars, and cats */
   .floating {
     position: fixed;
@@ -96,6 +105,7 @@
     from { opacity: 0.2; transform: scale(1); }
     to { opacity: 1; transform: scale(1.5); }
   }
+
   /* ========== Responsive adjustments ========== */
 @media (max-width: 720px) {
   .card{ width: calc(100% - 24px); padding: 18px; border-radius:16px; }
@@ -105,8 +115,9 @@
   #messageBox{ font-size: 15px; padding: 12px; min-height: 56px; }
   .btn{ padding: 14px 20px; font-size: 1rem; border-radius: 22px; }
   #jumper{ width: 64px !important; height: auto !important; }
-  .floating{ /* hide heavy floaters on small screens to save CPU/bandwidth */ display: none; }
+  .floating{ display: none; }
   .star{ display: none; }
+  #cozyCornerButton { width: calc(100% - 40px); }
 }
 
 /* tighter mobile for small phones */
@@ -116,6 +127,7 @@
   img#mainKitty{ width: 120px; }
   #messageBox{ font-size: 14px; padding: 10px; }
   .btn{ width: 46%; padding: 12px; font-size: 0.98rem; }
+  #cozyCornerButton { width: calc(100% - 40px); }
 }
 
 /* Respect users' reduced motion preference */
@@ -123,7 +135,6 @@
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   .floating, .star { display: none !important; }
 }
-
 </style>
 </head>
 <body>
@@ -137,6 +148,11 @@
 <button onclick="showMessage()">💌 Sweet Message</button>
 <button onclick="tapHeart()">💖 Tap the Heart 3 times</button>
 
+<!-- New Cozy Corner Button -->
+<a href="https://drive.google.com/drive/folders/10Otp417XF-dRbFpfYi9yeKpCYfN98sbO">
+  <button id="cozyCornerButton">🏡 To Cozy Corner</button>
+</a>
+
 <script>
   const messages = [
     "Kitty Divi, you are the sacred light of my life✨💖",
@@ -149,23 +165,10 @@
     "You are perfect just the way you are ✨💖",
     "I love you to the moon and back 🌌"
   ];
-  /* ========== Mobile detection & adaptive config ========== */
-const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) || window.innerWidth < 720;
 
-const SPAWN_INTERVAL_DESKTOP = 1600;
-const SPAWN_INTERVAL_MOBILE  = 2600;
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) || window.innerWidth < 720;
 
-const STAR_COUNT_DESKTOP = 40;
-const STAR_COUNT_MOBILE  = 8;   // far fewer on small devices
-
-// jumper timing (longer on mobile so it doesn't move too often)
-const JUMP_DELAY_MIN_DESKTOP = 900;
-const JUMP_DELAY_MAX_DESKTOP = 2200;
-const JUMP_DELAY_MIN_MOBILE  = 1600;
-const JUMP_DELAY_MAX_MOBILE  = 3200;
-
-function randRange(min,max){ return min + Math.random()*(max-min); }
-
+  function randRange(min,max){ return min + Math.random()*(max-min); }
 
   let heartTaps = 0;
 
@@ -194,13 +197,11 @@ function randRange(min,max){ return min + Math.random()*(max-min); }
     setTimeout(() => el.remove(), 8000);
   }
 
-  // Background cute cats & hearts
   setInterval(() => {
     const symbols = ['🐱', '😺', '😻', '💖', '🌸'];
     spawnFloating(symbols[Math.floor(Math.random() * symbols.length)]);
   }, 1500);
 
-  // Twinkling stars
   for (let i = 0; i < 50; i++) {
     const star = document.createElement('div');
     star.classList.add('star');
