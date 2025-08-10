@@ -122,7 +122,7 @@
 
   <div class="controls" role="group" aria-label="Mad Libs controls">
     <button id="randomBtn" class="btn secondary" title="Random Fill">Random Fill 🎲</button>
-    <button id="generateBtn" class="btn" title="Write my love story">Write My Love Story ✨</button>
+    <button id="generateBtn" class="btn" title="Write my love story">Write My Love Scene ✨</button>
     <button id="tryAgainBtn" class="btn secondary" title="Try again">Try Again 🔄</button>
   </div>
 
@@ -152,8 +152,8 @@
 
   const randomWords = {
     adj: ["sparkling","glowing","gentle","soft","radiant","blushing","whispering","velvet"],
-    place: ["moonlit garden","quiet beach","cozy café","starlit meadow","rooftop at midnight","hidden porch"],
-    noun: ["rose","letter","kiss","memory","butterfly","lantern"]
+    place: ["moonlit garden","quiet beach","bedroom","cozy café","starlit meadow","rooftop at midnight","hidden porch"],
+    noun: ["rose","letter","kiss","memory","cuddles","butterfly","lantern"]
   };
 
   randomBtn.addEventListener('click', () => {
@@ -261,7 +261,7 @@ MANDATORY RULES:
 - Address Divanshi only in second person ("you", "your").
 - Refer to Shourya by name at most twice; after the second occurrence, use only "he" or "his".
 - Focus the scene on the relationship and togetherness of you two; when describing shared qualities or moments, use inclusive phrasing like "you two" or "your togetherness".
-- Include the ADJECTIVE, PLACE, and NOUN (actual substituted words) somewhere naturally in the scene.
+- Do not include the actual substituted words somewhere naturally in the scene.
 - Do NOT include any signature, credit line, headings, or metadata.
 - Do NOT output any placeholders, curly braces, or literal token names.
 
