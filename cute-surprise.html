@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Cute Surprise for Kitty Divi 💖</title>
 <style>
   body {
@@ -52,11 +52,13 @@
     box-shadow: 0 8px 25px rgba(255, 20, 147, 0.6);
   }
 
+  /* floating sparkles (non-interactive so they don't block taps) */
   .floating {
     position: fixed;
     animation: floatUp 6s linear infinite;
     bottom: -100px;
     z-index: 10;
+    pointer-events: none; /* important — don't capture taps */
   }
 
   @keyframes floatUp {
@@ -93,23 +95,36 @@
     color: #b30059;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     opacity: 0;
-    transition: opacity 1s ease;
-    position: relative;
-    overflow: hidden;
+    transform: translateY(8px);
+    transition: opacity 350ms ease, transform 350ms ease;
+    position: relative; /* keep in document flow below buttons */
+    overflow: visible;
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
+    z-index: 1000; /* ensure it's above floating elements */
+    line-height: 1.6;
+    text-align: left;
   }
 
+  /* small floating hearts inside box (non-interactive) */
   .heart {
     position: absolute;
-    font-size: 16px;
+    font-size: 18px;
     animation: heartFloat 2s ease-out forwards;
-    opacity: 0.8;
+    opacity: 0.95;
+    pointer-events: none; /* don't block touches */
   }
   @keyframes heartFloat {
     0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+    100% { transform: translateY(-60px) scale(1.4); opacity: 0; }
+  }
+
+  /* make the content look a bit nicer on small screens */
+  @media (max-width: 420px) {
+    h1 { font-size: 2rem; }
+    p { font-size: 1rem; padding: 0 12px; }
+    #loveMessageBox { font-size: 1rem; padding: 14px; }
   }
 </style>
 </head>
@@ -132,7 +147,7 @@
 
   <!-- New Love Button -->
   <button class="love-btn" id="loveBtn">💖 Want to know how much Shourya loves you? 💖</button>
-  <div id="loveMessageBox"></div>
+  <div id="loveMessageBox" aria-live="polite"></div>
 
 <script src="https://js.puter.com/v2/"></script>
 <script>
@@ -159,13 +174,19 @@
   // New Love Button Functionality
   let loveLevel = 1;
 
+  // create a small heart inside the box and float it upward
   function createHeart(container) {
     const heart = document.createElement("div");
     heart.classList.add("heart");
     heart.textContent = "💖";
-    heart.style.left = Math.random() * 90 + "%";
+
+    // place within box width (8% - 85%)
+    const leftPct = 8 + Math.random() * 77;
+    heart.style.left = leftPct + "%";
+    heart.style.bottom = "8px";
+
     container.appendChild(heart);
-    setTimeout(() => heart.remove(), 2000);
+    setTimeout(() => heart.remove(), 2200);
   }
 
   document.getElementById("loveBtn").addEventListener("click", async () => {
@@ -173,39 +194,75 @@
     const box = document.getElementById("loveMessageBox");
 
     btn.disabled = true;
+    // show box with thinking text
     box.style.display = "block";
     box.style.opacity = "0";
+    box.style.transform = "translateY(8px)";
     box.textContent = "✨ Thinking about your magical bond with Divanshi... ✨";
 
-    // Floating hearts
+    // hearts inside the box (visual only)
     for (let i = 0; i < 5; i++) {
-      setTimeout(() => createHeart(box), i * 200);
+      setTimeout(() => createHeart(box), i * 160);
     }
+
+    // ensure user sees the box (center of viewport)
+    setTimeout(() => {
+      try {
+        box.scrollIntoView({ behavior: "smooth", block: "center" });
+      } catch (e) { /* ignore scroll errors on some environments */ }
+    }, 120);
 
     try {
       const prompt = `
-      You are writing a romantic love note from Shourya to his beloved Divanshi.
-      Make it poetic, magical, and full of warm emotions.
-      Love Level: ${loveLevel}.
-      Each time the level increases, make the words even more dreamy, enchanting, and heartwarming.
-      Mention how much he adores, respects, and admires Divanshi deeply, with metaphors and gentle imagery.
-      End with something uniquely sweet each time.
-      `;
+You are writing a romantic love note from Shourya to his beloved Divanshi.
+Make it poetic, magical, and full of warm emotions.
+Love Level: ${loveLevel}.
+Each time the level increases, make the words even more dreamy, enchanting, and heartwarming.
+Mention how much he adores, respects, and admires Divanshi deeply, with metaphors and gentle imagery.
+End with something uniquely sweet each time.
+      `.trim();
 
-      const response = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
+      // call Puter if available; otherwise fallback
+      let responseText = null;
+      if (window.puter && puter.ai && typeof puter.ai.chat === 'function') {
+        let response = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
+        // normalize possible shapes into string
+        if (!response) {
+          responseText = "";
+        } else if (typeof response === "string") {
+          responseText = response;
+        } else if (typeof response === "object") {
+          responseText = response.text || response.content || JSON.stringify(response);
+        } else {
+          responseText = String(response);
+        }
+      } else {
+        // simulate a short delay so UX feels consistent, then fallback
+        await new Promise(r => setTimeout(r, 300));
+        throw new Error("Puter not available");
+      }
+
+      // reveal response with a tiny delay so sparkles finish
+      setTimeout(() => {
+        box.textContent = responseText || (`Divanshi — Shourya's heart overflows for you. Even if words stumble, know he adores and respects you with a love that softens every shadow. 💕`);
+        box.style.opacity = "1";
+        box.style.transform = "translateY(0)";
+        try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
+      }, 300);
+    } catch (err) {
+      console.error("Love message error:", err);
+      const fallback = `Divanshi — Shourya's heart overflows for you. Even if words stumble, know that he adores and respects you with a love that softens every shadow. 💕`;
 
       setTimeout(() => {
-        box.textContent = response;
+        box.textContent = fallback;
         box.style.opacity = "1";
-      }, 800);
-
-      loveLevel++;
-    } catch (err) {
-      box.textContent = "Oops! Love is in the air, but something went wrong. 💔";
-      console.error(err);
+        box.style.transform = "translateY(0)";
+        try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
+      }, 200);
+    } finally {
+      loveLevel++; // increase magic for next click regardless
+      btn.disabled = false;
     }
-
-    btn.disabled = false;
   });
 </script>
 
