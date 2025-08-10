@@ -108,6 +108,25 @@
     to { opacity: 1; transform: scale(1.5); }
   }
 
+  /* Burst stars from tap */
+  .burst-star {
+    position: absolute;
+    font-size: 18px;
+    pointer-events: none;
+    animation: burstFall 1.5s ease-out forwards;
+  }
+
+  @keyframes burstFall {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(80px) scale(0.5);
+      opacity: 0;
+    }
+  }
+
   /* Responsive adjustments */
   @media (max-width: 720px) {
     h1 { font-size: 2rem; }
@@ -196,6 +215,46 @@
     star.style.animationDuration = (1 + Math.random() * 2) + 's';
     document.body.appendChild(star);
   }
+
+  // 🌟 Burst star effect from tap
+  function createStarBurst(x, y) {
+    const symbols = ["✨", "💫", "🌸", "❤️", "⭐"];
+    const count = 7;
+
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement("span");
+      star.className = "burst-star";
+      star.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      document.body.appendChild(star);
+
+      // Start at tap point
+      star.style.left = x + "px";
+      star.style.top = y + "px";
+
+      // Random spread
+      const offsetX = (Math.random() - 0.5) * 100;
+      const offsetY = Math.random() * 50;
+      setTimeout(() => {
+        star.style.transition = "transform 1.5s ease-out, opacity 1.5s";
+        star.style.transform = `translate(${offsetX}px, ${offsetY + 100}px) scale(0.5)`;
+        star.style.opacity = "0";
+      }, 20);
+
+      // Remove after animation
+      setTimeout(() => star.remove(), 1600);
+    }
+  }
+
+  // Trigger burst on click or tap
+  document.addEventListener("click", e => {
+    createStarBurst(e.pageX, e.pageY);
+  });
+
+  document.addEventListener("touchstart", e => {
+    if (e.touches.length > 0) {
+      createStarBurst(e.touches[0].pageX, e.touches[0].pageY);
+    }
+  });
 </script>
 
 </body>
