@@ -36,24 +36,49 @@
     to { text-shadow: 0 0 40px #ff69b4, 0 0 60px #ff1493; }
   }
 
-  .kitty-btn {
+  .btn-row {
+  display: flex;
+  justify-content: center;  /* center the row */
+  gap: 12px;                /* space between buttons */
+  max-width: 480px;         /* optional max width to limit row width */
+  margin: 20px auto;        /* center horizontally with vertical margin */
+}
+
+.kitty-btn {
+  flex: 1;                  /* both buttons share equal width */
+  min-width: 140px;         /* prevent buttons from becoming too narrow */
+  padding: 15px 0;          /* vertical padding for height, horizontal handled by flex */
+  font-size: 1.2rem;
   background: linear-gradient(45deg, #ff69b4, #ff1493);
   border: none;
-  padding: 15px 40px;
-  font-size: 1.2rem;
   color: white;
   border-radius: 30px;
   cursor: pointer;
   box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
   transition: all 0.3s ease;
-  width: 220px; /* added fixed width */
-  box-sizing: border-box; /* to include padding in width */
+  box-sizing: border-box;
+  display: flex;            /* for text centering */
+  align-items: center;      /* vertical center */
+  justify-content: center;  /* horizontal center */
+  white-space: nowrap;      /* prevent button text wrapping */
 }
 
-  .kitty-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(255, 20, 147, 0.6);
+.kitty-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(255, 20, 147, 0.6);
+}
+
+/* Responsive tweak for very small screens */
+@media (max-width: 320px) {
+  .btn-row {
+    flex-direction: column;
+    max-width: 90%;
   }
+  .kitty-btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
 
   /* floating sparkles (non-interactive so they don't block taps) */
   .floating {
@@ -147,10 +172,11 @@
     Ummmmmmmmmaaaaaaaaahhhhhhhhhh on forehead 💕
   </p>
 
- <div style="display: inline-block; vertical-align: middle; gap: 12px;">
+<div class="btn-row">
   <button class="kitty-btn" onclick="startSparkleMode()">✨ Kitty Sparkle Mode</button>
-  <button class="kitty-btn" id="madLibsBtn">💕 Mad-Libs</button>
+  <button class="kitty-btn" id="madLibsBtn">📚 Mad-Libs</button>
 </div>
+
 
   <!-- New Love Button -->
   <button class="love-btn" id="loveBtn">💖 Want to know how much Shourya loves you? 💖</button>
