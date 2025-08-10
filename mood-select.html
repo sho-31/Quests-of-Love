@@ -41,7 +41,7 @@
     padding: 15px 10px;
     cursor: pointer;
     user-select: none;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.15s;
     font-size: 1.4rem;
     color: #d63384;
     display: flex;
@@ -53,6 +53,14 @@
     box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
     outline: none;
   }
+
+  /* selected mood visual */
+  .moodCard.selected {
+    transform: scale(1.08);
+    box-shadow: 0 8px 28px rgba(255, 20, 147, 0.7);
+    border: 2px solid rgba(255,105,180,0.9);
+  }
+
   .moodEmoji {
     font-size: 2.8rem;
     margin-bottom: 6px;
@@ -107,6 +115,11 @@
     font-weight: 600;
     color: #d63384;
     min-height: 50px;
+    opacity: 0;
+    transition: opacity 300ms;
+  }
+  #comfortMessage.show {
+    opacity: 1;
   }
   /* Back button */
   #backBtn {
@@ -172,9 +185,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-  // ==== CHANGED LINE: only this was updated to use your Public Key ====
-  emailjs.init('HY8G_nl5aRSwXkR1y'); // Replace 'YOUR_USER_ID' with your EmailJS Public Key
-  // ===================================================================
+  // init with your Public Key (unchanged)
+  emailjs.init('HY8G_nl5aRSwXkR1y');
 
   const moodCards = document.querySelectorAll('.moodCard');
   const journalContainer = document.getElementById('journalContainer');
@@ -195,62 +207,107 @@
     loving: "You are my forever, and I adore you. ❤️"
   };
 
-  function openJournal(mood) {
-    selectedMood = mood;
+  // helper: set selected visual state
+  function setSelectedCard(card) {
+    moodCards.forEach(c => {
+      c.classList.remove('selected');
+      c.setAttribute('aria-pressed', 'false');
+    });
+    if (card) {
+      card.classList.add('selected');
+      card.setAttribute('aria-pressed', 'true');
+      selectedMood = card.getAttribute('data-mood');
+    } else {
+      selectedMood = null;
+    }
+  }
+
+  function openJournal(moodCard) {
+    // if a card was passed, mark it selected
+    if (moodCard) setSelectedCard(moodCard);
     moodGrid.style.display = 'none';
     journalContainer.style.display = 'flex';
     backBtn.style.display = 'inline-block';
     journalText.value = '';
+    comfortMessage.classList.remove('show');
     comfortMessage.textContent = '';
     journalText.focus();
   }
 
   function closeJournal() {
-    selectedMood = null;
+    setSelectedCard(null);
     moodGrid.style.display = 'grid';
     journalContainer.style.display = 'none';
     backBtn.style.display = 'none';
+    comfortMessage.classList.remove('show');
     comfortMessage.textContent = '';
     journalText.value = '';
   }
 
   moodCards.forEach(card => {
-    card.addEventListener('click', () => {
-      openJournal(card.getAttribute('data-mood'));
-    });
+    card.addEventListener('click', () => openJournal(card));
     card.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        openJournal(card.getAttribute('data-mood'));
+        openJournal(card);
       }
     });
   });
 
   backBtn.addEventListener('click', closeJournal);
 
-  sendBtn.addEventListener('click', () => {
+  // allow Ctrl/Cmd + Enter to send
+  journalText.addEventListener('keydown', e => {
+    const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+    if (isCmdOrCtrl && e.key === 'Enter') {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
+  sendBtn.addEventListener('click', async () => {
     const text = journalText.value.trim();
-    if (!text) {
-      alert("Please write something before sending, Divi 💖");
+
+    if (!selectedMood) {
+      alert("Please pick a mood first, Divi 💖");
       return;
     }
+    if (!text) {
+      alert("Please write something before sending, Divi 💖");
+      journalText.focus();
+      return;
+    }
+
+    // quick offline check
+    if (!navigator.onLine) {
+      alert("You're offline — connect to the internet and try again.");
+      return;
+    }
+
     sendBtn.disabled = true;
     sendBtn.textContent = "Sending...";
 
-    emailjs.send('service_505fcho', 'template_cqov8px', {
+    const templateParams = {
       mood_tag: selectedMood,
       mood_message: text,
       timestamp: new Date().toLocaleString()
-    }).then(() => {
+    };
+
+    try {
+      await emailjs.send('service_505fcho', 'template_cqov8px', templateParams);
+      // show comfort message and a small visual confirmation
       comfortMessage.textContent = comfortMessages[selectedMood] || "Thank you for sharing, love 💖";
+      comfortMessage.classList.add('show');
       journalText.value = '';
-    }).catch(err => {
-      alert("Oops, something went wrong. Please try again.");
+      // keep the journal open so Divi sees the message; if you prefer auto-close uncomment next line:
+      // setTimeout(closeJournal, 1800);
+    } catch (err) {
       console.error(err);
-    }).finally(() => {
+      alert("Oops, something went wrong. Please try again.");
+    } finally {
       sendBtn.disabled = false;
       sendBtn.textContent = "Send to Shourya 💌";
-    });
+    }
   });
 </script>
 
