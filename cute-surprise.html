@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Cute Surprise for Kitty Divi 💖</title>
 <style>
   body {
@@ -105,6 +106,7 @@
     z-index: 1000; /* ensure it's above floating elements */
     line-height: 1.6;
     text-align: left;
+    white-space: pre-wrap; /* preserve newlines */
   }
 
   /* small floating hearts inside box (non-interactive) */
@@ -151,6 +153,17 @@
 
 <script src="https://js.puter.com/v2/"></script>
 <script>
+/*
+  Updated love-button handler:
+  - Strong prompt that forces second-person (addressing 'you')
+  - Robust extraction of the AI text from different response shapes
+  - Replaces escaped \n with real newlines
+  - Ensures box becomes visible and scrolls into view
+*/
+
+  // keep the "magic level" increasing each click
+  let loveLevel = 1;
+
   function createFloatingItem(symbol) {
     const el = document.createElement('div');
     el.classList.add('floating');
@@ -171,22 +184,110 @@
     setTimeout(() => clearInterval(interval), 8000);
   }
 
-  // New Love Button Functionality
-  let loveLevel = 1;
-
-  // create a small heart inside the box and float it upward
+  // hearts floating inside the message box
   function createHeart(container) {
     const heart = document.createElement("div");
     heart.classList.add("heart");
     heart.textContent = "💖";
-
-    // place within box width (8% - 85%)
     const leftPct = 8 + Math.random() * 77;
     heart.style.left = leftPct + "%";
     heart.style.bottom = "8px";
-
     container.appendChild(heart);
     setTimeout(() => heart.remove(), 2200);
+  }
+
+  // try many shapes and pick the most plausible human text
+  function extractTextFromResponse(resp) {
+    if (!resp) return "";
+    // if it's already a string, return cleaned string
+    if (typeof resp === "string") {
+      return resp;
+    }
+
+    // Common shapes:
+    //  - resp.message.content (string)
+    //  - resp.message.content[0].text
+    //  - resp.choices[0].message.content
+    //  - resp.output[0].content[0].text
+    //  - resp.text or resp.content
+    try {
+      if (resp.message && (resp.message.content || resp.message.text)) {
+        // message.content might be string or array; handle both
+        const mc = resp.message.content;
+        if (typeof mc === "string") return mc;
+        if (Array.isArray(mc) && mc.length) {
+          // try to find a string inside
+          for (const item of mc) {
+            if (typeof item === "string") return item;
+            if (item && typeof item === "object") {
+              // sometimes {type: "output_text", text: "..." }
+              if (item.text) return item.text;
+              if (item.content) {
+                if (typeof item.content === "string") return item.content;
+                if (Array.isArray(item.content)) {
+                  for (const c of item.content) if (typeof c === "string") return c;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (resp.choices && Array.isArray(resp.choices) && resp.choices.length) {
+        const c = resp.choices[0];
+        if (c.message && (c.message.content || c.message.text)) {
+          return c.message.content || c.message.text;
+        }
+        if (typeof c.text === "string") return c.text;
+      }
+
+      if (resp.output && Array.isArray(resp.output) && resp.output.length) {
+        const out = resp.output[0];
+        if (out.content && Array.isArray(out.content) && out.content.length) {
+          // find first string inside
+          for (const ct of out.content) {
+            if (typeof ct === "string") return ct;
+            if (ct && ct.text) return ct.text;
+            if (ct && ct.content && typeof ct.content === "string") return ct.content;
+          }
+        }
+      }
+
+      // fallback: look for keys 'text' or 'content' in root
+      if (resp.text && typeof resp.text === "string") return resp.text;
+      if (resp.content && typeof resp.content === "string") return resp.content;
+
+      // final fallback: find the longest string value inside the object (helps avoid metadata)
+      let longest = "";
+      function walk(o) {
+        if (!o) return;
+        if (typeof o === "string") {
+          if (o.length > longest.length) longest = o;
+        } else if (Array.isArray(o)) {
+          for (const item of o) walk(item);
+        } else if (typeof o === "object") {
+          for (const k in o) {
+            if (!Object.prototype.hasOwnProperty.call(o, k)) continue;
+            walk(o[k]);
+          }
+        }
+      }
+      walk(resp);
+      return longest;
+    } catch (e) {
+      console.error("extractTextFromResponse error", e);
+      return "";
+    }
+  }
+
+  // clean escape sequences like \n -> actual newline, and trim
+  function cleanText(s) {
+    if (!s) return "";
+    // Convert escaped newlines to real newlines
+    s = s.replace(/\\n/g, "\n");
+    // Remove excessive quotes around the whole string
+    s = s.replace(/^\s*"(.*)"\s*$/s, "$1");
+    return s.trim();
   }
 
   document.getElementById("loveBtn").addEventListener("click", async () => {
@@ -194,65 +295,60 @@
     const box = document.getElementById("loveMessageBox");
 
     btn.disabled = true;
-    // show box with thinking text
     box.style.display = "block";
     box.style.opacity = "0";
     box.style.transform = "translateY(8px)";
     box.textContent = "✨ Thinking about your magical bond with Divanshi... ✨";
 
-    // hearts inside the box (visual only)
     for (let i = 0; i < 5; i++) {
       setTimeout(() => createHeart(box), i * 160);
     }
 
-    // ensure user sees the box (center of viewport)
     setTimeout(() => {
-      try {
-        box.scrollIntoView({ behavior: "smooth", block: "center" });
-      } catch (e) { /* ignore scroll errors on some environments */ }
+      try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
     }, 120);
 
-    try {
-      const prompt = `
-You are writing a romantic love note from Shourya to his beloved Divanshi.
-Make it poetic, magical, and full of warm emotions.
+    // Prompt: force second-person, avoid "I" statements, human tone
+    const prompt = `
+Compose a romantic, poetic love note **from Shourya to Divanshi** that speaks directly *to Divanshi* using **second-person** perspective. 
+Use "you" and address how Shourya sees, admires, and cherishes her. 
+**Do not** write primarily in the first person (avoid starting sentences with "I"). 
+Use warm metaphors and gentle imagery (stars, light, gardens, breeze) and short sweet lines.
+End with one unique, tender closing line. Keep the tone affectionate, simple, and clearly written in plain English (no JSON, no metadata).
 Love Level: ${loveLevel}.
-Each time the level increases, make the words even more dreamy, enchanting, and heartwarming.
-Mention how much he adores, respects, and admires Divanshi deeply, with metaphors and gentle imagery.
-End with something uniquely sweet each time.
-      `.trim();
+`.trim();
 
-      // call Puter if available; otherwise fallback
-      let responseText = null;
-      if (window.puter && puter.ai && typeof puter.ai.chat === 'function') {
-        let response = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
-        // normalize possible shapes into string
-        if (!response) {
-          responseText = "";
-        } else if (typeof response === "string") {
-          responseText = response;
-        } else if (typeof response === "object") {
-          responseText = response.text || response.content || JSON.stringify(response);
-        } else {
-          responseText = String(response);
-        }
+    try {
+      // call puter.ai.chat if available
+      let raw = null;
+      if (window.puter && puter.ai && typeof puter.ai.chat === "function") {
+        raw = await puter.ai.chat(prompt, { model: "gpt-4.1-nano" });
       } else {
-        // simulate a short delay so UX feels consistent, then fallback
-        await new Promise(r => setTimeout(r, 300));
+        // puter unavailable — simulate slight delay to keep UX consistent
+        await new Promise(r => setTimeout(r, 350));
         throw new Error("Puter not available");
       }
 
-      // reveal response with a tiny delay so sparkles finish
+      // extract human text
+      let extracted = extractTextFromResponse(raw);
+      extracted = cleanText(extracted);
+
+      // if nothing found, fallback friendly message
+      if (!extracted) {
+        extracted = `Divanshi — you glow like a gentle moon, softening every shadow. Know that Shourya admires and cherishes you deeply, and every thought of you feels like home. 💕`;
+      }
+
+      // reveal the message
       setTimeout(() => {
-        box.textContent = responseText || (`Divanshi — Shourya's heart overflows for you. Even if words stumble, know he adores and respects you with a love that softens every shadow. 💕`);
+        box.textContent = extracted;
         box.style.opacity = "1";
         box.style.transform = "translateY(0)";
         try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
       }, 300);
+
     } catch (err) {
       console.error("Love message error:", err);
-      const fallback = `Divanshi — Shourya's heart overflows for you. Even if words stumble, know that he adores and respects you with a love that softens every shadow. 💕`;
-
+      const fallback = `Divanshi — you shine with a warmth that turns ordinary moments into gentle wonders. Shourya cherishes you and your every smile. 💕`;
       setTimeout(() => {
         box.textContent = fallback;
         box.style.opacity = "1";
@@ -260,7 +356,7 @@ End with something uniquely sweet each time.
         try { box.scrollIntoView({ behavior: "smooth", block: "center" }); } catch(e){}
       }, 200);
     } finally {
-      loveLevel++; // increase magic for next click regardless
+      loveLevel++;
       btn.disabled = false;
     }
   });
