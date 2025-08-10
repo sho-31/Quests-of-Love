@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cute Surprise 💌</title>
+<style>
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(180deg, #ffe6f0, #ffd1e8);
+    text-align: center;
+    color: #d63384;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-top: 30px;
+    color: #ff1493;
+    text-shadow: 0 0 10px #ff69b4;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 15px auto;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .input-group {
+    margin: 10px 0;
+  }
+
+  input {
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 2px solid #ff69b4;
+    font-size: 1rem;
+    width: 70%;
+    max-width: 300px;
+    text-align: center;
+    margin: 5px;
+  }
+
+  .buttons {
+    margin-top: 15px;
+  }
+
+  button {
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    margin: 5px;
+    transition: all 0.3s ease;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+  }
+
+  #result {
+    margin-top: 25px;
+    padding: 15px;
+    background-color: #fff0f5;
+    border-radius: 15px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(255, 20, 147, 0.2);
+    min-height: 50px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  #poem {
+    font-size: 1rem;
+    margin-top: 10px;
+    font-style: italic;
+    color: #c71585;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 25px;
+    color: #ff1493;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  /* Floating hearts animation */
+  .heart {
+    position: fixed;
+    font-size: 24px;
+    animation: floatUp 4s ease-in forwards;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
+  }
+</style>
+<script src="https://js.puter.com/v2/"></script>
+</head>
+<body>
+
+<h1>Cute Surprise 💌</h1>
+<p>Fill in the blanks and let the magic unfold into a romantic surprise.</p>
+
+<div class="input-group">
+  <input type="text" id="adj" placeholder="Adjective (e.g., glowing)">
+</div>
+<div class="input-group">
+  <input type="text" id="place" placeholder="Place (e.g., moonlit garden)">
+</div>
+<div class="input-group">
+  <input type="text" id="noun" placeholder="Noun (e.g., rose)">
+</div>
+
+<div class="buttons">
+  <button id="randomBtn">Random Fill 🎲</button>
+  <button id="generateBtn">Write My Love Story ✨</button>
+</div>
+
+<div id="result">
+  <div id="sentence"></div>
+  <div id="poem"></div>
+</div>
+
+<div class="buttons">
+  <button id="tryAgainBtn" style="display:none;">Try Again 🔄</button>
+</div>
+
+<a href="index.html" class="back-link">← Back to Main Page</a>
+
+<script>
+  const resultDiv = document.getElementById('result');
+  const sentenceDiv = document.getElementById('sentence');
+  const poemDiv = document.getElementById('poem');
+  const tryAgainBtn = document.getElementById('tryAgainBtn');
+
+  const randomWords = {
+    adj: ["sparkling", "glowing", "gentle", "soft", "radiant", "blushing"],
+    place: ["moonlit garden", "quiet beach", "cozy café", "starlit meadow"],
+    noun: ["rose", "letter", "kiss", "memory", "butterfly"]
+  };
+
+  document.getElementById('randomBtn').addEventListener('click', () => {
+    document.getElementById('adj').value = pickRandom(randomWords.adj);
+    document.getElementById('place').value = pickRandom(randomWords.place);
+    document.getElementById('noun').value = pickRandom(randomWords.noun);
+  });
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  document.getElementById('generateBtn').addEventListener('click', async () => {
+    const adj = document.getElementById('adj').value.trim();
+    const place = document.getElementById('place').value.trim();
+    const noun = document.getElementById('noun').value.trim();
+
+    if (!adj || !place || !noun) {
+      sentenceDiv.textContent = "Please fill in all three fields ❤️";
+      resultDiv.style.opacity = 1;
+      return;
+    }
+
+    sentenceDiv.textContent = "Crafting something sweet... 💕";
+    poemDiv.textContent = "";
+    resultDiv.style.opacity = 1;
+
+    triggerHearts();
+
+    const prompt = `
+    On a ${place} beneath a ${adj} sky, you found a ${noun} that reminded me of you. 
+    1) Rewrite this into one short romantic sentence, under 20 words, addressed directly to the reader.
+    2) Then write a tiny poetic scene (max 2 sentences) inspired by it.
+    `;
+
+    try {
+      const response = await puter.ai.chat({
+        model: "gpt-4.1-mini",
+        messages: [
+          { role: "system", content: "You are a romantic storyteller. Keep it poetic, short, and sweet." },
+          { role: "user", content: prompt }
+        ]
+      });
+
+      const output = response.output_text.split("\n").filter(l => l.trim() !== "");
+      sentenceDiv.textContent = output[0] || "You are my sweetest dream. 💖";
+      poemDiv.textContent = output[1] || "";
+      tryAgainBtn.style.display = "inline-block";
+    } catch (err) {
+      console.error(err);
+      sentenceDiv.textContent = "Even without AI, you’re still my everything. 💗";
+      poemDiv.textContent = "";
+    }
+  });
+
+  tryAgainBtn.addEventListener('click', () => {
+    document.getElementById('generateBtn').click();
+  });
+
+  function triggerHearts() {
+    for (let i = 0; i < 5; i++) {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.top = "80vh";
+      heart.textContent = "💖";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }
+  }
+</script>
+
+</body>
+</html>
