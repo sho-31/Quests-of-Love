@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Kitty Divi's Mood Selection 💖</title>
 <style>
+  /* ---------- Original Kitty Divi styles (kept & cleaned) ---------- */
+  :root {
+    --accent: #ff1493;
+    --text: #d63384;
+    --card-bg: #ffe6f0;
+    --glass: rgba(255,182,193,0.18);
+  }
+
   body {
     margin: 0;
     font-family: 'Comic Sans MS', cursive, sans-serif;
     background: linear-gradient(180deg, #ffe6f0, #ffd1e8, #fff0f5);
-    color: #d63384;
+    color: var(--text);
     text-align: center;
     min-height: 100vh;
     padding: 20px;
@@ -18,134 +25,151 @@
   h1 {
     font-size: 2rem;
     margin-bottom: 20px;
-    color: #ff1493;
-    text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
+    color: var(--accent);
+    text-shadow: 0 0 20px #ff69b4, 0 0 40px var(--accent);
     animation: glow 2s infinite alternate;
     will-change: text-shadow;
   }
   @keyframes glow {
     from { text-shadow: 0 0 20px #ffb6c1, 0 0 40px #ff69b4; }
-    to { text-shadow: 0 0 30px #ff69b4, 0 0 60px #ff1493; }
+    to { text-shadow: 0 0 30px #ff69b4, 0 0 60px var(--accent); }
   }
+
+  /* responsive grid */
   #moodGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(110px,1fr));
     gap: 15px;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto 30px;
+    align-items: start;
   }
+
   .moodCard {
-    background: #ffe6f0;
+    background: var(--card-bg);
     border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.22);
     padding: 15px 10px;
     cursor: pointer;
     user-select: none;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.15s;
-    font-size: 1.4rem;
-    color: #d63384;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border 0.12s;
+    font-size: 1.15rem;
+    color: var(--text);
     display: flex;
     flex-direction: column;
     align-items: center;
+    border: 2px solid transparent;
   }
   .moodCard:hover, .moodCard:focus {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(255, 20, 147, 0.12);
     outline: none;
   }
 
-  /* selected mood visual */
-  .moodCard.selected {
-    transform: scale(1.08);
-    box-shadow: 0 8px 28px rgba(255, 20, 147, 0.7);
-    border: 2px solid rgba(255,105,180,0.9);
+  .moodEmoji {
+    font-size: 2.6rem;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .moodLabel {
+    font-weight: 700;
+    letter-spacing: 0.2px;
   }
 
-  .moodEmoji {
-    font-size: 2.8rem;
-    margin-bottom: 6px;
+  .moodCard.selected {
+    transform: scale(1.06);
+    box-shadow: 0 10px 36px rgba(255, 20, 147, 0.22);
+    border-color: rgba(255,105,180,0.75);
   }
+
+  /* Journal container */
   #journalContainer {
-    max-width: 600px;
+    max-width: 720px;
     margin: 0 auto;
-    background: rgba(255, 182, 193, 0.2);
+    background: var(--glass);
     padding: 20px 25px;
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+    border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(255, 105, 180, 0.28);
     display: none;
     flex-direction: column;
     align-items: center;
   }
   #journalContainer textarea {
     width: 100%;
-    min-height: 110px;
+    min-height: 120px;
     padding: 12px;
     font-family: 'Comic Sans MS', cursive, sans-serif;
     font-size: 1rem;
     border-radius: 15px;
     border: 1px solid #ff99cc;
     resize: vertical;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
+
+  /* buttons */
   #sendJournalBtn {
     background: linear-gradient(45deg, #ff99cc, #ff66b2);
     border: none;
-    padding: 12px 25px;
+    padding: 12px 26px;
     border-radius: 30px;
     color: white;
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
-    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.36);
+    transition: transform 0.25s, box-shadow 0.25s;
   }
   #sendJournalBtn:hover:not(:disabled) {
-    transform: scale(1.15) rotate(-2deg);
-    box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
+    transform: scale(1.08) rotate(-2deg);
+    box-shadow: 0 6px 22px rgba(255, 20, 147, 0.45);
   }
   #sendJournalBtn:disabled {
     opacity: 0.6;
     cursor: default;
     transform: none !important;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+    box-shadow: 0 4px 10px rgba(255, 105, 180, 0.12);
   }
+
+  #backBtn {
+    margin-top: 20px;
+    background: linear-gradient(45deg, #ffb6c1, #ff69b4);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 26px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.98rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    transition: transform 0.25s;
+  }
+
   #comfortMessage {
-    margin-top: 15px;
-    font-size: 1.1rem;
+    margin-top: 14px;
+    font-size: 1.05rem;
     font-weight: 600;
-    color: #d63384;
-    min-height: 50px;
+    color: var(--text);
+    min-height: 48px;
     opacity: 0;
-    transition: opacity 300ms;
+    transition: opacity 300ms, transform 300ms;
   }
   #comfortMessage.show {
     opacity: 1;
+    transform: translateY(0);
   }
-  /* Back button */
-  #backBtn {
-    margin-top: 30px;
-    background: linear-gradient(45deg, #ffb6c1, #ff69b4);
-    border: none;
-    padding: 10px 22px;
-    border-radius: 30px;
-    color: white;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  #backBtn:hover {
-    transform: scale(1.1) rotate(-2deg);
-    box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
-  }
+
+  /* small screens tweaks */
   @media (max-width: 420px) {
     #sendJournalBtn, #backBtn {
       padding: 10px 18px;
       font-size: 0.9rem;
     }
     .moodCard {
-      font-size: 1.2rem;
+      font-size: 1rem;
+      padding: 12px 8px;
+    }
+    .moodEmoji {
+      font-size: 2.2rem;
     }
   }
 </style>
@@ -154,162 +178,241 @@
 
 <h1>What's the mood today, Divi? 💖</h1>
 
-<div id="moodGrid" role="list" aria-label="Mood options">
-  <div tabindex="0" class="moodCard" data-mood="happy" data-emoji="😊" role="listitem" aria-label="Happy mood"> 
-    <div class="moodEmoji">😊</div>Happy
-  </div>
-  <div tabindex="0" class="moodCard" data-mood="sad" data-emoji="😢" role="listitem" aria-label="Sad mood">
-    <div class="moodEmoji">😢</div>Sad
-  </div>
-  <div tabindex="0" class="moodCard" data-mood="pmsing" data-emoji="🌸" role="listitem" aria-label="PMSing mood">
-    <div class="moodEmoji">🌸</div>PMSing
-  </div>
-  <div tabindex="0" class="moodCard" data-mood="playful" data-emoji="😺" role="listitem" aria-label="Playful mood">
-    <div class="moodEmoji">😺</div>Playful
-  </div>
-  <div tabindex="0" class="moodCard" data-mood="relaxed" data-emoji="🌿" role="listitem" aria-label="Relaxed mood">
-    <div class="moodEmoji">🌿</div>Relaxed
-  </div>
-  <div tabindex="0" class="moodCard" data-mood="loving" data-emoji="❤️" role="listitem" aria-label="Loving mood">
-    <div class="moodEmoji">❤️</div>Loving
-  </div>
-</div>
+<!-- mood grid container — will be filled dynamically -->
+<div id="moodGrid" role="list" aria-label="Mood options"></div>
 
 <section id="journalContainer" aria-live="polite" aria-label="Mood journal entry">
   <textarea id="journalText" placeholder="Write your feelings here, Divi..."></textarea>
-  <button id="sendJournalBtn">Send to Shourya 💌</button>
-  <div id="comfortMessage" role="alert"></div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+    <button id="sendJournalBtn">Send to Shourya 💌</button>
+    <button id="backBtn" style="display:none;">← Back to moods</button>
+  </div>
+  <div id="comfortMessage" role="status" aria-live="polite"></div>
 </section>
-
-<button id="backBtn" style="display:none;">← Back to moods</button>
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-  // init with your Public Key (unchanged)
-  emailjs.init('HY8G_nl5aRSwXkR1y');
+/* ========== CONFIG ========== */
+const EMAILJS_PUBLIC_KEY = 'HY8G_nl5aRSwXkR1y'; // your public key
+const EMAILJS_SERVICE_ID = 'service_505fcho';
+const EMAILJS_TEMPLATE_ID = 'template_cqov8px'; // change if your template id differs
+/* ============================ */
 
-  const moodCards = document.querySelectorAll('.moodCard');
-  const journalContainer = document.getElementById('journalContainer');
-  const journalText = document.getElementById('journalText');
-  const sendBtn = document.getElementById('sendJournalBtn');
-  const comfortMessage = document.getElementById('comfortMessage');
-  const backBtn = document.getElementById('backBtn');
-  const moodGrid = document.getElementById('moodGrid');
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
-  let selectedMood = null;
+/* ---------- Mood data (complete list) ---------- */
+const moods = [
+  { key: "happy", label: "Happy", emoji: "😊", message: "Your joy makes the world brighter!", color: "#28C76F" },
+  { key: "sad", label: "Sad", emoji: "😢", message: "It's okay to feel down; I'm here.", color: "#4A90E2" },
+  { key: "angry", label: "Angry", emoji: "😠", message: "Take a breath — you’re allowed to feel this.", color: "#E94F37" },
+  { key: "anxious", label: "Anxious", emoji: "😰", message: "One step at a time. Breathe with me.", color: "#FF9F43" },
+  { key: "disconnected", label: "Disconnected", emoji: "🔌", message: "It’s okay to pull back — we’ll reconnect when you’re ready.", color: "#9E9E9E" },
+  { key: "tired", label: "Tired", emoji: "😴", message: "Rest is productive too. Be gentle with yourself.", color: "#9B8AE3" },
+  { key: "burnt_out", label: "Burnt-out", emoji: "🥀", message: "You’ve done a lot; recharge is essential.", color: "#6B6B6B" },
+  { key: "nostalgic", label: "Nostalgic", emoji: "🕊️", message: "Sweet memories are treasures.", color: "#CFA0E8" },
+  { key: "motivated", label: "Motivated", emoji: "🚀", message: "Let’s make today count!", color: "#FF6B6B" },
+  { key: "playful", label: "Playful", emoji: "😺", message: "Let’s laugh and get silly!", color: "#FFD166" },
+  { key: "proud", label: "Proud", emoji: "🏆", message: "You did that — celebrate it!", color: "#00C2A8" },
+  { key: "loving", label: "Loving", emoji: "❤️", message: "You are my forever.", color: "#FF4D6D" },
+  { key: "lonely", label: "Lonely", emoji: "🥺", message: "You’re not alone — I’m listening.", color: "#7A7AFF" },
+  { key: "confused", label: "Confused", emoji: "🤔", message: "It’s okay to not have all the answers.", color: "#6C757D" },
+  { key: "hopeful", label: "Hopeful", emoji: "🌤️", message: "Small hope is still hope — hold it close.", color: "#8ED081" },
+  { key: "jealous", label: "Jealous", emoji: "💚", message: "Feelings are messy — talk it out when ready.", color: "#2E8B57" },
+  { key: "pmsing", label: "PMSing", emoji: "🌸", message: "Tough days are still beautiful. I love you.", color: "#FFB6C1" },
+  { key: "hungry", label: "Hungry", emoji: "🍽️", message: "Feed your body some love — quick snack?", color: "#FFB86B" },
+  { key: "focused", label: "Focused", emoji: "🧠", message: "Flow mode on — keep going!", color: "#00A3FF" },
+  { key: "distracted", label: "Distracted", emoji: "🌀", message: "Tiny reset: 5 min timer, then back.", color: "#B0BEC5" }
+];
 
-  const comfortMessages = {
-    happy: "Your joy makes the world brighter! Keep shining, love! 🌞",
-    sad: "It's okay to feel down. I’m here holding your hand. 💕",
-    pmsing: "You're so strong and beautiful even on tough days. I love you. 💖",
-    playful: "Let’s chase dreams and laugh till we drop! 😺",
-    relaxed: "Breathe in calm, breathe out love. 🌿",
-    loving: "You are my forever, and I adore you. ❤️"
+/* ---------- DOM refs ---------- */
+const moodGrid = document.getElementById('moodGrid');
+const journalContainer = document.getElementById('journalContainer');
+const journalText = document.getElementById('journalText');
+const sendBtn = document.getElementById('sendJournalBtn');
+const backBtn = document.getElementById('backBtn');
+const comfortMessage = document.getElementById('comfortMessage');
+
+let selectedCardEl = null;
+let selectedMoodKey = null;
+
+/* ---------- Render mood cards dynamically ---------- */
+function renderMoodGrid() {
+  moods.forEach(mood => {
+    const card = document.createElement('div');
+    card.className = 'moodCard';
+    card.tabIndex = 0;
+    card.role = 'listitem';
+    card.setAttribute('aria-label', `${mood.label} mood`);
+    card.dataset.mood = mood.key;
+    card.dataset.emoji = mood.emoji;
+    card.dataset.color = mood.color;
+
+    // build inner
+    card.innerHTML = `
+      <div class="moodEmoji" aria-hidden="true">${mood.emoji}</div>
+      <div class="moodLabel">${mood.label}</div>
+    `;
+
+    // tooltip with short message
+    card.title = mood.message;
+
+    // click and keyboard handled with delegation below
+    moodGrid.appendChild(card);
+  });
+}
+
+/* ---------- Selection helpers ---------- */
+function setSelectedCard(el) {
+  // remove previous
+  const prev = moodGrid.querySelector('.moodCard.selected');
+  if (prev) {
+    prev.classList.remove('selected');
+    prev.setAttribute('aria-pressed', 'false');
+  }
+  if (el) {
+    el.classList.add('selected');
+    el.setAttribute('aria-pressed', 'true');
+    selectedCardEl = el;
+    selectedMoodKey = el.dataset.mood;
+  } else {
+    selectedCardEl = null;
+    selectedMoodKey = null;
+  }
+}
+
+/* ---------- Open / Close journal ---------- */
+function openJournalForCard(cardEl) {
+  setSelectedCard(cardEl);
+  moodGrid.style.display = 'none';
+  journalContainer.style.display = 'flex';
+  backBtn.style.display = 'inline-block';
+  comfortMessage.classList.remove('show');
+  comfortMessage.textContent = '';
+  journalText.value = '';
+  journalText.focus();
+}
+
+function closeJournal() {
+  setSelectedCard(null);
+  moodGrid.style.display = 'grid';
+  journalContainer.style.display = 'none';
+  backBtn.style.display = 'none';
+  comfortMessage.classList.remove('show');
+  comfortMessage.textContent = '';
+  journalText.value = '';
+}
+
+/* ---------- Event delegation for grid (click + keyboard) ---------- */
+moodGrid.addEventListener('click', (e) => {
+  const card = e.target.closest('.moodCard');
+  if (!card) return;
+  openJournalForCard(card);
+});
+
+moodGrid.addEventListener('keydown', (e) => {
+  const card = e.target.closest('.moodCard');
+  if (!card) return;
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openJournalForCard(card);
+  }
+});
+
+/* ---------- Back button ---------- */
+backBtn.addEventListener('click', closeJournal);
+
+/* ---------- keyboard shortcut to send: Ctrl/Cmd + Enter ---------- */
+journalText.addEventListener('keydown', (e) => {
+  const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+  if (isCmdOrCtrl && e.key === 'Enter') {
+    e.preventDefault();
+    sendBtn.click();
+  }
+});
+
+/* ---------- Send flow ---------- */
+sendBtn.addEventListener('click', async () => {
+  const text = journalText.value.trim();
+
+  if (!selectedMoodKey) {
+    alert("Please pick a mood first, Divi 💖");
+    return;
+  }
+  if (!text) {
+    alert("Please write something before sending, Divi 💖");
+    journalText.focus();
+    return;
+  }
+  if (!navigator.onLine) {
+    alert("You're offline — connect to the internet and try again.");
+    return;
+  }
+
+  // find mood object
+  const mood = moods.find(m => m.key === selectedMoodKey) || {};
+  const templateParams = {
+    mood_key: mood.key || selectedMoodKey,
+    mood_label: mood.label || selectedMoodKey,
+    mood_emoji: mood.emoji || '',
+    mood_color: mood.color || '#ff99cc',
+    mood_message: text,
+    timestamp: new Date().toLocaleString()
   };
 
-  // helper: set selected visual state
-  function setSelectedCard(card) {
-    moodCards.forEach(c => {
-      c.classList.remove('selected');
-      c.setAttribute('aria-pressed', 'false');
-    });
-    if (card) {
-      card.classList.add('selected');
-      card.setAttribute('aria-pressed', 'true');
-      selectedMood = card.getAttribute('data-mood');
-    } else {
-      selectedMood = null;
-    }
-  }
+  sendBtn.disabled = true;
+  sendBtn.textContent = "Sending...";
 
-  function openJournal(moodCard) {
-    // if a card was passed, mark it selected
-    if (moodCard) setSelectedCard(moodCard);
-    moodGrid.style.display = 'none';
-    journalContainer.style.display = 'flex';
-    backBtn.style.display = 'inline-block';
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
+    // show comfort message (use the mapped short affirmation if available)
+    const shortAffirm = mood.message || "Thank you for sharing, love 💖";
+    comfortMessage.textContent = shortAffirm;
+    comfortMessage.classList.add('show');
+
+    // keep journal open so Divi sees feedback; optionally auto-close:
+    // setTimeout(closeJournal, 1500);
+
+    // clear text input
     journalText.value = '';
-    comfortMessage.classList.remove('show');
-    comfortMessage.textContent = '';
-    journalText.focus();
+  } catch (err) {
+    console.error('EmailJS send failed', err);
+    alert("Oops — something went wrong while sending. Try again.");
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.textContent = "Send to Shourya 💌";
   }
+});
 
-  function closeJournal() {
-    setSelectedCard(null);
-    moodGrid.style.display = 'grid';
-    journalContainer.style.display = 'none';
-    backBtn.style.display = 'none';
-    comfortMessage.classList.remove('show');
-    comfortMessage.textContent = '';
-    journalText.value = '';
-  }
+/* ---------- Initialize ---------- */
+renderMoodGrid();
 
-  moodCards.forEach(card => {
-    card.addEventListener('click', () => openJournal(card));
-    card.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openJournal(card);
-      }
-    });
-  });
-
-  backBtn.addEventListener('click', closeJournal);
-
-  // allow Ctrl/Cmd + Enter to send
-  journalText.addEventListener('keydown', e => {
-    const isCmdOrCtrl = e.metaKey || e.ctrlKey;
-    if (isCmdOrCtrl && e.key === 'Enter') {
+/* Accessibility improvement: allow arrow navigation among mood cards */
+(function enableArrowNav() {
+  const cardsSelector = '.moodCard';
+  document.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+    if (!active || !active.matches(cardsSelector)) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault();
-      sendBtn.click();
+      let next = active.nextElementSibling;
+      if (!next) {
+        // wrap to first
+        next = active.parentElement.querySelector(cardsSelector);
+      }
+      next.focus();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      let prev = active.previousElementSibling;
+      if (!prev) {
+        // wrap to last
+        const list = active.parentElement.querySelectorAll(cardsSelector);
+        prev = list[list.length - 1];
+      }
+      prev.focus();
     }
   });
-
-  sendBtn.addEventListener('click', async () => {
-    const text = journalText.value.trim();
-
-    if (!selectedMood) {
-      alert("Please pick a mood first, Divi 💖");
-      return;
-    }
-    if (!text) {
-      alert("Please write something before sending, Divi 💖");
-      journalText.focus();
-      return;
-    }
-
-    // quick offline check
-    if (!navigator.onLine) {
-      alert("You're offline — connect to the internet and try again.");
-      return;
-    }
-
-    sendBtn.disabled = true;
-    sendBtn.textContent = "Sending...";
-
-    const templateParams = {
-      mood_tag: selectedMood,
-      mood_message: text,
-      timestamp: new Date().toLocaleString()
-    };
-
-    try {
-      await emailjs.send('service_505fcho', 'template_cqov8px', templateParams);
-      // show comfort message and a small visual confirmation
-      comfortMessage.textContent = comfortMessages[selectedMood] || "Thank you for sharing, love 💖";
-      comfortMessage.classList.add('show');
-      journalText.value = '';
-      // keep the journal open so Divi sees the message; if you prefer auto-close uncomment next line:
-      // setTimeout(closeJournal, 1800);
-    } catch (err) {
-      console.error(err);
-      alert("Oops, something went wrong. Please try again.");
-    } finally {
-      sendBtn.disabled = false;
-      sendBtn.textContent = "Send to Shourya 💌";
-    }
-  });
+})();
 </script>
-
 </body>
 </html>
