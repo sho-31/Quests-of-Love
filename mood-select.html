@@ -667,7 +667,7 @@ sendBtn.addEventListener('click', async () => {
   sendBtn.textContent = "Sending...";
 
   try {
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    await emailjs.send(service_505fcho, template_cqov8px, templateParams);
 
     // show comfort message (use the mapped short affirmation if available)
     const shortAffirm = mood.message || "Thank you for sharing, love 💖";
