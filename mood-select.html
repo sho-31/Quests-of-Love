@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -539,28 +540,8 @@ sendBtn.addEventListener('click', async () => {
   sendBtn.disabled = true;
   sendBtn.textContent = "Sending...";
 
-form.addEventListener("submit", function (event) {
-  event.preventDefault();
-
-  const mood = document.getElementById("moodInput").value; // your textarea
-  const intensity = document.getElementById("intensityInput").value; // your slider/select
-
-  emailjs.send("service_505fcho", "template_cqov8px", {
-    mood: mood,
-    intensity: intensity
-  })
-  .then(function () {
-    alert("Mood sent successfully!");
-    form.reset();
-  })
-  .catch(function (error) {
-    alert("Oops — something went wrong while sending. Try again.");
-    console.error(error);
-  });
-});
-
   try {
-    await emailjs.send(service_505fcho, template_cqov8px, templateParams);
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
 
     // show comfort message (use the mapped short affirmation if available)
     const shortAffirm = mood.message || "Thank you for sharing, love 💖";
