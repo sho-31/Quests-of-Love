@@ -263,11 +263,20 @@
     </div>
 
 <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+  <div class="attachWrap" style="width:100%; display:flex; justify-content:center;">
+    <button id="attachBtn" class="attachBtn" type="button">Attach photo / voice</button>
+    <div id="attachmentName" class="attachmentName" aria-live="polite"></div>
+    <input id="attachmentInput" type="file" accept="image/*,audio/*" style="display:none;" />
+  </div>
+
   <div style="display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap;">
     <button id="sendJournalBtn">Send to Shourya 💌</button>
     <button id="backBtn" style="display:none;">← Back to moods</button>
   </div>
 </div>
+
+
+
 
   <div id="comfortMessage" role="status" aria-live="polite"></div>
 </section>
@@ -275,9 +284,9 @@
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
 /* ========== CONFIG ========== */
-const EMAILJS_PUBLIC_KEY = 'HY8G_nl5aRSwXkR1y';
+const EMAILJS_PUBLIC_KEY = 'HY8G_nl5aRSwXkR1y'; // your public key
 const EMAILJS_SERVICE_ID = 'service_505fcho';
-const EMAILJS_TEMPLATE_ID = 'template_cqov8px';
+const EMAILJS_TEMPLATE_ID = 'template_cqov8px'; // change if your template id differs
 /* ============================ */
 
 emailjs.init(EMAILJS_PUBLIC_KEY);
@@ -314,17 +323,18 @@ const sendBtn = document.getElementById('sendJournalBtn');
 const backBtn = document.getElementById('backBtn');
 const comfortMessage = document.getElementById('comfortMessage');
 
-const intensityRange = document.getElementById('intensityRange');
-const intensityValue = document.getElementById('intensityValue');
-const attachBtn = document.getElementById('attachBtn');
-const attachmentInput = document.getElementById('attachmentInput');
-const attachmentName = document.getElementById('attachmentName');
+// ADDED refs
+const intensityRange = document.getElementById('intensityRange'); // ADDED
+const intensityValue = document.getElementById('intensityValue'); // ADDED
+const attachBtn = document.getElementById('attachBtn'); // ADDED
+const attachmentInput = document.getElementById('attachmentInput'); // ADDED
+const attachmentName = document.getElementById('attachmentName'); // ADDED
 
 let selectedCardEl = null;
 let selectedMoodKey = null;
-let attachmentFile = null;
+let attachmentFile = null; // ADDED: stores currently selected file
 
-/* ---------- Render mood cards ---------- */
+/* ---------- Render mood cards dynamically ---------- */
 function renderMoodGrid() {
   moods.forEach(mood => {
     const card = document.createElement('div');
@@ -336,17 +346,23 @@ function renderMoodGrid() {
     card.dataset.emoji = mood.emoji;
     card.dataset.color = mood.color;
 
+    // build inner
     card.innerHTML = `
       <div class="moodEmoji" aria-hidden="true">${mood.emoji}</div>
       <div class="moodLabel">${mood.label}</div>
     `;
+
+    // tooltip with short message
     card.title = mood.message;
+
+    // click and keyboard handled with delegation below
     moodGrid.appendChild(card);
   });
 }
 
 /* ---------- Selection helpers ---------- */
 function setSelectedCard(el) {
+  // remove previous
   const prev = moodGrid.querySelector('.moodCard.selected');
   if (prev) {
     prev.classList.remove('selected');
@@ -363,7 +379,7 @@ function setSelectedCard(el) {
   }
 }
 
-/* ---------- Open/close journal ---------- */
+/* ---------- Open / Close journal ---------- */
 function openJournalForCard(cardEl) {
   setSelectedCard(cardEl);
   moodGrid.style.display = 'none';
@@ -372,6 +388,7 @@ function openJournalForCard(cardEl) {
   comfortMessage.classList.remove('show');
   comfortMessage.textContent = '';
   journalText.value = '';
+  // reset intensity and attachment on open
   if (intensityRange) {
     intensityRange.value = 5;
     intensityValue.textContent = '5';
@@ -380,6 +397,7 @@ function openJournalForCard(cardEl) {
   if (attachmentName) attachmentName.textContent = '';
   journalText.focus();
 }
+
 function closeJournal() {
   setSelectedCard(null);
   moodGrid.style.display = 'grid';
@@ -388,6 +406,7 @@ function closeJournal() {
   comfortMessage.classList.remove('show');
   comfortMessage.textContent = '';
   journalText.value = '';
+  // reset attachments and intensity
   if (intensityRange) {
     intensityRange.value = 5;
     intensityValue.textContent = '5';
@@ -396,12 +415,13 @@ function closeJournal() {
   if (attachmentName) attachmentName.textContent = '';
 }
 
-/* ---------- Events for grid ---------- */
+/* ---------- Event delegation for grid (click + keyboard) ---------- */
 moodGrid.addEventListener('click', (e) => {
   const card = e.target.closest('.moodCard');
   if (!card) return;
   openJournalForCard(card);
 });
+
 moodGrid.addEventListener('keydown', (e) => {
   const card = e.target.closest('.moodCard');
   if (!card) return;
@@ -414,7 +434,7 @@ moodGrid.addEventListener('keydown', (e) => {
 /* ---------- Back button ---------- */
 backBtn.addEventListener('click', closeJournal);
 
-/* ---------- Keyboard: Ctrl/Cmd + Enter to send ---------- */
+/* ---------- keyboard shortcut to send: Ctrl/Cmd + Enter ---------- */
 journalText.addEventListener('keydown', (e) => {
   const isCmdOrCtrl = e.metaKey || e.ctrlKey;
   if (isCmdOrCtrl && e.key === 'Enter') {
@@ -423,16 +443,18 @@ journalText.addEventListener('keydown', (e) => {
   }
 });
 
-/* ---------- Intensity binding ---------- */
+/* ---------- Intensity UI binding (ADDED) ---------- */
 if (intensityRange && intensityValue) {
   intensityRange.addEventListener('input', () => {
     intensityValue.textContent = intensityRange.value;
   });
 }
 
-/* ---------- Attachment UI ---------- */
+/* ---------- Attachment UI (ADDED) ---------- */
 if (attachBtn && attachmentInput && attachmentName) {
-  attachBtn.addEventListener('click', () => attachmentInput.click());
+  attachBtn.addEventListener('click', () => {
+    attachmentInput.click();
+  });
 
   attachmentInput.addEventListener('change', () => {
     const f = attachmentInput.files && attachmentInput.files[0];
@@ -446,146 +468,18 @@ if (attachBtn && attachmentInput && attachmentName) {
   });
 }
 
-/* ---------- helper: compress/read image to DataURL ---------- */
-async function readFileAsDataURL(file) {
-  if (!file) return null;
-
-  const MAX_EMBED_BYTES = 700 * 1024; // 700KB
-
-  function rawReadAsDataURL(f) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(f);
-    });
-  }
-
-  if (file.type && file.type.startsWith('image/')) {
-    try {
-      const origDataUrl = await rawReadAsDataURL(file);
-      const img = await new Promise((res, rej) => {
-        const i = new Image();
-        i.onload = () => res(i);
-        i.onerror = rej;
-        i.src = origDataUrl;
-      });
-
-      const MAX_WIDTH = 1024;
-      const scale = Math.min(1, MAX_WIDTH / Math.max(img.width, img.height));
-      const targetW = Math.round(img.width * scale);
-      const targetH = Math.round(img.height * scale);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = targetW;
-      canvas.height = targetH;
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, targetW, targetH);
-
-      let quality = 0.85;
-      let dataUrl = canvas.toDataURL('image/jpeg', quality);
-      function dataUrlSizeBytes(durl) {
-        const b64 = durl.split(',')[1] || '';
-        return Math.ceil((b64.length * 3) / 4);
-      }
-
-      let size = dataUrlSizeBytes(dataUrl);
-      while (size > MAX_EMBED_BYTES && quality > 0.35) {
-        quality -= 0.12;
-        dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.35, quality));
-        size = dataUrlSizeBytes(dataUrl);
-      }
-
-      if (size > MAX_EMBED_BYTES) {
-        // try smaller dimensions
-        const SMALL_MAX = 640;
-        let scale2 = Math.min(1, SMALL_MAX / Math.max(img.width, img.height));
-        const tw = Math.round(img.width * scale2);
-        const th = Math.round(img.height * scale2);
-        canvas.width = tw;
-        canvas.height = th;
-        ctx.drawImage(img, 0, 0, tw, th);
-        quality = 0.7;
-        dataUrl = canvas.toDataURL('image/jpeg', quality);
-        size = dataUrlSizeBytes(dataUrl);
-        while (size > MAX_EMBED_BYTES && quality > 0.4) {
-          quality -= 0.1;
-          dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.4, quality));
-          size = dataUrlSizeBytes(dataUrl);
-        }
-      }
-
-      if (size > MAX_EMBED_BYTES) {
-        // can't embed safely
-        return null;
-      }
-      return dataUrl;
-    } catch (err) {
-      console.warn('Image processing failed, fallback to raw read', err);
-      try {
-        const d = await rawReadAsDataURL(file);
-        const sizeBytes = Math.ceil(((d.split(',')[1] || '').length * 3) / 4);
-        if (sizeBytes > MAX_EMBED_BYTES) return null;
-        return d;
-      } catch (e) {
-        console.error('Fallback read failed', e);
-        return null;
-      }
-    }
-  }
-
-  // non-images: embed only if small enough
-  if (file.size && file.size > MAX_EMBED_BYTES) {
-    return null;
-  }
-  try {
-    return await rawReadAsDataURL(file);
-  } catch (err) {
-    console.warn('rawReadAsDataURL failed', err);
-    return null;
-  }
-}
-
-/* ---------- helper: upload file to 0x0.st and return URL ---------- */
-async function uploadTo0x0st(file) {
-  try {
-    const form = new FormData();
-    form.append('file', file);
-    const res = await fetch('https://0x0.st', { method: 'POST', body: form });
-    if (!res.ok) {
-      console.warn('0x0.st upload failed status', res.status);
-      return null;
-    }
-    const text = await res.text();
-    return text.trim(); // URL or error text
-  } catch (err) {
-    console.error('0x0.st upload error', err);
-    return null;
-  }
-}
-
-/* ---------- Send flow (final, robust) ---------- */
-form.addEventListener("submit", function (event) {
-  event.preventDefault();
-
-  const mood = document.getElementById("moodInput").value; // your textarea
-  const intensity = document.getElementById("intensityInput").value; // your slider/select
-
-  emailjs.send("service_505fcho", "template_cqov8px", {
-    mood: mood,
-    intensity: intensity
-  })
-  .then(function () {
-    alert("Mood sent successfully!");
-    form.reset();
-  })
-  .catch(function (error) {
-    alert("Oops — something went wrong while sending. Try again.");
-    console.error(error);
+/* ---------- helper: read file as DataURL (ADDED) ---------- */
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve(null);
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
-});
+}
 
+/* ---------- Send flow (FIXED: include many placeholder names so template gets the mood) ---------- */
 sendBtn.addEventListener('click', async () => {
   const text = journalText.value.trim();
 
@@ -593,8 +487,8 @@ sendBtn.addEventListener('click', async () => {
     alert("Please pick a mood first, Divi 💖");
     return;
   }
-  if (!text && !attachmentFile) {
-    alert("Please write something or attach a file before sending, Divi 💖");
+  if (!text) {
+    alert("Please write something before sending, Divi 💖");
     journalText.focus();
     return;
   }
@@ -603,86 +497,70 @@ sendBtn.addEventListener('click', async () => {
     return;
   }
 
+  // find mood object
   const mood = moods.find(m => m.key === selectedMoodKey) || {};
 
-  // Try to embed (small images) first
+  // read attachment if present (ADDED)
   let attachmentDataUrl = '';
   let attachmentFilename = '';
-  let attachmentLink = '';
-
   if (attachmentFile) {
-    attachmentFilename = attachmentFile.name || '';
-
-    // attempt to produce an embeddable data URL (may return null if too big)
     try {
-      const processed = await readFileAsDataURL(attachmentFile);
-      if (processed) {
-        attachmentDataUrl = processed; // will be a data:* URL
-      } else {
-        // too large to embed — upload to file host and get link
-        const url = await uploadTo0x0st(attachmentFile);
-        if (url) {
-          attachmentLink = url;
-        } else {
-          // upload failed — keep filename only (we still send email)
-          attachmentLink = '';
-        }
-      }
+      attachmentDataUrl = await readFileAsDataURL(attachmentFile);
+      attachmentFilename = attachmentFile.name || '';
     } catch (err) {
-      console.warn('Attachment handling error', err);
+      console.warn('Attachment read failed', err);
+      // proceed without attachment
       attachmentDataUrl = '';
-      attachmentLink = '';
+      attachmentFilename = '';
     }
   }
 
-  // prepare template params
+  // ---- FIX: include multiple commonly-used placeholder names so the template always receives the value ----
   const label = (mood.label || selectedMoodKey || '').toString();
-  const intensity = (intensityRange && intensityRange.value) ? intensityRange.value.toString() : '5';
+  const intensity = (intensityRange && intensityRange.value) ? intensityRange.value.toString() : '5'; // ADDED: include intensity
   const templateParams = {
+    // common names (so any template using any of these will receive the value)
     mood: label,
     mood_tag: label,
     mood_label: label,
     mood_name: label,
     mood_key: mood.key || selectedMoodKey,
 
+    // emoji + color + message + timestamp
     mood_emoji: mood.emoji || '',
     mood_color: mood.color || '#ff99cc',
     mood_message: text,
     timestamp: new Date().toLocaleString(),
 
+    // ADDED: intensity + attachment fields
     mood_intensity: intensity,
     mood_intensity_label: `${intensity}/10`,
     mood_attachment_name: attachmentFilename,
-    mood_attachment_data: attachmentDataUrl || '', // embed if present
-    mood_attachment_link: attachmentLink || ''     // link if uploaded
+    mood_attachment_data: attachmentDataUrl // base64 data URL (if present)
   };
+  // small debug (console only)
+  console.log('Sending templateParams:', templateParams);
 
-  console.log('Sending templateParams (preview):', {
-    mood: templateParams.mood,
-    mood_attachment_name: templateParams.mood_attachment_name,
-    has_embed: !!templateParams.mood_attachment_data,
-    has_link: !!templateParams.mood_attachment_link
-  });
-
-  // UI
   sendBtn.disabled = true;
   sendBtn.textContent = "Sending...";
 
   try {
-    await emailjs.send(service_505fcho, template_cqov8px, templateParams);
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
 
+    // show comfort message (use the mapped short affirmation if available)
     const shortAffirm = mood.message || "Thank you for sharing, love 💖";
     comfortMessage.textContent = shortAffirm;
     comfortMessage.classList.add('show');
 
-    // clear UI
+    // clear text input and attachment
     journalText.value = '';
     attachmentFile = null;
     if (attachmentName) attachmentName.textContent = '';
+    // optionally keep journal open so Divi sees feedback; you can auto-close if you want:
+    // setTimeout(closeJournal, 1400);
   } catch (err) {
-    console.error('EmailJS send failed:', err);
-    // if EmailJS fails, show detailed console error and a friendly alert
-    alert("Oops — something went wrong while sending. Check console for details and try again.");
+    console.error('EmailJS send failed', err);
+    alert("Oops — something went wrong while sending. Try again.");
   } finally {
     sendBtn.disabled = false;
     sendBtn.textContent = "Send to Shourya 💌";
@@ -692,7 +570,7 @@ sendBtn.addEventListener('click', async () => {
 /* ---------- Initialize ---------- */
 renderMoodGrid();
 
-/* Accessibility: arrow nav */
+/* Accessibility improvement: allow arrow navigation among mood cards */
 (function enableArrowNav() {
   const cardsSelector = '.moodCard';
   document.addEventListener('keydown', (e) => {
@@ -702,6 +580,7 @@ renderMoodGrid();
       e.preventDefault();
       let next = active.nextElementSibling;
       if (!next) {
+        // wrap to first
         next = active.parentElement.querySelector(cardsSelector);
       }
       next.focus();
@@ -709,6 +588,7 @@ renderMoodGrid();
       e.preventDefault();
       let prev = active.previousElementSibling;
       if (!prev) {
+        // wrap to last
         const list = active.parentElement.querySelectorAll(cardsSelector);
         prev = list[list.length - 1];
       }
@@ -717,6 +597,5 @@ renderMoodGrid();
   });
 })();
 </script>
-
 </body>
 </html>
