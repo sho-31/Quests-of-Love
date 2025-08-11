@@ -106,58 +106,77 @@
     margin-bottom: 12px;
   }
 
-  /* buttons */
-  #sendJournalBtn {
-    background: linear-gradient(45deg, #ff99cc, #ff66b2);
-    border: none;
-    padding: 12px 26px;
-    border-radius: 30px;
-    color: white;
-    font-weight: bold;
-    font-size: 1rem;
+  /* ADDED: intensity slider + attachment area styles */
+  .entryControls {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .intensityWrap {
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex: 1 1 240px;
+  }
+  .intensityLabel {
+    font-weight: 700;
+    min-width: 70px;
+    text-align:left;
+  }
+  .intensityVal {
+    min-width: 38px;
+    font-weight: 800;
+    color: var(--accent);
+    text-align: right;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg,#ff99cc,#ff66b2);
+    outline: none;
+    flex:1;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border: 3px solid var(--accent);
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.36);
-    transition: transform 0.25s, box-shadow 0.25s;
   }
-  #sendJournalBtn:hover:not(:disabled) {
-    transform: scale(1.08) rotate(-2deg);
-    box-shadow: 0 6px 22px rgba(255, 20, 147, 0.45);
+  .attachWrap {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:flex-end;
+    flex: 0 0 auto;
   }
-  #sendJournalBtn:disabled {
-    opacity: 0.6;
-    cursor: default;
-    transform: none !important;
-    box-shadow: 0 4px 10px rgba(255, 105, 180, 0.12);
-  }
-
-  #backBtn {
-    margin-top: 20px;
-    background: linear-gradient(45deg, #ffb6c1, #ff69b4);
-    border: none;
-    padding: 10px 18px;
-    border-radius: 26px;
-    color: white;
-    font-weight: bold;
-    font-size: 0.98rem;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
-    transition: transform 0.25s;
-  }
-
-  #comfortMessage {
-    margin-top: 14px;
-    font-size: 1.05rem;
-    font-weight: 600;
+  .attachBtn {
+    background: linear-gradient(45deg,#ffe6f0,#ffd1e8);
+    border: 1px dashed #ff85b2;
+    padding: 8px 12px;
+    border-radius: 14px;
     color: var(--text);
-    min-height: 48px;
-    opacity: 0;
-    transition: opacity 300ms, transform 300ms;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.95rem;
   }
-  #comfortMessage.show {
-    opacity: 1;
-    transform: translateY(0);
+  .attachmentName {
+    font-size: 0.9rem;
+    color: #7a7a7a;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-
   /* small screens tweaks */
   @media (max-width: 420px) {
     #sendJournalBtn, #backBtn {
@@ -183,6 +202,23 @@
 
 <section id="journalContainer" aria-live="polite" aria-label="Mood journal entry">
   <textarea id="journalText" placeholder="Write your feelings here, Divi..."></textarea>
+
+  <!-- ADDED: intensity slider + attachment controls -->
+  <div class="entryControls">
+    <div class="intensityWrap" aria-hidden="false">
+      <div class="intensityLabel">Intensity</div>
+      <input id="intensityRange" type="range" min="0" max="10" step="1" value="5" aria-label="Mood intensity slider">
+      <div id="intensityValue" class="intensityVal" aria-live="polite">5</div>
+    </div>
+
+    <div class="attachWrap">
+      <button id="attachBtn" class="attachBtn" type="button">Attach photo / voice</button>
+      <div id="attachmentName" class="attachmentName" aria-live="polite"></div>
+      <!-- hidden file input -->
+      <input id="attachmentInput" type="file" accept="image/*,audio/*" style="display:none;" />
+    </div>
+  </div>
+
   <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
     <button id="sendJournalBtn">Send to Shourya 💌</button>
     <button id="backBtn" style="display:none;">← Back to moods</button>
@@ -232,8 +268,16 @@ const sendBtn = document.getElementById('sendJournalBtn');
 const backBtn = document.getElementById('backBtn');
 const comfortMessage = document.getElementById('comfortMessage');
 
+// ADDED refs
+const intensityRange = document.getElementById('intensityRange'); // ADDED
+const intensityValue = document.getElementById('intensityValue'); // ADDED
+const attachBtn = document.getElementById('attachBtn'); // ADDED
+const attachmentInput = document.getElementById('attachmentInput'); // ADDED
+const attachmentName = document.getElementById('attachmentName'); // ADDED
+
 let selectedCardEl = null;
 let selectedMoodKey = null;
+let attachmentFile = null; // ADDED: stores currently selected file
 
 /* ---------- Render mood cards dynamically ---------- */
 function renderMoodGrid() {
@@ -289,6 +333,13 @@ function openJournalForCard(cardEl) {
   comfortMessage.classList.remove('show');
   comfortMessage.textContent = '';
   journalText.value = '';
+  // reset intensity and attachment on open
+  if (intensityRange) {
+    intensityRange.value = 5;
+    intensityValue.textContent = '5';
+  }
+  attachmentFile = null;
+  if (attachmentName) attachmentName.textContent = '';
   journalText.focus();
 }
 
@@ -300,6 +351,13 @@ function closeJournal() {
   comfortMessage.classList.remove('show');
   comfortMessage.textContent = '';
   journalText.value = '';
+  // reset attachments and intensity
+  if (intensityRange) {
+    intensityRange.value = 5;
+    intensityValue.textContent = '5';
+  }
+  attachmentFile = null;
+  if (attachmentName) attachmentName.textContent = '';
 }
 
 /* ---------- Event delegation for grid (click + keyboard) ---------- */
@@ -330,6 +388,42 @@ journalText.addEventListener('keydown', (e) => {
   }
 });
 
+/* ---------- Intensity UI binding (ADDED) ---------- */
+if (intensityRange && intensityValue) {
+  intensityRange.addEventListener('input', () => {
+    intensityValue.textContent = intensityRange.value;
+  });
+}
+
+/* ---------- Attachment UI (ADDED) ---------- */
+if (attachBtn && attachmentInput && attachmentName) {
+  attachBtn.addEventListener('click', () => {
+    attachmentInput.click();
+  });
+
+  attachmentInput.addEventListener('change', () => {
+    const f = attachmentInput.files && attachmentInput.files[0];
+    if (!f) {
+      attachmentFile = null;
+      attachmentName.textContent = '';
+      return;
+    }
+    attachmentFile = f;
+    attachmentName.textContent = f.name;
+  });
+}
+
+/* ---------- helper: read file as DataURL (ADDED) ---------- */
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve(null);
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 /* ---------- Send flow (FIXED: include many placeholder names so template gets the mood) ---------- */
 sendBtn.addEventListener('click', async () => {
   const text = journalText.value.trim();
@@ -351,8 +445,24 @@ sendBtn.addEventListener('click', async () => {
   // find mood object
   const mood = moods.find(m => m.key === selectedMoodKey) || {};
 
-  // ---- FIX: include multiple commonly-used placeholder names so the template always receives the label ----
+  // read attachment if present (ADDED)
+  let attachmentDataUrl = '';
+  let attachmentFilename = '';
+  if (attachmentFile) {
+    try {
+      attachmentDataUrl = await readFileAsDataURL(attachmentFile);
+      attachmentFilename = attachmentFile.name || '';
+    } catch (err) {
+      console.warn('Attachment read failed', err);
+      // proceed without attachment
+      attachmentDataUrl = '';
+      attachmentFilename = '';
+    }
+  }
+
+  // ---- FIX: include multiple commonly-used placeholder names so the template always receives the value ----
   const label = (mood.label || selectedMoodKey || '').toString();
+  const intensity = (intensityRange && intensityRange.value) ? intensityRange.value.toString() : '5'; // ADDED: include intensity
   const templateParams = {
     // common names (so any template using any of these will receive the value)
     mood: label,
@@ -365,7 +475,13 @@ sendBtn.addEventListener('click', async () => {
     mood_emoji: mood.emoji || '',
     mood_color: mood.color || '#ff99cc',
     mood_message: text,
-    timestamp: new Date().toLocaleString()
+    timestamp: new Date().toLocaleString(),
+
+    // ADDED: intensity + attachment fields
+    mood_intensity: intensity,
+    mood_intensity_label: `${intensity}/10`,
+    mood_attachment_name: attachmentFilename,
+    mood_attachment_data: attachmentDataUrl // base64 data URL (if present)
   };
   // small debug (console only)
   console.log('Sending templateParams:', templateParams);
@@ -381,9 +497,10 @@ sendBtn.addEventListener('click', async () => {
     comfortMessage.textContent = shortAffirm;
     comfortMessage.classList.add('show');
 
-    // clear text input
+    // clear text input and attachment
     journalText.value = '';
-
+    attachmentFile = null;
+    if (attachmentName) attachmentName.textContent = '';
     // optionally keep journal open so Divi sees feedback; you can auto-close if you want:
     // setTimeout(closeJournal, 1400);
   } catch (err) {
