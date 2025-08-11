@@ -106,6 +106,57 @@
     margin-bottom: 12px;
   }
 
+#sendJournalBtn {
+  display: inline-block;
+  background: linear-gradient(45deg, #ff99cc, #ff66b2);
+  border: none;
+  padding: 12px 22px;
+  border-radius: 28px;
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(255, 105, 180, 0.32);
+  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms;
+  vertical-align: middle;
+}
+
+#sendJournalBtn:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 30px rgba(255, 105, 180, 0.42);
+}
+
+#sendJournalBtn:disabled {
+  opacity: 0.7;
+  cursor: default;
+  transform: none !important;
+  box-shadow: 0 4px 10px rgba(255, 105, 180, 0.12);
+}
+
+/* Back button: softer outline style to contrast the primary pink button */
+#backBtn {
+  display: inline-block;
+  margin-top: 20px;
+  background: transparent;
+  border: 2px solid rgba(255,105,180,0.18);
+  padding: 10px 18px;
+  border-radius: 22px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.98rem;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  vertical-align: middle;
+}
+
+#backBtn:hover {
+  background: rgba(255,182,193,0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(255, 105, 180, 0.12);
+}
+
+
   /* ADDED: intensity slider + attachment area styles */
   .entryControls {
     width: 100%;
