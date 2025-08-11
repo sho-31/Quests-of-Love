@@ -151,10 +151,21 @@
   const poemDiv = document.getElementById('poem');
 
   const randomWords = {
-    adj: ["sparkling","glowing","gentle","soft","radiant","blushing","whispering","velvet"],
-    place: ["moonlit garden","quiet beach","bedroom","cozy café","starlit meadow","rooftop at midnight","hidden porch"],
-    noun: ["rose","letter","kiss","memory","cuddles","butterfly","lantern"]
-  };
+  adj: [
+    "sparkling","glowing","gentle","soft","radiant","blushing","whispering","velvet",
+    "luminous","tender","wistful","hushed","amber","dewy","faint"
+  ],
+  place: [
+    "moonlit garden","quiet beach","bedroom","cozy café","starlit meadow","rooftop at midnight","hidden porch",
+    "balcony at dusk","secluded pier","rainy veranda","train window","laneway of lanterns","candlelit kitchen","winter greenhouse"
+  ],
+  noun: [
+    "caress","embrace","fingertips","warm palm","handhold","gentle squeeze","nuzzle","forehead press",
+    "brush of lips","lingering touch","tucked hand","thumb trace","hair tuck","shoulder rest","waist hold",
+    "soft kiss","handprint","kiss","cuddles","light brush","wrist graze","cheek press","slow hug"
+  ]
+};
+
 
   randomBtn.addEventListener('click', () => {
     adjInput.value = pickRandom(randomWords.adj);
