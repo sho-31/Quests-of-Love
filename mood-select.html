@@ -595,6 +595,7 @@ async function readFileAsDataURL(file) {
 }
 
 /* ---------- Send flow (FIXED: include many placeholder names so template gets the mood) ---------- */
+/* ---------- Send flow (FIXED: include many placeholder names so template gets the mood) ---------- */
 sendBtn.addEventListener('click', async () => {
   const text = journalText.value.trim();
 
@@ -615,18 +616,18 @@ sendBtn.addEventListener('click', async () => {
   // find mood object
   const mood = moods.find(m => m.key === selectedMoodKey) || {};
 
-  // read attachment if present (IMPROVED)
+  // read/process attachment if present
   let attachmentDataUrl = '';
   let attachmentFilename = '';
   if (attachmentFile) {
     try {
-      // attempt to produce a (possibly compressed) data URL for images
+      // uses your readFileAsDataURL helper (returns a data URL or null)
       const processed = await readFileAsDataURL(attachmentFile);
       if (processed) {
-        attachmentDataUrl = processed;
+        attachmentDataUrl = processed;            // full data URL (e.g. data:image/jpeg;base64,...)
         attachmentFilename = attachmentFile.name || '';
       } else {
-        // processed is null — don't send raw data; only send filename
+        // couldn't embed (too large or unsupported) — still send filename so you know one was chosen
         attachmentDataUrl = '';
         attachmentFilename = attachmentFile.name || '';
       }
@@ -637,49 +638,47 @@ sendBtn.addEventListener('click', async () => {
     }
   }
 
-  // ---- include multiple commonly-used placeholder names so the template always receives the value ----
+  // prepare template params (keep the names your EmailJS template expects)
   const label = (mood.label || selectedMoodKey || '').toString();
-  const intensity = (intensityRange && intensityRange.value) ? intensityRange.value.toString() : '5'; // include intensity
+  const intensity = (intensityRange && intensityRange.value) ? intensityRange.value.toString() : '5';
   const templateParams = {
-    // common names (so any template using any of these will receive the value)
     mood: label,
     mood_tag: label,
     mood_label: label,
     mood_name: label,
     mood_key: mood.key || selectedMoodKey,
 
-    // emoji + color + message + timestamp
     mood_emoji: mood.emoji || '',
     mood_color: mood.color || '#ff99cc',
     mood_message: text,
     timestamp: new Date().toLocaleString(),
 
-    // intensity + attachment fields
     mood_intensity: intensity,
     mood_intensity_label: `${intensity}/10`,
     mood_attachment_name: attachmentFilename,
-    mood_attachment_data: attachmentDataUrl // may be '' if not available or too large
+    // send the data URL (or empty string)
+    mood_attachment_data: attachmentDataUrl
   };
-  // small debug (console only)
+
   console.log('Sending templateParams:', templateParams);
 
+  // UI: disable while sending
   sendBtn.disabled = true;
   sendBtn.textContent = "Sending...";
 
   try {
-    await emailjs.send(service_505fcho, template_cqov8px, templateParams);
+    // IMPORTANT: use your EMAILJS constants (not bare identifiers)
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
 
-    // show comfort message (use the mapped short affirmation if available)
+    // success feedback
     const shortAffirm = mood.message || "Thank you for sharing, love 💖";
     comfortMessage.textContent = shortAffirm;
     comfortMessage.classList.add('show');
 
-    // clear text input and attachment
+    // clear the entry and attachment display
     journalText.value = '';
     attachmentFile = null;
     if (attachmentName) attachmentName.textContent = '';
-    // optionally keep journal open so Divi sees feedback; you can auto-close if you want:
-    // setTimeout(closeJournal, 1400);
   } catch (err) {
     console.error('EmailJS send failed', err);
     alert("Oops — something went wrong while sending. Try again.");
