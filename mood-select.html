@@ -566,6 +566,26 @@ async function uploadTo0x0st(file) {
 }
 
 /* ---------- Send flow (final, robust) ---------- */
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const mood = document.getElementById("moodInput").value; // your textarea
+  const intensity = document.getElementById("intensityInput").value; // your slider/select
+
+  emailjs.send("service_505fcho", "template_cqov8px", {
+    mood: mood,
+    intensity: intensity
+  })
+  .then(function () {
+    alert("Mood sent successfully!");
+    form.reset();
+  })
+  .catch(function (error) {
+    alert("Oops — something went wrong while sending. Try again.");
+    console.error(error);
+  });
+});
+
 sendBtn.addEventListener('click', async () => {
   const text = journalText.value.trim();
 
@@ -649,7 +669,7 @@ sendBtn.addEventListener('click', async () => {
   sendBtn.textContent = "Sending...";
 
   try {
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    await emailjs.send(service_505fcho, template_cqov8px, templateParams);
 
     const shortAffirm = mood.message || "Thank you for sharing, love 💖";
     comfortMessage.textContent = shortAffirm;
