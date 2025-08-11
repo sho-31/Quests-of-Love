@@ -250,21 +250,21 @@
 
     // build prompt (kept focused + concise)
     const prompt = `
-Inputs: ADJECTIVE = "{adj}", PLACE = "{place}", NOUN = "{noun}"
+ADJECTIVE: ${adj}
+PLACE: ${place}
+NOUN: ${noun}
 
-Write a short, poetic, romantic scene addressed directly to Divanshi as "you". The scene must use the provided PLACE exactly as the setting (do NOT describe any other place or unrelated setting). Use the ADJECTIVE and NOUN naturally in the prose. Substitute the inputs before sending; do NOT output the literal placeholders or curly braces.
+Write a short, poetic, romantic scene addressed directly to Divanshi as "you". The scene must use the provided PLACE exactly as the setting (do NOT describe any other place or unrelated setting). Use the ADJECTIVE and NOUN naturally in the prose — you must explicitly include them in the text exactly as given. Do not change, paraphrase, or replace these words.
 
 MANDATORY RULES:
 - The very first sentence MUST begin exactly with: "You and Shourya".
-- Any sentence beginning with "You and ..." must refer only to Shourya (e.g., "You and Shourya") — never use a place, object, or anything else as the co-subject (e.g., avoid "You and the garden...").
+- Any sentence beginning with "You and ..." must refer only to Shourya (e.g., "You and Shourya").
 - NEVER use first-person pronouns or possessives: do NOT use "I", "me", "my", "mine", "we", "our", "us", or contractions equivalent to these.
 - Address Divanshi only in second person ("you", "your").
 - Refer to Shourya by name at most twice; after the second occurrence, use only "he" or "his".
-- Focus the scene on the relationship and togetherness of you two; when describing shared qualities or moments, use inclusive phrasing like "you two" or "your togetherness".
+- Focus the scene on the relationship and togetherness of you two.
 - Do NOT include any signature, credit line, headings, or metadata.
-- Do NOT output any placeholders, curly braces, or literal token names.
-- Refer to the words filled in blanks only and make the scene.
-- Do not refer to gardens every time.
+- Refer only to the words filled in the blanks above.
 
 STYLE & FORMAT:
 - Tone: tender, dreamy, poetic, human.
@@ -274,6 +274,7 @@ STYLE & FORMAT:
 
 OUTPUT:
 Return ONLY the scene text (plain narrative) that strictly follows these rules.
+
 `.trim();
 
     // call puter.ai.chat robustly
