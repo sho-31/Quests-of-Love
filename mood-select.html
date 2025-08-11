@@ -275,9 +275,6 @@
   </div>
 </div>
 
-
-
-
   <div id="comfortMessage" role="status" aria-live="polite"></div>
 </section>
 
@@ -468,15 +465,133 @@ if (attachBtn && attachmentInput && attachmentName) {
   });
 }
 
-/* ---------- helper: read file as DataURL (ADDED) ---------- */
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    if (!file) return resolve(null);
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+/* ---------- helper: read file as DataURL (IMPROVED) ----------
+   - If image: resizes & compresses (canvas) to keep payload small.
+   - If audio/other: reads but will not include huge data URIs (we only pass filename).
+   - If compression can't reduce below threshold, warns the user and returns null.
+*/
+async function readFileAsDataURL(file) {
+  if (!file) return null;
+
+  // limit for embedded DataURL: ~700 KB (approx). EmailJS/templates often choke on huge strings.
+  const MAX_EMBED_BYTES = 700 * 1024; // 700 KB
+
+  // helper: read raw dataURL
+  function rawReadAsDataURL(f) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(f);
+    });
+  }
+
+  // If it's an image, try to downscale & compress
+  if (file.type && file.type.startsWith('image/')) {
+    try {
+      const origDataUrl = await rawReadAsDataURL(file);
+      // create image
+      const img = await new Promise((res, rej) => {
+        const i = new Image();
+        i.onload = () => res(i);
+        i.onerror = rej;
+        i.src = origDataUrl;
+      });
+
+      // determine target size (keep aspect ratio)
+      const MAX_WIDTH = 1024; // px
+      const scale = Math.min(1, MAX_WIDTH / Math.max(img.width, img.height));
+      const targetW = Math.round(img.width * scale);
+      const targetH = Math.round(img.height * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      // draw with subtle smoothing
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, targetW, targetH);
+
+      // attempt to compress gradually until under MAX_EMBED_BYTES or quality floor hit
+      let quality = 0.85;
+      let dataUrl = canvas.toDataURL('image/jpeg', quality);
+      // if already small enough, return
+      function dataUrlSizeBytes(durl) {
+        // remove prefix "data:*/*;base64," then compute length
+        const base64 = durl.split(',')[1] || '';
+        return Math.ceil((base64.length * 3) / 4);
+      }
+
+      let size = dataUrlSizeBytes(dataUrl);
+      // reduce quality in steps if needed
+      while (size > MAX_EMBED_BYTES && quality > 0.35) {
+        quality -= 0.12; // reduce
+        dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.35, quality));
+        size = dataUrlSizeBytes(dataUrl);
+      }
+
+      // if still too large, try smaller dimensions
+      if (size > MAX_EMBED_BYTES) {
+        // progressively reduce to 640px width
+        const SMALL_MAX = 640;
+        let scale2 = Math.min(1, SMALL_MAX / Math.max(img.width, img.height));
+        const tw = Math.round(img.width * scale2);
+        const th = Math.round(img.height * scale2);
+        canvas.width = tw;
+        canvas.height = th;
+        ctx.drawImage(img, 0, 0, tw, th);
+        quality = 0.7;
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+        size = dataUrlSizeBytes(dataUrl);
+        while (size > MAX_EMBED_BYTES && quality > 0.4) {
+          quality -= 0.1;
+          dataUrl = canvas.toDataURL('image/jpeg', Math.max(0.4, quality));
+          size = dataUrlSizeBytes(dataUrl);
+        }
+      }
+
+      if (size > MAX_EMBED_BYTES) {
+        // can't compress enough — advise user to pick a smaller photo
+        alert("That photo is too large to attach here. Please choose a smaller image (try taking a smaller screenshot or crop it).");
+        return null;
+      }
+
+      // success
+      return dataUrl;
+    } catch (err) {
+      console.warn('Image processing failed, falling back to raw read', err);
+      // fallback: raw data URL but check size
+      try {
+        const d = await rawReadAsDataURL(file);
+        const sizeBytes = Math.ceil(((d.split(',')[1] || '').length * 3) / 4);
+        if (sizeBytes > MAX_EMBED_BYTES) {
+          alert("That photo is too large to attach here. Please choose a smaller image.");
+          return null;
+        }
+        return d;
+      } catch (e) {
+        console.error('Fallback read failed', e);
+        return null;
+      }
+    }
+  }
+
+  // For audio/other types: read but warn if too large — we prefer sending filename only
+  if (file.size && file.size > MAX_EMBED_BYTES) {
+    // too large to embed safely
+    // don't attempt to embed audio — return null and we'll only send filename
+    alert("That file is large and cannot be embedded. The message will be sent without the actual file; only the filename will be included. (You can send large files via chat or cloud link.)");
+    return null;
+  }
+
+  // final fallback: small non-image file
+  try {
+    const smallData = await rawReadAsDataURL(file);
+    return smallData;
+  } catch (err) {
+    console.warn('rawReadAsDataURL failed', err);
+    return null;
+  }
 }
 
 /* ---------- Send flow (FIXED: include many placeholder names so template gets the mood) ---------- */
@@ -484,118 +599,4 @@ sendBtn.addEventListener('click', async () => {
   const text = journalText.value.trim();
 
   if (!selectedMoodKey) {
-    alert("Please pick a mood first, Divi 💖");
-    return;
-  }
-  if (!text) {
-    alert("Please write something before sending, Divi 💖");
-    journalText.focus();
-    return;
-  }
-  if (!navigator.onLine) {
-    alert("You're offline — connect to the internet and try again.");
-    return;
-  }
-
-  // find mood object
-  const mood = moods.find(m => m.key === selectedMoodKey) || {};
-
-  // read attachment if present (ADDED)
-  let attachmentDataUrl = '';
-  let attachmentFilename = '';
-  if (attachmentFile) {
-    try {
-      attachmentDataUrl = await readFileAsDataURL(attachmentFile);
-      attachmentFilename = attachmentFile.name || '';
-    } catch (err) {
-      console.warn('Attachment read failed', err);
-      // proceed without attachment
-      attachmentDataUrl = '';
-      attachmentFilename = '';
-    }
-  }
-
-  // ---- FIX: include multiple commonly-used placeholder names so the template always receives the value ----
-  const label = (mood.label || selectedMoodKey || '').toString();
-  const intensity = (intensityRange && intensityRange.value) ? intensityRange.value.toString() : '5'; // ADDED: include intensity
-  const templateParams = {
-    // common names (so any template using any of these will receive the value)
-    mood: label,
-    mood_tag: label,
-    mood_label: label,
-    mood_name: label,
-    mood_key: mood.key || selectedMoodKey,
-
-    // emoji + color + message + timestamp
-    mood_emoji: mood.emoji || '',
-    mood_color: mood.color || '#ff99cc',
-    mood_message: text,
-    timestamp: new Date().toLocaleString(),
-
-    // ADDED: intensity + attachment fields
-    mood_intensity: intensity,
-    mood_intensity_label: `${intensity}/10`,
-    mood_attachment_name: attachmentFilename,
-    mood_attachment_data: attachmentDataUrl // base64 data URL (if present)
-  };
-  // small debug (console only)
-  console.log('Sending templateParams:', templateParams);
-
-  sendBtn.disabled = true;
-  sendBtn.textContent = "Sending...";
-
-  try {
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-
-    // show comfort message (use the mapped short affirmation if available)
-    const shortAffirm = mood.message || "Thank you for sharing, love 💖";
-    comfortMessage.textContent = shortAffirm;
-    comfortMessage.classList.add('show');
-
-    // clear text input and attachment
-    journalText.value = '';
-    attachmentFile = null;
-    if (attachmentName) attachmentName.textContent = '';
-    // optionally keep journal open so Divi sees feedback; you can auto-close if you want:
-    // setTimeout(closeJournal, 1400);
-  } catch (err) {
-    console.error('EmailJS send failed', err);
-    alert("Oops — something went wrong while sending. Try again.");
-  } finally {
-    sendBtn.disabled = false;
-    sendBtn.textContent = "Send to Shourya 💌";
-  }
-});
-
-/* ---------- Initialize ---------- */
-renderMoodGrid();
-
-/* Accessibility improvement: allow arrow navigation among mood cards */
-(function enableArrowNav() {
-  const cardsSelector = '.moodCard';
-  document.addEventListener('keydown', (e) => {
-    const active = document.activeElement;
-    if (!active || !active.matches(cardsSelector)) return;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      e.preventDefault();
-      let next = active.nextElementSibling;
-      if (!next) {
-        // wrap to first
-        next = active.parentElement.querySelector(cardsSelector);
-      }
-      next.focus();
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      let prev = active.previousElementSibling;
-      if (!prev) {
-        // wrap to last
-        const list = active.parentElement.querySelectorAll(cardsSelector);
-        prev = list[list.length - 1];
-      }
-      prev.focus();
-    }
-  });
-})();
-</script>
-</body>
-</html>
+    aler
