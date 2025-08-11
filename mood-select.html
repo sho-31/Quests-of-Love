@@ -263,11 +263,6 @@
     </div>
 
 <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
-  <div class="attachWrap" style="width:100%; display:flex; justify-content:center;">
-    <button id="attachBtn" class="attachBtn" type="button">Attach photo / voice</button>
-    <div id="attachmentName" class="attachmentName" aria-live="polite"></div>
-    <input id="attachmentInput" type="file" accept="image/*,audio/*" style="display:none;" />
-  </div>
 
   <div style="display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap;">
     <button id="sendJournalBtn">Send to Shourya 💌</button>
@@ -544,8 +539,28 @@ sendBtn.addEventListener('click', async () => {
   sendBtn.disabled = true;
   sendBtn.textContent = "Sending...";
 
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const mood = document.getElementById("moodInput").value; // your textarea
+  const intensity = document.getElementById("intensityInput").value; // your slider/select
+
+  emailjs.send("service_505fcho", "template_cqov8px", {
+    mood: mood,
+    intensity: intensity
+  })
+  .then(function () {
+    alert("Mood sent successfully!");
+    form.reset();
+  })
+  .catch(function (error) {
+    alert("Oops — something went wrong while sending. Try again.");
+    console.error(error);
+  });
+});
+
   try {
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+    await emailjs.send(service_505fcho, template_cqov8px, templateParams);
 
     // show comfort message (use the mapped short affirmation if available)
     const shortAffirm = mood.message || "Thank you for sharing, love 💖";
