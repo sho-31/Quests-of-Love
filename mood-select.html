@@ -599,4 +599,125 @@ sendBtn.addEventListener('click', async () => {
   const text = journalText.value.trim();
 
   if (!selectedMoodKey) {
-    aler
+    alert("Please pick a mood first, Divi 💖");
+    return;
+  }
+  if (!text) {
+    alert("Please write something before sending, Divi 💖");
+    journalText.focus();
+    return;
+  }
+  if (!navigator.onLine) {
+    alert("You're offline — connect to the internet and try again.");
+    return;
+  }
+
+  // find mood object
+  const mood = moods.find(m => m.key === selectedMoodKey) || {};
+
+  // read attachment if present (IMPROVED)
+  let attachmentDataUrl = '';
+  let attachmentFilename = '';
+  if (attachmentFile) {
+    try {
+      // attempt to produce a (possibly compressed) data URL for images
+      const processed = await readFileAsDataURL(attachmentFile);
+      if (processed) {
+        attachmentDataUrl = processed;
+        attachmentFilename = attachmentFile.name || '';
+      } else {
+        // processed is null — don't send raw data; only send filename
+        attachmentDataUrl = '';
+        attachmentFilename = attachmentFile.name || '';
+      }
+    } catch (err) {
+      console.warn('Attachment processing failed', err);
+      attachmentDataUrl = '';
+      attachmentFilename = attachmentFile.name || '';
+    }
+  }
+
+  // ---- include multiple commonly-used placeholder names so the template always receives the value ----
+  const label = (mood.label || selectedMoodKey || '').toString();
+  const intensity = (intensityRange && intensityRange.value) ? intensityRange.value.toString() : '5'; // include intensity
+  const templateParams = {
+    // common names (so any template using any of these will receive the value)
+    mood: label,
+    mood_tag: label,
+    mood_label: label,
+    mood_name: label,
+    mood_key: mood.key || selectedMoodKey,
+
+    // emoji + color + message + timestamp
+    mood_emoji: mood.emoji || '',
+    mood_color: mood.color || '#ff99cc',
+    mood_message: text,
+    timestamp: new Date().toLocaleString(),
+
+    // intensity + attachment fields
+    mood_intensity: intensity,
+    mood_intensity_label: `${intensity}/10`,
+    mood_attachment_name: attachmentFilename,
+    mood_attachment_data: attachmentDataUrl // may be '' if not available or too large
+  };
+  // small debug (console only)
+  console.log('Sending templateParams:', templateParams);
+
+  sendBtn.disabled = true;
+  sendBtn.textContent = "Sending...";
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
+    // show comfort message (use the mapped short affirmation if available)
+    const shortAffirm = mood.message || "Thank you for sharing, love 💖";
+    comfortMessage.textContent = shortAffirm;
+    comfortMessage.classList.add('show');
+
+    // clear text input and attachment
+    journalText.value = '';
+    attachmentFile = null;
+    if (attachmentName) attachmentName.textContent = '';
+    // optionally keep journal open so Divi sees feedback; you can auto-close if you want:
+    // setTimeout(closeJournal, 1400);
+  } catch (err) {
+    console.error('EmailJS send failed', err);
+    alert("Oops — something went wrong while sending. Try again.");
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.textContent = "Send to Shourya 💌";
+  }
+});
+
+/* ---------- Initialize ---------- */
+renderMoodGrid();
+
+/* Accessibility improvement: allow arrow navigation among mood cards */
+(function enableArrowNav() {
+  const cardsSelector = '.moodCard';
+  document.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+    if (!active || !active.matches(cardsSelector)) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      let next = active.nextElementSibling;
+      if (!next) {
+        // wrap to first
+        next = active.parentElement.querySelector(cardsSelector);
+      }
+      next.focus();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      let prev = active.previousElementSibling;
+      if (!prev) {
+        // wrap to last
+        const list = active.parentElement.querySelectorAll(cardsSelector);
+        prev = list[list.length - 1];
+      }
+      prev.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
