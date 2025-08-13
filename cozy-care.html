@@ -1,189 +1,149 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>🐾 Cozy Care — Night Window</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>🐾 Cozy Care — Night Window</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<!-- Tailwind (for utility classes) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --indigo-1: #07061a;
-      --indigo-2: #0d1b3a;
-      --accentA: #ff78b2;
-      --accentB: #ff57a0;
-      --muted: #9a4a7a;
-    }
+<style>
+  :root{
+    --bg-deep-1: #02061a;
+    --bg-deep-2: #07102a;
+    --accentA: #ff78b2;
+    --accentB: #ff57a0;
+    --muted: #9a4a7a;
+    --glass: rgba(255,255,255,0.03);
+  }
 
-    html,body{height:100%; margin:0;}
-    body{
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      background: linear-gradient(180deg, #0f1020 0%, #111422 30%, #0b1228 100%);
-      color: #eee7f2;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      display:flex; justify-content:center; padding:20px;
-      box-sizing:border-box;
-    }
+  html,body { height:100%; margin:0; }
+  body{
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: radial-gradient(circle at 10% 10%, rgba(20,30,60,0.25), transparent 10%),
+                radial-gradient(circle at 85% 85%, rgba(10,20,40,0.18), transparent 10%),
+                linear-gradient(180deg, var(--bg-deep-1) 0%, var(--bg-deep-2) 50%, #02041a 100%);
+    color: #f6eef8;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex; justify-content:center; padding:20px;
+    box-sizing:border-box;
+  }
 
-    .container {
-      width:100%;
-      max-width:1100px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:18px;
-    }
-    @media(min-width:940px){
-      .container { grid-template-columns:360px 1fr; }
-    }
+  /* container: left controls + right window */
+  .container { width:100%; max-width:1100px; display:grid; gap:18px; grid-template-columns: 1fr; }
+  @media(min-width:940px){ .container { grid-template-columns: 360px 1fr; } }
 
-    /* left controls */
-    .panel {
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      border-radius: 16px;
-      padding:14px;
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    }
-    h1.title {
-      font-family: 'Pacifico', cursive;
-      font-size:1.55rem;
-      margin:0;
-      color:#ffdff0;
-      text-align:center;
-      text-shadow: 0 6px 28px rgba(255,100,175,0.08);
-    }
-    .muted { color: var(--muted); }
+  /* panel (glass card) */
+  .panel {
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border-radius: 14px;
+    padding:16px;
+    border: 1px solid var(--glass);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
 
-    /* book */
-    .book {
-      width:140px; height:94px; margin:auto; position:relative; perspective:1000px;
-      cursor:pointer;
-    }
-    .book-shell {
-      width:100%; height:100%; border-radius:9px; position:relative;
-      transform-origin: left center;
-      transition: transform 520ms cubic-bezier(.2,.9,.2,1);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-      background: linear-gradient(180deg,#ffecf6,#ffdfee);
-      border:1px solid rgba(255,255,255,0.06);
-    }
-    .book.open .book-shell { transform: rotateY(-18deg) translateX(-6px) scale(1.02); }
+  h1.title {
+    font-family:'Pacifico', cursive;
+    color: #ffdff6;
+    font-size: clamp(1.3rem, 3.6vw, 1.9rem);
+    margin:0;
+    text-align:center;
+    text-shadow: 0 8px 40px rgba(255,90,160,0.06);
+  }
+  .muted { color: var(--muted); }
 
-    .book .label { position:absolute; right:10px; top:30px; font-weight:700; color:#2b1422; font-size:0.9rem; }
+  /* Book / flipbook styles (kept but no Spotify page) */
+  .book { width:140px; height:92px; margin:auto; perspective:1000px; cursor:pointer; }
+  .book-shell {
+    width:100%; height:100%; border-radius:10px; transform-origin:left center;
+    transition: transform 520ms cubic-bezier(.2,.9,.2,1);
+    background: linear-gradient(180deg,#ffeaf4,#ffdbe9);
+    box-shadow: 0 12px 34px rgba(0,0,0,0.5);
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  .book.open .book-shell{ transform: rotateY(-18deg) translateX(-6px) scale(1.02); }
+  .book .label{ position:absolute; right:12px; top:34px; font-weight:700; color:#2b1422; }
 
-    /* flipbook pages */
-    .flipbook {
-      width:300px; height:220px; margin:auto; position:relative; perspective:1200px;
-    }
-    .page {
-      position:absolute; inset:0; border-radius:12px; padding:12px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      color:#ffeef7;
-      transition: transform 600ms cubic-bezier(.2,.9,.2,1), opacity 320ms;
-      box-shadow: inset 0 -8px 30px rgba(0,0,0,0.6);
-      display:flex; flex-direction:column; gap:8px;
-      backface-visibility: hidden;
-    }
-    .page.p1 { z-index:40; transform-origin:left center; }
-    .page.p2 { z-index:30; left:6px; top:6px; width:calc(100% - 6px); transform-origin:left center; }
-    .page.p3 { z-index:20; left:12px; top:12px; width:calc(100% - 12px); transform-origin:left center; }
+  .flipbook{ width:300px; max-width:100%; height:210px; margin:auto; position:relative; perspective:1200px; }
+  .page{
+    position:absolute; inset:0; border-radius:10px; padding:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: inset 0 -8px 30px rgba(0,0,0,0.6);
+    transition: transform 600ms cubic-bezier(.2,.9,.2,1), opacity 320ms;
+    display:flex; flex-direction:column; gap:8px;
+    backface-visibility: hidden;
+    color:#ffeef8;
+  }
+  .page.flipped{ transform: rotateY(-160deg) translateX(-60px); opacity:0; }
+  .page.p1{ z-index:40; }
+  .page.p2{ z-index:30; left:6px; top:6px; width:calc(100% - 6px); }
+  .page.p3{ z-index:20; left:12px; top:12px; width:calc(100% - 12px); }
 
-    .page.flipped { transform: rotateY(-160deg) translateX(-60px); opacity:0; }
+  /* Window / sky */
+  .window{ border-radius:12px; padding:14px; overflow:visible; }
+  .sky{
+    position:relative; width:100%; min-height:380px; border-radius:10px;
+    background: radial-gradient(circle at 40% 20%, #0b2340 0%, #07112a 30%, #020318 100%);
+    overflow:hidden; display:flex; align-items:center; justify-content:center;
+  }
 
-    /* main window / sky */
-    .window {
-      border-radius:16px;
-      padding:18px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.03);
-      box-shadow: 0 18px 48px rgba(0,0,0,0.6);
-      overflow:visible;
-    }
+  /* many small stars: css twinkle */
+  .star{ position:absolute; width:3px; height:3px; border-radius:50%; background:white; filter: drop-shadow(0 0 6px rgba(255,255,255,0.7)); animation: twinkle linear infinite; opacity:0.9; }
+  @keyframes twinkle {
+    0% { transform: scale(0.6); opacity: 0.15; }
+    50% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.6); opacity: 0.15; }
+  }
 
-    .sky {
-      position:relative;
-      width:100%;
-      min-height:360px;
-      border-radius:12px;
-      background: radial-gradient(circle at 60% 30%, #10203f 0%, #07102a 40%, #02061a 100%);
-      overflow:hidden;
-      display:flex; align-items:center; justify-content:center;
-    }
+  /* orbit nodes (planets) */
+  .orbit-wrap{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:520px; height:520px; pointer-events:none; }
+  .node{
+    position:absolute; width:58px; height:58px; border-radius:999px; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle at 35% 28%, #0d2743, #08162a);
+    color:#f9f2fb; font-weight:700; cursor:pointer; pointer-events:auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    transition: transform .36s cubic-bezier(.2,.9,.2,1), box-shadow .36s;
+  }
+  .node:hover{ transform: translateY(-6px) scale(1.06); box-shadow:0 28px 70px rgba(0,0,0,0.6); }
 
-    /* twinkling stars (CSS keyframes for smooth low-cost animation) */
-    .star {
-      position:absolute; width:3px; height:3px; border-radius:50%;
-      background: white; opacity:0.8;
-      filter: drop-shadow(0 0 6px rgba(255,255,255,0.65));
-      animation: twinkle linear infinite;
-    }
-    @keyframes twinkle {
-      0% { opacity: 0.15; transform: scale(0.7); }
-      50% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0.15; transform: scale(0.7); }
-    }
+  /* breathing circle */
+  .breath{ width:240px; height:240px; border-radius:999px; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.02), rgba(255,255,255,0.01) 20%, rgba(10,24,50,0.12) 100%);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 8px 18px rgba(255,255,255,0.02);
+    transition: transform 7000ms cubic-bezier(.2,.9,.2,1); will-change: transform; position:relative; overflow:visible;
+  }
+  .breath.small{ transform: scale(0.78); }
+  .breath.big{ transform: scale(1.18); }
+  .breath.contract{ transform: scale(0.78); transition-duration:4000ms; }
 
-    /* orbit + nodes */
-    .orbit-wrap{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:520px; height:520px; pointer-events:none; }
-    .node {
-      position:absolute;
-      width:56px; height:56px; border-radius:999px;
-      display:flex; align-items:center; justify-content:center;
-      background: linear-gradient(180deg,#081a3a, #12284d);
-      color:#fbeefb; font-weight:700; cursor:pointer; pointer-events:auto;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-      transition: transform .36s cubic-bezier(.2,.9,.2,1), box-shadow .36s;
-    }
-    .node:hover{ transform: translateY(-6px) scale(1.05); box-shadow: 0 20px 48px rgba(0,0,0,0.6); }
+  .paw-center{ width:120px; height:120px; pointer-events:none; display:block; }
+  .paw-center img{ width:100%; height:100%; object-fit:contain; filter: drop-shadow(0 14px 28px rgba(0,0,0,0.6)); }
 
-    /* breathing center */
-    .breath {
-      width:220px; height:220px; border-radius:999px;
-      display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.02), rgba(255,245,250,0.03) 30%, rgba(20,40,70,0.12) 100%);
-      box-shadow: 0 18px 48px rgba(10,10,30,0.6), inset 0 8px 18px rgba(255,255,255,0.02);
-      transition: transform 7000ms cubic-bezier(.2,.9,.2,1);
-      will-change: transform;
-      position:relative;
-      overflow:visible;
-    }
-    .breath.small { transform: scale(0.78); }
-    .breath.big { transform: scale(1.18); }
-    .breath.contract { transform: scale(0.78); transition-duration:4000ms; }
+  /* floating paw prints */
+  .float-paw{ position:absolute; font-size:18px; pointer-events:none; transform: translateY(0) scale(.9); opacity:1; }
 
-    .paw-center { width:110px; height:110px; pointer-events:none; display:block; }
-    .paw-center img { width:100%; height:100%; object-fit:contain; display:block; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
+  .affirm{ background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02); text-align:center; color:#ffdff7; font-weight:600; }
 
-    /* floating paw prints with smooth WA API fallback */
-    .float-paw { position:absolute; font-size:18px; pointer-events:none; transform: translateY(0) scale(.8); opacity:1; }
-
-    /* affirmation box */
-    .affirm { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); text-align:center; color:#ffdfeff; font-weight:600; }
-
-    @media (max-width:640px){
-      .orbit-wrap{ width:360px; height:360px; }
-      .breath{ width:170px; height:170px; }
-      .paw-center{ width:86px; height:86px; }
-      .page { font-size:0.95rem; }
-    }
-
-    /* subtle footer spacing */
-    footer{ height:20px; }
-  </style>
+  @media(max-width:640px){
+    .orbit-wrap{ width:380px; height:380px; }
+    .breath{ width:170px; height:170px; }
+    .paw-center{ width:88px; height:88px; }
+    .flipbook{ width:260px; height:190px; }
+  }
+</style>
 </head>
 <body>
 
   <div class="container">
 
-    <!-- left column -->
+    <!-- LEFT column (controls & book) -->
     <div class="flex flex-col gap-4">
       <div class="panel">
         <h1 class="title">🐾 Cozy Room</h1>
-        <p class="muted mt-2 text-sm">Tap the book, the stars, or the window to begin. Designed to be calm and low-CPU.</p>
+        <p class="muted mt-2 text-sm">Tap the dreambook or a planet in the sky. The breathing circle sits in the center — try it.</p>
       </div>
 
       <div class="panel">
@@ -196,67 +156,56 @@
         <div class="mt-4 flipbook" id="flipbook">
           <div class="page p3" id="page3">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div style="font-weight:700">Surprise</div>
-              <div style="font-size:0.9rem" class="muted">Peek</div>
+              <div style="font-weight:700">Surprise</div><div style="font-size:0.9rem" class="muted">Peek</div>
             </div>
-            <div style="flex:1; display:flex; align-items:center; justify-content:center; color:#d6c0d7;">
-              Little notes & tiny surprises ✨
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;color:#d6c0d7;">
+              Tiny surprises live here ✨
             </div>
           </div>
+
           <div class="page p2" id="page2">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div style="font-weight:700">Affirmations</div>
-              <div style="font-size:0.9rem" class="muted">Auto</div>
+              <div style="font-weight:700">Affirmations</div><div style="font-size:0.9rem" class="muted">Auto</div>
             </div>
-            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;">
               <div class="affirm" id="flipAff">You are loved and cherished 🌸</div>
             </div>
           </div>
-          <div class="page p1" id="page1">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div style="font-weight:700">Playlist</div>
-              <div style="font-size:0.9rem" class="muted">Play</div>
-            </div>
-            <div style="margin-top:8px;">
-              <iframe id="miniSpotify" style="width:100%; height:78px; border-radius:10px; border:none;" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-            </div>
-          </div>
-        </div>
 
+          <!-- Playlist page removed as requested (no spotify iframe) -->
+        </div>
       </div>
 
       <div class="panel">
         <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
-          <button class="px-4 py-2 rounded-full" style="background:linear-gradient(90deg,var(--accentA),var(--accentB)); color:white; font-weight:700; box-shadow:0 8px 28px rgba(255,90,150,0.12)" onclick="openPlaylist()">Open Playlist</button>
-          <div class="muted text-sm mt-2">Or tap a star to focus a feature.</div>
+          <!-- Spotify removed per your request -->
+          <div class="muted text-sm mt-2">Tip: tap a star (planet) to focus a feature.</div>
         </div>
       </div>
     </div>
 
-    <!-- right column: window + interactions -->
-    <div class="">
+    <!-- RIGHT column (window + sky) -->
+    <div>
       <div class="panel window">
         <div class="sky" id="sky">
-
-          <!-- orbit wrap for nodes -->
+          <!-- orbit wrapper -->
           <div class="orbit-wrap" id="orbitWrap"></div>
 
           <!-- breathing center -->
-          <div id="breath" class="breath small" aria-label="Breathing circle">
+          <div id="breath" class="breath small" aria-label="breathing circle">
             <div class="paw-center">
-              <img id="pawImg" src="paw.png" alt="paw" onerror="console.warn('paw.png missing — add file named paw.png next to cozy-care.html')">
+              <img id="pawImg" src="paw.png" alt="paw" onerror="console.warn('paw.png missing — add paw.png next to this HTML file')">
             </div>
           </div>
 
-          <!-- anim layer for stars and paw floats -->
-          <div id="animLayer" style="position:absolute; inset:0; pointer-events:none;"></div>
-
+          <!-- animation layer: stars + floaters -->
+          <div id="animLayer" style="position:absolute;inset:0;pointer-events:none;"></div>
         </div>
 
-        <!-- control buttons -->
+        <!-- control buttons under window -->
         <div class="flex gap-4 justify-center mt-4">
-          <button id="btnStart" class="px-5 py-2 rounded-full" style="background:linear-gradient(90deg,var(--accentA),var(--accentB)); color:white; font-weight:700; box-shadow:0 10px 30px rgba(255,90,150,0.12)">Start Breathing</button>
-          <button id="btnHow" class="px-4 py-2 rounded-full" style="background:transparent; border:1px solid rgba(255,255,255,0.06); color:#ffdfeff; font-weight:700">How to</button>
+          <button id="btnStart" class="px-5 py-2 rounded-full" style="background:linear-gradient(90deg,var(--accentA),var(--accentB)); color:white; font-weight:800; box-shadow:0 10px 30px rgba(255,90,150,0.12)">Start Breathing</button>
+          <button id="btnHow" class="px-4 py-2 rounded-full" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:#ffdff7;font-weight:700">How to</button>
         </div>
       </div>
 
@@ -264,87 +213,86 @@
         <h3 style="margin:0;font-weight:700;">💬 Gentle Affirmation</h3>
         <div style="margin-top:10px;">
           <div class="affirm" id="mainAff">Every breath you take brings peace 🌬</div>
-          <div class="muted text-sm mt-2" style="text-align:center;">(changes every 5 seconds)</div>
+          <div class="muted text-sm mt-2" style="text-align:center;">(automatically changes every 5 seconds)</div>
         </div>
       </div>
     </div>
 
   </div>
 
-  <footer></footer>
-
 <script>
-/* -------------------------
-  Utilities / fallback
-------------------------- */
-function openPlaylist(){
-  window.open('https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj', '_blank');
+/* =========================
+   Starfield (many stars, low-cost twinkle)
+   ========================= */
+const sky = document.getElementById('sky');
+const animLayer = document.getElementById('animLayer');
+
+function createStar(left, top, size, dur, delay) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.left = left + '%';
+  s.style.top = top + '%';
+  s.style.width = s.style.height = size + 'px';
+  s.style.animationDuration = dur + 'ms';
+  s.style.animationDelay = delay + 'ms';
+  animLayer.appendChild(s);
+  return s;
 }
 
-/* -------------------------
-  Create twinkling stars (CSS animation is used, JS positions them)
-------------------------- */
-const animLayer = document.getElementById('animLayer');
-const sky = document.getElementById('sky');
-function makeStars(count = 40){
-  const w = sky.clientWidth, h = sky.clientHeight;
-  for (let i=0;i<count;i++){
-    const s = document.createElement('div');
-    s.className = 'star';
-    // random position
-    const left = Math.random()*100;
-    const top = Math.random()*85;
-    s.style.left = left + '%';
-    s.style.top = top + '%';
-    // varied size & animation duration
-    const size = 1 + Math.random()*3;
-    s.style.width = s.style.height = size + 'px';
-    const dur = 1800 + Math.random()*2400;
-    s.style.animationDuration = dur + 'ms';
-    s.style.animationDelay = (Math.random()*1200) + 'ms';
-    animLayer.appendChild(s);
+// create many stars that fill the page and look natural
+function populateStars(count = 120) {
+  const w = sky.clientWidth || 800;
+  const h = sky.clientHeight || 420;
+  for (let i=0; i<count; i++) {
+    const left = Math.random() * 100;
+    const top = Math.random() * 86;
+    const size = 1 + Math.random() * 3.5;
+    const dur = 1500 + Math.random() * 3000;
+    const delay = Math.random() * 2000;
+    createStar(left, top, size, dur, delay);
   }
 }
-/* create stars once (responsive safe) */
-makeStars(48);
+populateStars(120);
 
-/* -------------------------
-  Orbit nodes creation + smooth RAF loop
-------------------------- */
+/* =========================
+   Orbiting nodes (planets)
+   ========================= */
 const orbitWrap = document.getElementById('orbitWrap');
+
+// nodes data
 const nodes = [
-  {id:'n-play', label:'Play', angle:-25, r:140},
-  {id:'n-breathe', label:'Breathe', angle:75, r:165},
-  {id:'n-affirm', label:'Affirm', angle:165, r:135},
-  {id:'n-surprise', label:'Surprise', angle:255, r:155}
+  {id:'n-breathe', label:'Breathe', angle: -10, r: 150},
+  {id:'n-affirm', label:'Affirm', angle: 70, r: 190},
+  {id:'n-surprise', label:'Surprise', angle: 160, r: 150},
+  {id:'n-note', label:'Notes', angle: 250, r: 180}
 ];
 
-nodes.forEach((n, idx) => {
+// build nodes DOM
+nodes.forEach(n => {
   const el = document.createElement('div');
   el.className = 'node';
   el.id = n.id;
   el.innerHTML = `<div class="label">${n.label}</div>`;
   orbitWrap.appendChild(el);
-  el.addEventListener('click', ()=> focusNode(n.id));
+  el.addEventListener('click', () => focusNode(n.id));
 });
 
+// orbit math loop (smooth)
 let orbitAngle = 0;
 let lastRAF = performance.now();
-function orbitLoop(now){
-  const dt = Math.min(40, now - lastRAF); // cap dt
+function orbitLoop(now) {
+  const dt = Math.min(40, now - lastRAF);
   lastRAF = now;
-  // slow angular speed, scaled with dt
-  orbitAngle += 0.00028 * dt; // tuned slower and smoother
-  nodes.forEach((n,i) => {
+  orbitAngle += 0.00025 * dt;
+  nodes.forEach((n, i) => {
     const el = document.getElementById(n.id);
-    const base = (n.angle||0) * Math.PI/180;
-    const a = base + orbitAngle + (i * 0.08);
+    const base = (n.angle || 0) * Math.PI / 180;
+    const a = base + orbitAngle + (i * 0.03);
     const r = n.r;
-    const cx = orbitWrap.clientWidth/2;
-    const cy = orbitWrap.clientHeight/2;
+    const cx = orbitWrap.clientWidth / 2;
+    const cy = orbitWrap.clientHeight / 2;
     const x = cx + Math.cos(a) * r;
     const y = cy + Math.sin(a) * r;
-    // apply transform
     el.style.left = x + 'px';
     el.style.top = y + 'px';
   });
@@ -352,37 +300,31 @@ function orbitLoop(now){
 }
 requestAnimationFrame(orbitLoop);
 
-/* -------------------------
-  Flipbook simplified toggle (no racing)
-------------------------- */
+/* =========================
+   Flipbook open/close (kept small)
+   ========================= */
 const book = document.getElementById('book');
-const bookShell = document.getElementById('bookShell');
 const page1 = document.getElementById('page1');
 const page2 = document.getElementById('page2');
 const page3 = document.getElementById('page3');
-let open = false;
+let bookOpen = false;
 book.addEventListener('click', () => {
-  open = !open;
-  book.classList.toggle('open', open);
-  // pages flip in sequence but without tangled timeouts
-  if (open) {
-    page1.classList.remove('flipped');
-    page2.classList.remove('flipped');
-    page3.classList.remove('flipped');
-    // small staged effect (non-blocking)
-    setTimeout(()=> page1.classList.add('flipped'), 1200);
-    setTimeout(()=> page2.classList.add('flipped'), 1800);
-    setTimeout(()=> page3.classList.add('flipped'), 2400);
+  bookOpen = !bookOpen;
+  book.classList.toggle('open', bookOpen);
+  if (bookOpen) {
+    // reveal then gently flip pages (staged, non-blocking)
+    page1.classList.remove('flipped'); page2.classList.remove('flipped'); page3.classList.remove('flipped');
+    setTimeout(()=> page1.classList.add('flipped'), 1100);
+    setTimeout(()=> page2.classList.add('flipped'), 1700);
+    setTimeout(()=> page3.classList.add('flipped'), 2300);
   } else {
-    page1.classList.remove('flipped');
-    page2.classList.remove('flipped');
-    page3.classList.remove('flipped');
+    page1.classList.remove('flipped'); page2.classList.remove('flipped'); page3.classList.remove('flipped');
   }
 });
 
-/* -------------------------
-  Affirmations auto-rotate (main + flip small)
-------------------------- */
+/* =========================
+  Affirmations rotation (auto)
+  ========================= */
 const affirmList = [
   "Every breath you take brings peace 🌬",
   "You are doing amazing, Divanshi 💛",
@@ -401,18 +343,18 @@ function rotateAff(){
   setTimeout(()=> {
     mainAff.textContent = affirmList[ai];
     mainAff.classList.remove('aff-out'); mainAff.classList.add('aff-in');
-  }, 320);
-  // mini flipbook snippet
-  flipAff.textContent = affirmList[(ai+2) % affirmList.length];
+  }, 360);
+  // flipbook snippet update
+  flipAff.textContent = affirmList[(ai + 2) % affirmList.length];
 }
 document.addEventListener('visibilitychange', ()=> {
   if (document.hidden) { clearInterval(affHandle); affHandle = null; }
   else if (!affHandle) affHandle = setInterval(rotateAff, 5000);
 });
 
-/* -------------------------
-  Breathing logic (smooth)
-------------------------- */
+/* =========================
+  Breathing behavior (7s inhale, 8s hold, 4s exhale)
+  ========================= */
 const breathEl = document.getElementById('breath');
 const btnStart = document.getElementById('btnStart');
 const btnHow = document.getElementById('btnHow');
@@ -420,42 +362,32 @@ const btnHow = document.getElementById('btnHow');
 const inhaleMs = 7000, holdMs = 8000, exhaleMs = 4000;
 let breathing = false, breathTimer = null;
 
-// set to rest
-breathEl.classList.add('small');
-
-function spawnFloatingPaws(count=6){
-  // use Web Animations API for stable timing where available
-  for (let i=0;i<count;i++){
+function spawnFloatingPaws(count = 6) {
+  for (let i=0; i<count; i++) {
     const el = document.createElement('div');
     el.className = 'float-paw';
     el.textContent = '🐾';
-    // random start near center
-    const leftPct = 48 + (Math.random()-0.5)*14;
-    const topPct = 48 + (Math.random()-0.5)*12;
+    // pick random start near center
+    const leftPct = 48 + (Math.random()-0.5)*18;
+    const topPct = 48 + (Math.random()-0.5)*16;
     el.style.left = leftPct + '%';
     el.style.top = topPct + '%';
-    el.style.opacity = '1';
-    el.style.transform = 'translateY(0) scale(.9)';
     animLayer.appendChild(el);
 
-    // animate using WA API if available; otherwise fallback to transition
-    if (el.animate){
-      const dx = (-50 + Math.random()*100);
-      const dy = -(80 + Math.random()*60);
-      el.animate([
+    if (el.animate) {
+      const dx = (-60 + Math.random()*120);
+      const dy = -(100 + Math.random()*60);
+      const dur = 1200 + Math.random()*500;
+      const anim = el.animate([
         { transform: 'translate(0px, 0px) scale(.95)', opacity: 1 },
         { transform: `translate(${dx}px, ${dy}px) scale(1)`, opacity: 0 }
-      ], {
-        duration: 1200 + Math.random()*400,
-        easing: 'cubic-bezier(.2,.9,.2,1)',
-        fill: 'forwards'
-      }).onfinish = () => { try{ el.remove(); } catch(e){} };
+      ], { duration: dur, easing: 'cubic-bezier(.2,.9,.2,1)', fill: 'forwards' });
+      anim.onfinish = () => { try { el.remove(); } catch(e){} };
     } else {
-      // fallback
       requestAnimationFrame(()=> {
         el.style.transition = 'transform 1200ms cubic-bezier(.2,.9,.2,1), opacity 1200ms';
-        const dx = (-50 + Math.random()*100);
-        const dy = -(80 + Math.random()*60);
+        const dx = (-60 + Math.random()*120);
+        const dy = -(100 + Math.random()*60);
         el.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
         el.style.opacity = '0';
         setTimeout(()=> { try{ el.remove(); } catch(e){} }, 1500);
@@ -464,30 +396,31 @@ function spawnFloatingPaws(count=6){
   }
 }
 
-async function breatheLoop(){
+async function breatheLoop() {
   if (!breathing) return;
   // inhale
   breathEl.style.transitionDuration = inhaleMs + 'ms';
   breathEl.classList.add('big'); breathEl.classList.remove('small','contract');
-  await new Promise(res => breathTimer = setTimeout(res, inhaleMs));
+  await new Promise(r => breathTimer = setTimeout(r, inhaleMs));
   if (!breathing) return;
-  // hold (keep big)
-  await new Promise(res => breathTimer = setTimeout(res, holdMs));
+  // hold
+  await new Promise(r => breathTimer = setTimeout(r, holdMs));
   if (!breathing) return;
   // exhale
   breathEl.style.transitionDuration = exhaleMs + 'ms';
   breathEl.classList.add('contract'); breathEl.classList.remove('big','small');
   spawnFloatingPaws(6);
-  await new Promise(res => breathTimer = setTimeout(res, exhaleMs));
+  await new Promise(r => breathTimer = setTimeout(r, exhaleMs));
   if (!breathing) return;
+  // tiny rest
   breathEl.classList.remove('contract'); breathEl.classList.add('small');
-  await new Promise(res => breathTimer = setTimeout(res, 300));
+  await new Promise(r => breathTimer = setTimeout(r, 300));
   if (!breathing) return;
   breatheLoop();
 }
 
 btnStart.addEventListener('click', ()=> {
-  if (!breathing){
+  if (!breathing) {
     breathing = true;
     btnStart.textContent = 'Stop Breathing';
     breatheLoop();
@@ -498,65 +431,72 @@ btnStart.addEventListener('click', ()=> {
     breathEl.classList.remove('big','contract'); breathEl.classList.add('small');
   }
 });
+
 btnHow.addEventListener('click', ()=> {
   alert('Breathe gently:\nInhale — 7 seconds\nHold — 8 seconds\nExhale — 4 seconds\nRepeat.');
 });
 
-/* -------------------------
-  Focus node behavior
-------------------------- */
-function focusNode(id){
+/* =========================
+   Focus node action
+   ========================= */
+function focusNode(id) {
   const el = document.getElementById(id);
-  // small highlight
+  if (!el) return;
   el.style.transform = 'scale(1.12) translateY(-6px)';
-  setTimeout(()=> el.style.transform = '', 700);
-  if (id === 'n-play') openPlaylist();
+  setTimeout(()=> el.style.transform = '', 650);
+  // handle actions
   if (id === 'n-breathe') {
-    // scroll into view smoothly and start
     breathEl.scrollIntoView({behavior:'smooth', block:'center'});
     setTimeout(()=> { if (!breathing) btnStart.click(); }, 700);
-  }
-  if (id === 'n-affirm') rotateAff();
-  if (id === 'n-surprise') {
-    if (!open) book.click();
+  } else if (id === 'n-affirm') {
+    rotateAff();
+  } else if (id === 'n-surprise') {
+    if (!bookOpen) book.click();
+    // small surprise nudge
     page3.style.transform = 'translateY(6px)';
-    setTimeout(()=> page3.style.transform = '', 1300);
+    setTimeout(()=> page3.style.transform = '', 1200);
+  } else if (id === 'n-note') {
+    if (!bookOpen) book.click();
+    page2.style.transform = 'translateY(6px)';
+    setTimeout(()=> page2.style.transform = '', 1000);
   }
 }
 
-/* -------------------------
-  Create the nodes (DOM already inserted in markup)
-------------------------- */
-(function createNodesPositions(){
-  // ensure nodes exist in DOM with given ids
-  nodesRef = nodes = [
-    {id:'n-play', angle:-25, r:140},
-    {id:'n-breathe', angle:75, r:165},
-    {id:'n-affirm', angle:165, r:135},
-    {id:'n-surprise', angle:255, r:155}
-  ];
-  // nodes created earlier in markup loop; nothing else needed
-})();
+/* =========================
+  Node creation to match earlier data (create DOM nodes)
+========================= */
+const nodeData = [
+  { id: 'n-breathe', label:'Breathe', angle:-10, r:150 },
+  { id: 'n-affirm', label:'Affirm', angle:70, r:190 },
+  { id: 'n-surprise', label:'Surprise', angle:160, r:150 },
+  { id: 'n-note', label:'Notes', angle:250, r:180 }
+];
+// ensure DOM nodes exist (if not created earlier)
+nodeData.forEach(n => {
+  if (!document.getElementById(n.id)) {
+    const el = document.createElement('div');
+    el.className = 'node';
+    el.id = n.id;
+    el.innerHTML = `<div class="label">${n.label}</div>`;
+    orbitWrap.appendChild(el);
+    el.addEventListener('click', () => focusNode(n.id));
+  }
+});
 
-/* -------------------------
-  Initial setup & safety
-------------------------- */
+/* =========================
+  initial states & cleanup
+========================= */
 window.addEventListener('load', ()=> {
-  // set resting scale
+  // rest breathing
   breathEl.classList.add('small');
-  // set flipbook initially closed
+  // initial flipbook closed
   page1.classList.add('flipped'); page2.classList.add('flipped'); page3.classList.add('flipped');
 });
 
-/* cleanup on hide */
 document.addEventListener('visibilitychange', ()=> {
-  if (document.hidden) {
-    breathing=false; clearTimeout(breathTimer);
-    if (affHandle) { clearInterval(affHandle); affHandle = null; }
-  } else {
-    if (!affHandle) affHandle = setInterval(rotateAff, 5000);
-  }
+  if (document.hidden) { breathing = false; clearTimeout(breathTimer); }
 });
+
 </script>
 
 </body>
