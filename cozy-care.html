@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>🐾 Cozy Care — Kitty Divi</title>
 
   <!-- Tailwind CDN -->
@@ -10,163 +10,217 @@
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
   <style>
-    /* --- Custom visuals on top of Tailwind --- */
+    /* Dreamy custom styles on top of Tailwind */
     :root{
-      --pink-1: #fff0f5;
-      --pink-2: #ffe6f0;
-      --accent-1: #ff69b4;
-      --accent-2: #ff66b2;
+      --p1: #fff0f5;
+      --p2: #ffe6f0;
+      --accentA: #ff79b4;
+      --accentB: #ff5fa3;
       --muted: #8a3b6e;
     }
 
+    html,body{height:100%; margin:0;}
     body{
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(circle at 20% 10%, rgba(255,245,250,0.6), transparent 8%),
+                  radial-gradient(circle at 80% 70%, rgba(255,230,240,0.55), transparent 10%),
+                  linear-gradient(180deg, var(--p2) 0%, #ffd9eb 40%, var(--p1) 100%);
+      color:#57123d;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      background: linear-gradient(180deg, var(--pink-2) 0%, rgba(255,220,235,0.6) 40%, var(--pink-1) 100%);
-    }
-
-    /* page container card look */
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,250,253,0.95));
-      border-radius: 18px;
-      box-shadow: 0 12px 28px rgba(255,182,193,0.18);
-      border: 1px solid rgba(255,220,230,0.6);
-    }
-
-    /* breathing circle baseline */
-    .breath-circle {
-      width: 230px;
-      height: 230px;
-      border-radius: 9999px;
       display:flex;
+      flex-direction:column;
       align-items:center;
+      padding:18px;
+      box-sizing:border-box;
+    }
+
+    /* header */
+    header {
+      width:100%;
+      max-width:920px;
+      margin-bottom:12px;
+    }
+    .header-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,246,250,0.95));
+      border-radius: 16px;
+      padding: 12px 14px;
+      display:flex;
       justify-content:center;
-      background: radial-gradient(circle at 40% 35%, rgba(255,245,250,1), #ffeef6 40%, #ffddeb 100%);
-      box-shadow: 0 8px 26px rgba(255,182,193,0.14), inset 0 3px 12px rgba(255,255,255,0.4);
-      position: relative;
-      transition: transform 7000ms cubic-bezier(.2,.9,.2,1), opacity 400ms ease;
-      will-change: transform;
+      align-items:center;
+      box-shadow: 0 14px 36px rgba(255,140,190,0.14);
+      border: 1px solid rgba(255,220,230,0.8);
+    }
+    h1 {
+      margin:0;
+      font-family: 'Pacifico', cursive;
+      color:#2b1422;
+      font-size: clamp(1.4rem, 4vw, 2.4rem);
+      letter-spacing:0.4px;
+    }
+
+    /* page container */
+    .page {
+      width:100%;
+      max-width:920px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    /* glassy card style */
+    .card {
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,250,253,0.96));
+      box-shadow: 0 18px 44px rgba(255,150,185,0.12);
+      border: 1px solid rgba(255,220,230,0.6);
+      transition: transform .28s ease, box-shadow .28s ease;
+    }
+    .card:hover{ transform: translateY(-6px); box-shadow: 0 26px 60px rgba(255,150,185,0.16); }
+
+    .muted { color: var(--muted); }
+
+    /* playlist */
+    .player-iframe { width:100%; min-height:86px; border-radius:12px; border:none; }
+
+    /* fancy pill buttons */
+    .pill-primary {
+      background: linear-gradient(90deg, var(--accentA), var(--accentB));
+      color:white;
+      padding:10px 18px;
+      border-radius:999px;
+      font-weight:700;
+      box-shadow: 0 8px 26px rgba(255,105,180,0.16);
+      border:none;
+    }
+    .pill-ghost {
+      padding:9px 14px;
+      border-radius:999px;
+      background:white;
+      border:1px solid rgba(255,200,220,0.7);
+      color:var(--accentB);
+      font-weight:700;
+    }
+
+    /* breathing circle */
+    .breath-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; }
+    .breath-circle {
+      width: 240px;
+      height: 240px;
+      border-radius:50%;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,1), rgba(255,240,245,0.8) 35%, rgba(255,230,240,1) 70%);
+      box-shadow: inset 0 10px 30px rgba(255,255,255,0.7), 0 18px 48px rgba(255,170,200,0.12);
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+      transition: transform 7000ms cubic-bezier(.2,.9,.2,1), opacity 300ms ease;
+      will-change: transform, opacity;
       overflow: visible;
     }
+    .breath-small { transform: scale(0.78); }
+    .breath-big { transform: scale(1.18); transition-duration:7000ms; }
+    .breath-contract { transform: scale(0.78); transition-duration:4000ms; }
 
-    /* resting scale */
-    .breath-rest { transform: scale(0.82); }
-    /* inhale -> big scale */
-    .breath-inhale { transform: scale(1.18); transition-duration: 7000ms; }
-    /* exhale -> contract */
-    .breath-exhale { transform: scale(0.78); transition-duration: 4000ms; }
-
-    /* paw overlay image centered on circle */
+    /* centered paw image on top of circle */
     .paw-overlay {
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform: translate(-50%,-50%);
-      width: 96px;
-      height: 96px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:120px; height:120px; display:flex; align-items:center; justify-content:center;
       pointer-events:none;
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.07));
     }
-    .paw-overlay img { width:100%; height:100%; object-fit:contain; }
+    .paw-overlay img { width:100%; height:100%; object-fit:contain; display:block; }
 
-    /* floating paw prints for exhale */
+    /* floating tiny sparkles */
+    .sparkle {
+      position: absolute;
+      width:6px; height:6px; border-radius:50%;
+      background: rgba(255,255,255,0.85);
+      filter: blur(0.4px);
+      opacity: 0.7;
+      box-shadow: 0 0 8px rgba(255,220,240,0.8);
+      will-change: transform, opacity;
+    }
+
+    /* floating paw prints during exhale */
     .floating-paw {
       position:absolute;
-      font-size:18px;
       pointer-events:none;
-      transform: translateY(0) scale(0.75);
-      opacity: 0;
+      font-size:18px;
+      transform: translateY(0) scale(0.8);
+      opacity:0;
       transition: transform 1200ms ease-out, opacity 1200ms ease-out;
       will-change: transform, opacity;
-      filter: drop-shadow(0 6px 12px rgba(255,182,193,0.20));
+      filter: drop-shadow(0 6px 12px rgba(255,150,185,0.14));
     }
 
-    /* affirmation fade classes (JS toggles) */
-    .aff-in { opacity:1; transform: translateY(0); transition: all 420ms ease; }
-    .aff-out { opacity:0; transform: translateY(8px); transition: all 420ms ease; }
+    /* affirmation fade */
+    .aff-in { opacity:1; transform: translateY(0); transition: all .45s ease; }
+    .aff-out { opacity:0; transform: translateY(8px); transition: all .45s ease; }
 
-    /* subtle global sparkle overlay similar to main page */
-    body::after{
-      content:"";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        radial-gradient(circle at 10% 12%, rgba(255,255,255,0.06) 0px, transparent 8px),
-        radial-gradient(circle at 85% 28%, rgba(255,255,255,0.04) 0px, transparent 6px),
-        radial-gradient(circle at 50% 82%, rgba(255,255,255,0.03) 0px, transparent 5px);
-      mix-blend-mode: screen;
-    }
-
-    /* responsive adjustments */
+    /* responsive */
     @media (max-width:420px){
-      .breath-circle { width: 170px; height: 170px; }
-      .paw-overlay { width: 74px; height: 74px; }
+      .breath-circle { width:170px; height:170px; }
+      .paw-overlay { width:90px; height:90px; }
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center text-[#9f2c6a]">
+<body>
 
-  <!-- header -->
-  <header class="w-full max-w-3xl px-4 pt-6">
-    <div class="card p-3 flex justify-center items-center bg-gradient-to-b from-[#fff6fb] to-[#fff0f6]">
-      <h1 class="font-[Pacifico] text-3xl sm:text-4xl text-[#2a1224]">🐾 Cozy Care</h1>
-    </div>
+  <header class="header-card">
+    <h1>🐾 Cozy Care</h1>
   </header>
 
-  <!-- main content -->
-  <main class="w-full max-w-3xl px-4 mt-6 mb-10 flex flex-col gap-6">
+  <main class="page">
 
-    <!-- Playlist Card -->
-    <section class="card p-5">
-      <h2 class="text-xl font-semibold text-[#22121d] flex items-center gap-3">🎵 Soothing Playlist</h2>
-      <p class="text-sm text-[#7b2f5b] mt-1">Gentle tunes to calm the heart. Use Spotify or the local audio player below.</p>
+    <!-- Playlist -->
+    <section class="card">
+      <h2 class="text-lg font-semibold">🎵 Soothing Playlist</h2>
+      <p class="text-sm muted mt-1">A small collection of calm songs — open in Spotify or use the player below.</p>
 
       <div class="mt-4 flex flex-col gap-3">
-        <iframe class="w-full rounded-lg" style="min-height:84px;" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        <iframe class="player-iframe rounded-lg" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 
         <audio id="localAudio" controls class="w-full rounded-md">
           <source src="sample.mp3" type="audio/mpeg">
           Your browser doesn't support audio playback.
         </audio>
 
-        <div class="mt-2 flex gap-3 justify-center">
-          <button onclick="openPlaylist()" class="px-5 py-2 rounded-full bg-gradient-to-r from-[#ff99cc] to-[#ff66b2] text-white font-semibold shadow-sm">Open in Spotify</button>
-          <button onclick="flashPlayer()" class="px-4 py-2 rounded-full border border-pink-200 text-[#ff4d9e] bg-white font-semibold">Focus</button>
+        <div class="mt-2 flex items-center justify-center gap-3">
+          <button class="pill-primary" onclick="openPlaylist()">Open in Spotify</button>
+          <button class="pill-ghost" onclick="flashPlayer()">Focus</button>
         </div>
       </div>
     </section>
 
-    <!-- Breathing Card -->
-    <section class="card p-5 flex flex-col items-center">
-      <h2 class="w-full text-left text-xl font-semibold text-[#22121d] flex items-center gap-3">🌬 Breathing Exercise</h2>
-      <p class="w-full text-left text-sm text-[#7b2f5b] mt-1">Follow the circle — inhale 7s → hold 8s → exhale 4s. Repeat gently.</p>
+    <!-- Breathing -->
+    <section class="card">
+      <h2 class="text-lg font-semibold">🌬 Breathing Exercise</h2>
+      <p class="text-sm muted mt-1">Follow the circle — inhale 7s → hold 8s → exhale 4s. Repeat gently.</p>
 
-      <div class="mt-6 flex flex-col items-center gap-4 w-full">
-        <div id="circle" class="breath-circle breath-rest" role="img" aria-label="Breathing circle">
-          <!-- paw image centered -->
-          <div class="paw-overlay" aria-hidden="true">
-            <img src="paw.png" alt="paw" id="centerPaw" />
+      <div class="mt-6 breath-wrap">
+        <div id="breathCircle" class="breath-circle breath-small" role="img" aria-label="Breathing circle">
+          <!-- paw image centered on the circle -->
+          <div class="paw-overlay">
+            <img src="paw.png" id="centerPaw" alt="paw"/>
           </div>
         </div>
 
-        <!-- paw prints layer -->
-        <div id="pawLayer" class="w-full h-0 relative pointer-events-none"></div>
+        <!-- layer for paw floats & sparkles -->
+        <div id="animLayer" class="w-full relative" style="height:0;"></div>
 
         <div class="mt-4 flex gap-3">
-          <button id="btnStart" class="px-6 py-2 rounded-full bg-gradient-to-r from-[#ff99cc] to-[#ff66b2] text-white font-semibold shadow-sm">Start</button>
-          <button id="btnHow" class="px-5 py-2 rounded-full border border-pink-200 text-[#ff4d9e] bg-white font-semibold">How to</button>
+          <button id="btnStart" class="pill-primary">Start</button>
+          <button id="btnGuide" class="pill-ghost">How to</button>
         </div>
       </div>
     </section>
 
-    <!-- Affirmations Card -->
-    <section class="card p-5">
-      <h2 class="text-xl font-semibold text-[#22121d] flex items-center gap-3">💬 Positive Affirmations</h2>
+    <!-- Affirmations -->
+    <section class="card">
+      <h2 class="text-lg font-semibold">💬 Positive Affirmations</h2>
       <div class="mt-3">
-        <div id="affirmBox" class="rounded-lg bg-gradient-to-r from-[#fff6fb] to-[#fff0f6] p-3">
+        <div class="rounded-lg bg-gradient-to-r from-[#fff6fb] to-[#fff0f6] p-3">
           <div id="affirmText" class="text-center text-[#6a2b5a] text-base aff-in">You are doing amazing, Divanshi 💛</div>
         </div>
         <div class="mt-2 text-xs text-[#a64a87] text-center">(automatically changes every 5 seconds)</div>
@@ -175,171 +229,176 @@
 
   </main>
 
-  <footer class="w-full max-w-3xl px-4 mb-8"></footer>
+  <script>
+    /* ===== Helpers for playlist ===== */
+    function openPlaylist(){
+      window.open('https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj', '_blank');
+    }
+    function flashPlayer(){
+      const iframe = document.querySelector('iframe');
+      if(!iframe) return;
+      iframe.style.boxShadow = '0 18px 48px rgba(255,140,190,0.22)';
+      setTimeout(()=> iframe.style.boxShadow = '', 900);
+    }
 
-<script>
-/* ===== Playlist helpers ===== */
-function openPlaylist() {
-  window.open('https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj', '_blank');
-}
-function flashPlayer() {
-  const iframe = document.querySelector('iframe');
-  if(!iframe) return;
-  iframe.style.boxShadow = '0 20px 48px rgba(255,105,180,0.2)';
-  setTimeout(() => iframe.style.boxShadow = '', 900);
-}
+    /* ===== Dreamy sparkles (background micro-animations) ===== */
+    const animLayer = document.getElementById('animLayer');
+    // small subtle sparkles distributed around circle
+    for(let i=0;i<12;i++){
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      const left = 20 + Math.random()*60; // percent within card
+      const top = 10 + Math.random()*40;
+      s.style.left = left + '%';
+      s.style.top = top + '%';
+      const size = 4 + Math.random()*6;
+      s.style.width = s.style.height = size + 'px';
+      s.style.opacity = 0.5 + Math.random()*0.5;
+      animLayer.appendChild(s);
+      // float animation
+      (function(el){
+        const dx = (Math.random()-0.5)*40;
+        const dy = (Math.random()-0.5)*40;
+        function tick(){
+          el.animate([
+            { transform: 'translate(0,0)', opacity: el.style.opacity },
+            { transform: `translate(${dx}px, ${dy}px)`, opacity: 0.2 }
+          ], { duration: 4000 + Math.random()*6000, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
+        }
+        tick();
+      })(s);
+    }
 
-/* ===== Breathing timings =====
-   Inhale: 7000ms
-   Hold : 8000ms
-   Exhale: 4000ms
-*/
-const inhaleMs = 7000;
-const holdMs = 8000;
-const exhaleMs = 4000;
+    /* ===== Breathing logic (Inhale 7s, Hold 8s, Exhale 4s) ===== */
+    const inhaleMs = 7000, holdMs = 8000, exhaleMs = 4000;
+    const breathCircle = document.getElementById('breathCircle');
+    const btnStart = document.getElementById('btnStart');
+    const btnGuide = document.getElementById('btnGuide');
 
-const circle = document.getElementById('circle');
-const btnStart = document.getElementById('btnStart');
-const btnHow = document.getElementById('btnHow');
-const pawLayer = document.getElementById('pawLayer');
+    let breathing = false;
+    let breathTimer = null;
 
-let breathActive = false;
-let breathTimer = null;
+    function setStateExpand(duration){
+      // set transition duration to match inhale
+      breathCircle.style.transitionDuration = duration + 'ms';
+      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
+      breathCircle.classList.add('breath-big');
+    }
+    function setStateHold(){
+      // keep same (no change)
+      breathCircle.style.transitionDuration = '200ms';
+      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
+      breathCircle.classList.add('breath-big');
+    }
+    function setStateExhale(duration){
+      breathCircle.style.transitionDuration = duration + 'ms';
+      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
+      breathCircle.classList.add('breath-contract');
+    }
+    function setStateRest(){
+      breathCircle.style.transitionDuration = '400ms';
+      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
+      breathCircle.classList.add('breath-small');
+    }
 
-function setCircleState(state) {
-  // remove all three classes then add right one
-  circle.classList.remove('breath-rest','breath-inhale','breath-exhale');
-  if (state === 'rest') circle.classList.add('breath-rest');
-  if (state === 'inhale') {
-    circle.classList.add('breath-inhale');
-    // set CSS transition duration accordingly (already handled in CSS)
-  }
-  if (state === 'exhale') circle.classList.add('breath-exhale');
-}
+    function spawnFloatingPaws(){
+      // spawn 5 small paw emojis that float upward & fade
+      for(let i=0;i<5;i++){
+        const p = document.createElement('div');
+        p.className = 'floating-paw';
+        p.textContent = '🐾';
+        // random around center
+        p.style.left = (45 + (Math.random()-0.5)*20) + '%';
+        p.style.top = '18px';
+        animLayer.appendChild(p);
+        // animate in next frame
+        requestAnimationFrame(() => {
+          const dx = (-40 + Math.random()*80); // px
+          const dy = -(90 + Math.random()*40);
+          p.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
+          p.style.opacity = '0';
+        });
+        setTimeout(()=> { try{ p.remove(); }catch(e){} }, 1500 + Math.random()*400);
+      }
+    }
 
-// spawn paw prints that float upwards on exhale
-function spawnPaws() {
-  const count = 5;
-  for (let i=0;i<count;i++){
-    const el = document.createElement('div');
-    el.className = 'floating-paw';
-    el.textContent = '🐾';
-    // position near center horizontally
-    const leftPercent = 40 + Math.random()*20; // 40%..60%
-    el.style.left = leftPercent + '%';
-    // start slightly below center visually
-    el.style.top = '30px';
-    pawLayer.appendChild(el);
+    async function breatheLoop(){
+      if(!breathing) return;
+      // inhale
+      setStateExpand(inhaleMs);
+      await new Promise(r => breathTimer = setTimeout(r, inhaleMs));
+      if(!breathing) return;
+      // hold
+      setStateHold();
+      await new Promise(r => breathTimer = setTimeout(r, holdMs));
+      if(!breathing) return;
+      // exhale
+      setStateExhale(exhaleMs);
+      spawnFloatingPaws();
+      await new Promise(r => breathTimer = setTimeout(r, exhaleMs));
+      if(!breathing) return;
+      // tiny rest
+      setStateRest();
+      await new Promise(r => breathTimer = setTimeout(r, 300));
+      if(!breathing) return;
+      breatheLoop();
+    }
 
-    // trigger animation in next frame
-    requestAnimationFrame(() => {
-      const dx = (-30 + Math.random()*60); // horizontal drift px
-      const dy = -(90 + Math.random()*40); // upward px
-      el.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
-      el.style.opacity = '0';
+    btnStart.addEventListener('click', () => {
+      if(!breathing){
+        breathing = true;
+        btnStart.textContent = 'Stop';
+        breatheLoop();
+      } else {
+        breathing = false;
+        btnStart.textContent = 'Start';
+        clearTimeout(breathTimer);
+        setStateRest();
+      }
     });
 
-    setTimeout(()=> {
-      try { el.remove(); } catch(e){}
-    }, 1500 + Math.random()*400);
-  }
-}
+    btnGuide.addEventListener('click', () => {
+      alert('Breathe gently:\nInhale — 7 seconds\nHold — 8 seconds\nExhale — 4 seconds\nRepeat.');
+    });
 
-async function breatheLoop() {
-  if (!breathActive) return;
-  // Inhale: expand
-  setCircleState('inhale');
-  await new Promise(res => breathTimer = setTimeout(res, inhaleMs));
-  if (!breathActive) return;
+    /* ===== Affirmations auto-rotate ===== */
+    const affirmText = document.getElementById('affirmText');
+    const affirmList = [
+      "You are doing amazing, Divanshi 💛",
+      "You are loved and cherished 🌸",
+      "Every breath you take brings peace 🌬",
+      "You make tiny moments feel like magic ✨",
+      "You are exactly where you need to be 💗"
+    ];
+    let ai = 0;
+    setInterval(()=> {
+      ai = (ai + 1) % affirmList.length;
+      // fade out/in
+      affirmText.classList.remove('aff-in');
+      affirmText.classList.add('aff-out');
+      setTimeout(()=> {
+        affirmText.textContent = affirmList[ai];
+        affirmText.classList.remove('aff-out');
+        affirmText.classList.add('aff-in');
+      }, 420);
+    }, 5000);
 
-  // Hold: keep expanded (no change)
-  // keep same scale; just wait
-  await new Promise(res => breathTimer = setTimeout(res, holdMs));
-  if (!breathActive) return;
+    /* ===== Ensure paw image exists & scale nicely ===== */
+    const centerPaw = document.getElementById('centerPaw');
+    centerPaw.addEventListener('error', ()=> {
+      console.warn('paw.png failed to load — ensure paw.png sits next to cozy-care.html and is named exactly paw.png');
+    });
 
-  // Exhale: contract & spawn paw prints
-  setCircleState('exhale');
-  spawnPaws();
-  await new Promise(res => breathTimer = setTimeout(res, exhaleMs));
-  if (!breathActive) return;
+    // on load set restful scale
+    window.addEventListener('load', ()=> {
+      setStateRest();
+    });
 
-  // small rest state to give a gentle feel
-  setCircleState('rest');
-  await new Promise(res => breathTimer = setTimeout(res, 300));
-  if (!breathActive) return;
-
-  // loop again
-  breatheLoop();
-}
-
-btnStart.addEventListener('click', () => {
-  if (!breathActive) {
-    breathActive = true;
-    btnStart.textContent = 'Stop';
-    breatheLoop();
-  } else {
-    breathActive = false;
-    btnStart.textContent = 'Start';
-    clearTimeout(breathTimer);
-    setCircleState('rest');
-  }
-});
-
-btnHow.addEventListener('click', () => {
-  alert('Breathe: Inhale 7 seconds → Hold 8 seconds → Exhale 4 seconds. Repeat gently.');
-});
-
-/* ===== Affirmations auto-rotate (no click required) ===== */
-const affirmText = document.getElementById('affirmText');
-const affirmList = [
-  "You are doing amazing, Divanshi 💛",
-  "You are loved and cherished 🌸",
-  "Every breath you take brings peace 🌬",
-  "You make tiny moments feel like magic ✨",
-  "You are exactly where you need to be 💗"
-];
-let affIndex = 0;
-let affInterval = null;
-
-function showAff(idx) {
-  affirmText.classList.remove('aff-in'); 
-  affirmText.classList.add('aff-out');
-  setTimeout(()=> {
-    affirmText.textContent = affirmList[idx];
-    affirmText.classList.remove('aff-out');
-    affirmText.classList.add('aff-in');
-  }, 420);
-}
-
-function nextAff() {
-  affIndex = (affIndex + 1) % affirmList.length;
-  showAff(affIndex);
-}
-
-affInterval = setInterval(nextAff, 5000);
-
-/* pause rotations when tab hidden to save CPU */
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    if (affInterval) { clearInterval(affInterval); affInterval = null; }
-  } else {
-    if (!affInterval) affInterval = setInterval(nextAff, 5000);
-  }
-});
-
-/* Ensure breathing stops when leaving page */
-window.addEventListener('pagehide', () => {
-  breathActive = false;
-  clearTimeout(breathTimer);
-});
-
-/* Safety: verify paw.png presence; if missing, show console note */
-window.addEventListener('load', () => {
-  const img = document.getElementById('centerPaw');
-  img.addEventListener('error', () => {
-    console.warn('paw.png failed to load. Make sure paw.png is placed in the same folder as cozy-care.html and is named exactly "paw.png".');
-  });
-});
-</script>
+    // cleanup when leaving
+    window.addEventListener('pagehide', ()=> {
+      breathing = false;
+      clearTimeout(breathTimer);
+    });
+  </script>
 </body>
 </html>
