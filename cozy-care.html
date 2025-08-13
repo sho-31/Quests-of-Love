@@ -113,18 +113,37 @@
     }
 
     /* star (twinkle) */
-    .star {
-      position:absolute;
-      width:3px; height:3px; border-radius:50%;
-      background: white; opacity:0.9;
-      filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
-      animation: twinkle linear infinite;
-    }
-    @keyframes twinkle {
-      0% { transform: scale(0.6); opacity: 0.18; }
-      50% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(0.6); opacity: 0.18; }
-    }
+    /* Make stars cover the whole page */
+html, body {
+  height: 100%;
+  margin: 0;
+  background: radial-gradient(circle at 40% 18%, #0d2a4a 0%, #07102a 36%, #020318 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Star style (from your existing .star) */
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
+  animation: twinkle linear infinite;
+}
+
+@keyframes twinkle {
+  0% { transform: scale(0.6); opacity: 0.18; }
+  50% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.6); opacity: 0.18; }
+}
+
+/* Optional: keep your .sky section transparent so background stars show through */
+.sky {
+  background: transparent;
+}
 
     /* orbit nodes */
     .orbit-wrap { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:520px; height:520px; pointer-events:none; }
