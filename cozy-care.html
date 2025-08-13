@@ -20,24 +20,28 @@
   }
 
   /* page base */
-  html,body { height:100%; margin:0; background: linear-gradient(180deg, var(--bg-deep-1) 0%, var(--bg-deep-2) 60%, #020318 100%); color:var(--soft-white); font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow:auto; }
+  html,body {
+    height:100%;
+    margin:0;
+    background: linear-gradient(180deg, var(--bg-deep-1) 0%, var(--bg-deep-2) 60%, #020318 100%);
+    color:var(--soft-white);
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow:auto;
+  }
 
   /* full-screen star canvas sits behind everything */
-  #starfield { position:fixed; inset:0; z-index:0; display:block; }
+  #starfield { position:fixed; inset:0; z-index:0; display:block; background:transparent; }
 
-  /* dreamy nebula overlays (warmer glow + richer) */
-  .nebula {
-    position:fixed; inset:0; pointer-events:none; z-index:1;
+  /* dreamy nebula overlays */
+  .nebula { position:fixed; inset:0; pointer-events:none; z-index:1;
     background:
       radial-gradient(900px 420px at 12% 22%, rgba(255,140,190,0.065), transparent 10%),
       radial-gradient(700px 450px at 85% 78%, rgba(80,100,220,0.05), transparent 10%),
       radial-gradient(600px 320px at 50% 40%, rgba(255,255,255,0.02), transparent 18%);
-    mix-blend-mode: screen;
-    opacity:0.96;
-    filter:blur(16px) saturate(120%);
-  }
+    mix-blend-mode: screen; opacity:0.96; filter:blur(16px) saturate(120%); }
 
-  /* subtle vignette / depth */
   .vignette { position:fixed; inset:0; z-index:2; pointer-events:none;
     background: radial-gradient(1200px 700px at 50% 30%, rgba(0,0,0,0.06), transparent 20%),
                 linear-gradient(180deg, rgba(0,0,0,0.14), rgba(0,0,0,0.34));
@@ -45,35 +49,24 @@
 
   /* main layout stage */
   .stage {
-    position:relative;
-    z-index:3;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:28px;
-    box-sizing:border-box;
+    position:relative; z-index:3;
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:28px; box-sizing:border-box;
   }
 
   /* central card */
   .card {
-    width:100%;
-    max-width:1040px;
-    display:grid;
-    grid-template-columns: 1fr 380px;
-    gap:26px;
+    width:100%; max-width:1040px;
+    display:grid; grid-template-columns: 1fr 380px; gap:26px;
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:18px;
-    padding:28px;
+    border-radius:18px; padding:28px;
     box-shadow: 0 36px 120px rgba(2,6,26,0.75), inset 0 1px 0 rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.03);
     backdrop-filter: blur(8px) saturate(120%);
     align-items:start;
   }
 
-  @media (max-width:980px) {
-    .card { grid-template-columns: 1fr; padding:20px; gap:18px; margin: 12px; }
-  }
+  @media (max-width:980px) { .card { grid-template-columns: 1fr; padding:20px; gap:18px; margin: 12px; } }
 
   /* left: breathing area */
   .breath-wrap { display:flex; flex-direction:column; align-items:center; gap:18px; padding:6px 4px; }
@@ -84,14 +77,11 @@
     width:360px; height:360px; border-radius:999px; display:grid; place-items:center;
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.02), rgba(10,24,50,0.12) 40%);
     box-shadow: 0 30px 80px rgba(6,10,30,0.66), inset 0 6px 22px rgba(255,255,255,0.02);
-    position:relative; overflow:visible;
-    transition: transform .4s ease;
+    position:relative; overflow:visible; transition: transform .4s ease;
   }
-
   @media (max-width:920px){ .breath-stage { width:300px; height:300px; } }
   @media (max-width:560px){ .breath-stage { width:240px; height:240px; } }
 
-  /* animated breathing orb */
   .breath-orb {
     width:200px; height:200px; border-radius:999px; display:flex; align-items:center; justify-content:center;
     background: radial-gradient(circle at 35% 28%, rgba(255,240,250,0.06), rgba(10,24,50,0.12) 80%);
@@ -99,7 +89,6 @@
     transition: transform 4000ms cubic-bezier(.2,.9,.2,1), box-shadow .7s;
     will-change: transform;
   }
-
   .breath-orb.small { transform: scale(0.78); transition-duration:4000ms; box-shadow: 0 20px 48px rgba(0,0,0,0.46); }
   .breath-orb.big   { transform: scale(1.18); transition-duration:7000ms; box-shadow: 0 40px 140px rgba(255,120,180,0.07); }
 
@@ -115,14 +104,12 @@
   }
   .btn:active{ transform: translateY(1px) scale(.996); }
   .btn.secondary { background:transparent; color:var(--soft-white); border:1px solid rgba(255,255,255,0.04); box-shadow:none; }
-
   .btn:focus{ outline: none; box-shadow: 0 0 0 6px rgba(255,120,180,0.08); }
 
   .meta { color:var(--muted); font-size:0.98rem; text-align:center; margin-top:6px; }
 
   /* affirmations (right) — made more visible */
   .affirm-wrap { display:flex; flex-direction:column; gap:16px; justify-content:flex-start; align-items:stretch; }
-
   .affirm-card {
     padding:22px; border-radius:14px;
     background: linear-gradient(135deg, rgba(255,255,255,0.028), rgba(255,255,255,0.012));
@@ -131,30 +118,18 @@
     min-height:140px; display:flex; flex-direction:column; justify-content:center; align-items:center;
     backdrop-filter: blur(6px) saturate(110%);
   }
-
   .affirm-text {
     font-weight:900; text-align:center; font-size:1.15rem; color:#fff; line-height:1.28;
-    text-shadow: 0 10px 36px rgba(0,0,0,0.6);
-    letter-spacing:0.2px;
+    text-shadow: 0 10px 36px rgba(0,0,0,0.6); letter-spacing:0.2px;
+    transition: opacity 260ms ease;
   }
-
   .small-muted { color:var(--muted); font-size:0.95rem; text-align:center; margin-top:8px; }
 
-  .affirm-card .controls { justify-content:center; padding-top:8px; }
-
-  /* make the affirm container stand out on mobile: sticky + slightly brighter */
-  @media (max-width:980px){
-    .affirm-card { min-height:120px; padding:18px; }
-    .affirm-text { font-size:1.08rem; }
-  }
-
+  @media (max-width:980px){ .affirm-card { min-height:120px; padding:18px; } .affirm-text { font-size:1.08rem; } }
   @media (max-width:560px){
     .card { gap:14px; padding:18px; }
     .affirm-card {
-      position: sticky;
-      bottom: 18px;
-      z-index:6;
-      margin: 0 -6px 0 -6px;
+      position: sticky; bottom: 18px; z-index:6; margin: 0 -6px 0 -6px;
       border-radius:12px;
       background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.014));
       box-shadow: 0 28px 80px rgba(0,0,0,0.6);
@@ -164,48 +139,27 @@
     .btn { padding:12px 16px; font-size:0.98rem; }
   }
 
-  /* small twinkly star elements for UI depth */
-  .ui-star {
-    position:absolute; width:6px; height:6px; border-radius:50%; background:linear-gradient(180deg,#fff,#ffdff8);
-    filter: blur(6px) drop-shadow(0 0 10px rgba(255,255,255,0.45));
-    opacity:0.14; transform:translate3d(0,0,0);
-    animation: uiFloat 10s linear infinite;
-    z-index:4;
-    pointer-events:none;
-  }
-  @keyframes uiFloat {
-    0% { transform: translateY(0) scale(1); opacity:0.10; }
-    50% { transform: translateY(-20px) scale(1.24); opacity:0.28; }
-    100% { transform: translateY(0) scale(1); opacity:0.10; }
-  }
+  /* small UI sparkle */
+  .ui-star { position:absolute; width:6px; height:6px; border-radius:50%; background:linear-gradient(180deg,#fff,#ffdff8);
+    filter: blur(6px) drop-shadow(0 0 10px rgba(255,255,255,0.45)); opacity:0.14; animation: uiFloat 10s linear infinite; z-index:4; pointer-events:none; }
+  @keyframes uiFloat { 0% { transform: translateY(0) scale(1); opacity:0.10; } 50% { transform: translateY(-20px) scale(1.24); opacity:0.28; } 100% { transform: translateY(0) scale(1); opacity:0.10; } }
 
-  /* dreamy CTA at bottom of card */
-  .footer-cta { display:flex; gap:12px; justify-content:center; align-items:center; margin-top:6px; color:var(--muted); }
-
-  /* accessibility: reduce motion */
+  /* accessible reduce motion */
   @media (prefers-reduced-motion: reduce){
     .breath-orb, .ui-star, #starfield { transition:none; animation:none; }
   }
-
 </style>
 </head>
 <body>
 
-<!-- star canvas (full page) -->
 <canvas id="starfield" aria-hidden="true"></canvas>
-
-<!-- soft overlays -->
 <div class="nebula" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
-
-<!-- some floating UI stars for depth -->
 <div id="uiStarsContainer" aria-hidden="true"></div>
 
-<!-- main content -->
 <main class="stage" role="main">
   <section class="card" aria-label="Relaxation card with breathing and affirmations">
 
-    <!-- Breathing left -->
     <div class="breath-wrap" aria-hidden="false">
       <h1 class="title">Stargaze & Breathe</h1>
       <p class="lead">A tiny universe made for Divanshi — inhale starlight, exhale all the noise.</p>
@@ -216,16 +170,15 @@
         </div>
       </div>
 
-      <div class="controls">
+      <div class="controls" role="group" aria-label="breathing controls">
         <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
         <button class="btn secondary" id="stopBtn">Stop</button>
       </div>
 
-      <div class="meta" id="cycleMeta">Cycle: 0 • Phase: idle • Time left: —</div>
+      <div class="meta" id="cycleMeta" aria-live="polite">Cycle: 0 • Phase: idle • Time left: —</div>
       <div class="footer-cta small-muted">Tip: tap the starlit background to add a soft sparkle.</div>
     </div>
 
-    <!-- Affirmations right -->
     <aside class="affirm-wrap" aria-hidden="false">
       <div class="affirm-card" role="region" aria-label="Gentle affirmations for Divanshi">
         <div class="affirm-text" id="affirmText">You are doing amazing, Divanshi 💛</div>
@@ -245,260 +198,290 @@
 </main>
 
 <script>
-/* ===========================
-   STARFIELD — canvas based
-   mobile-friendly density + DPR aware
-   =========================== */
-(function(){
-  const canvas = document.getElementById('starfield');
-  const ctx = canvas.getContext('2d');
-  let width, height, stars = [];
-  const rand = (min,max) => Math.random() * (max - min) + min;
+/* Wrap everything in DOMContentLoaded to avoid timing issues */
+document.addEventListener('DOMContentLoaded', function () {
 
-  function makeStars(count) {
-    stars = [];
+  /* ===== STARFIELD ===== */
+  (function(){
+    const canvas = document.getElementById('starfield');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let width = 0, height = 0, dpr = 1;
+    let stars = [];
+    let raf = null;
+    // settings
+    const STAR_BASE_DIV = () => (innerWidth < 560 ? 8000 : innerWidth < 920 ? 7000 : 6000);
+
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    function resize() {
+      dpr = Math.max(1, window.devicePixelRatio || 1);
+      width = innerWidth;
+      height = innerHeight;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      // scale so we can draw in CSS pixels
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // recreate stars based on area
+      const area = width * height;
+      const count = Math.max(60, Math.round(area / STAR_BASE_DIV()));
+      makeStars(count);
+    }
+
+    function makeStars(count){
+      stars = [];
+      for (let i = 0; i < count; i++){
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.pow(Math.random(), 2) * (1.9 + Math.random()*0.6) + 0.3,
+          baseAlpha: rand(0.25, 0.95),
+          twinkleSpeed: rand(0.002, 0.012),
+          phase: Math.random() * Math.PI * 2,
+          hueShift: rand(-6, 18)
+        });
+      }
+    }
+
+    let lastTime = 0;
+    function draw(time) {
+      // time is high-res ms from RAF
+      const dt = Math.min(40, time - lastTime);
+      lastTime = time;
+      // background tint
+      ctx.clearRect(0, 0, width, height);
+      const g = ctx.createLinearGradient(0, 0, 0, height);
+      g.addColorStop(0, 'rgba(5,12,30,0.22)');
+      g.addColorStop(1, 'rgba(0,3,12,0.48)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, width, height);
+
+      for (let s of stars){
+        s.phase += s.twinkleSpeed * (dt/16); // normalize speed with dt
+        const a = s.baseAlpha * (0.6 + 0.4 * Math.sin(s.phase));
+        const cx = s.x, cy = s.y, r = s.r;
+        const rad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r*8);
+        rad.addColorStop(0, `rgba(255,${240 + Math.round(s.hueShift)},${255},${(a*0.92).toFixed(3)})`);
+        rad.addColorStop(0.5, `rgba(255,255,255,${(a*0.45).toFixed(3)})`);
+        rad.addColorStop(1, `rgba(255,255,255,0)`);
+        ctx.beginPath();
+        ctx.fillStyle = rad;
+        ctx.arc(cx, cy, r*8, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${Math.min(1,a+0.14).toFixed(3)})`;
+        ctx.arc(cx, cy, r, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(draw);
+    }
+
+    // parallax: subtle movement
+    let mx = width / 2, my = height / 2;
+    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; });
+    window.addEventListener('touchmove', (e) => { if (e.touches && e.touches[0]) { mx = e.touches[0].clientX; my = e.touches[0].clientY; } }, { passive: true });
+
+    setInterval(function parallaxStep(){
+      const cx = width/2, cy = height/2;
+      const dx = (mx - cx)/cx, dy = (my - cy)/cy;
+      for (let s of stars){
+        s.x += dx * (0.14 - Math.min(0.12, s.r / 16));
+        s.y += dy * (0.14 - Math.min(0.12, s.r / 16));
+        // keep stars in bounds (wrap-around)
+        if (s.x < -20) s.x = width + 20;
+        if (s.x > width + 20) s.x = -20;
+        if (s.y < -20) s.y = height + 20;
+        if (s.y > height + 20) s.y = -20;
+      }
+    }, 800);
+
+    // spawn sparkles on click/tap
+    window.addEventListener('click', (e) => {
+      for (let i=0;i<6;i++){
+        stars.push({
+          x: e.clientX + rand(-16,16),
+          y: e.clientY + rand(-16,16),
+          r: rand(0.6,2.4),
+          baseAlpha: rand(0.8,1),
+          twinkleSpeed: rand(0.02,0.06),
+          phase: Math.random()*Math.PI*2,
+          hueShift: rand(-6,18)
+        });
+      }
+      // trim to reasonable size after a while
+      setTimeout(()=> {
+        const cap = Math.max(60, Math.round((width * height) / STAR_BASE_DIV()));
+        if (stars.length > cap) stars = stars.slice(0, cap);
+      }, 2900);
+    });
+
+    // lifecycle
+    function start() {
+      cancelAnimation();
+      lastTime = performance.now();
+      raf = requestAnimationFrame(draw);
+    }
+    function cancelAnimation(){
+      if (raf) cancelAnimationFrame(raf);
+      raf = null;
+    }
+
+    window.addEventListener('resize', () => { resize(); start(); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) cancelAnimation(); else start();
+    });
+
+    // initial
+    resize();
+    start();
+
+  })(); // end starfield
+
+  /* ===== UI decorative stars ===== */
+  (function(){
+    const container = document.getElementById('uiStarsContainer');
+    if (!container) return;
+    const count = innerWidth < 560 ? 4 : 8;
     for (let i=0;i<count;i++){
-      stars.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.pow(Math.random(), 2) * (1.9 + Math.random()*0.6) + 0.3,
-        baseAlpha: rand(0.25, 0.95),
-        twinkleSpeed: rand(0.002, 0.012),
-        phase: Math.random() * Math.PI * 2,
-        hueShift: rand(-6, 18)
-      });
+      const el = document.createElement('div');
+      el.className = 'ui-star';
+      el.style.left = (6 + Math.random()*88) + '%';
+      el.style.top = (6 + Math.random()*88) + '%';
+      el.style.opacity = (0.06 + Math.random()*0.24);
+      el.style.transform = `scale(${0.7 + Math.random()*1.4})`;
+      el.style.animationDelay = (Math.random()*6) + 's';
+      container.appendChild(el);
     }
-  }
+  })();
 
-  function resize(){
-    const dpr = Math.max(1, devicePixelRatio || 1);
-    width = canvas.width = innerWidth * dpr;
-    height = canvas.height = innerHeight * dpr;
-    canvas.style.width = innerWidth + 'px';
-    canvas.style.height = innerHeight + 'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
+  /* ===== BREATHING LOGIC ===== */
+  (function(){
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const orb = document.getElementById('breathOrb');
+    const label = document.getElementById('breathLabel');
+    const meta = document.getElementById('cycleMeta');
 
-    // density: reduce on small screens
-    const baseArea = innerWidth * innerHeight;
-    const densityDiv = innerWidth < 560 ? 8000 : innerWidth < 920 ? 7000 : 6000;
-    const count = Math.max(60, Math.round(baseArea / densityDiv));
-    makeStars(count);
-  }
+    const inhale = 4.5, hold = 2, exhale = 6; // seconds
+    let running = false, cycleCount = 0, phase = 'idle', timeLeft = 0;
+    let phaseTimer = null, countdownInterval = null;
 
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    // background tint layer
-    const g = ctx.createLinearGradient(0,0,0,innerHeight);
-    g.addColorStop(0,'rgba(5,12,30,0.22)');
-    g.addColorStop(1,'rgba(0,3,12,0.48)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,innerWidth,innerHeight);
-
-    for (let s of stars){
-      s.phase += s.twinkleSpeed * 60;
-      const a = s.baseAlpha * (0.6 + 0.4 * Math.sin(s.phase));
-      const cx = s.x, cy = s.y, r = s.r;
-      const rad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r*8);
-      rad.addColorStop(0, `rgba(255,${240 + s.hueShift},${255},${a*0.92})`);
-      rad.addColorStop(0.5, `rgba(255,255,255,${a*0.45})`);
-      rad.addColorStop(1, `rgba(255,255,255,0)`);
-      ctx.beginPath();
-      ctx.fillStyle = rad;
-      ctx.arc(cx, cy, r*8, 0, Math.PI*2);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(255,255,255,${Math.min(1,a+0.14)})`;
-      ctx.arc(cx, cy, r, 0, Math.PI*2);
-      ctx.fill();
+    function updateMeta(){
+      meta.textContent = `Cycle: ${cycleCount} • Phase: ${phase} • Time left: ${timeLeft ? timeLeft.toFixed(1) + 's' : '—'}`;
     }
 
-    requestAnimationFrame(draw);
-  }
-
-  // subtle parallax on pointer move
-  let mx = innerWidth/2, my = innerHeight/2;
-  addEventListener('pointermove', (e)=>{ mx = e.clientX; my = e.clientY; });
-  function parallaxStep(){
-    const cx = innerWidth/2, cy = innerHeight/2;
-    const dx = (mx - cx)/cx, dy = (my - cy)/cy;
-    for (let s of stars){
-      s.x += dx * (0.18 - Math.min(0.14, s.r / 12));
-      s.y += dy * (0.18 - Math.min(0.14, s.r / 12));
+    function start(){
+      if (running) return;
+      running = true; cycleCount = 0; phase = 'inhale'; timeLeft = inhale;
+      label.textContent = 'Inhale'; orb.classList.remove('small'); orb.classList.add('big');
+      startPhase();
     }
-  }
-  setInterval(parallaxStep, 800);
 
-  // click to spawn sparkle
-  addEventListener('click', (e)=>{
-    for (let i=0;i<6;i++){
-      stars.push({
-        x: e.clientX + rand(-16,16),
-        y: e.clientY + rand(-16,16),
-        r: rand(0.6,2.4),
-        baseAlpha: rand(0.8,1),
-        twinkleSpeed: rand(0.02,0.06),
-        phase: Math.random()*Math.PI*2,
-        hueShift: rand(-6,18)
-      });
-    }
-    // trim later
-    setTimeout(()=>{ stars = stars.slice(0, Math.max(60, Math.round((innerWidth * innerHeight) / (innerWidth < 560 ? 8000 : 6000))); }, 2600);
-  });
-
-  addEventListener('resize', resize);
-  resize();
-  requestAnimationFrame(draw);
-})();
-
-/* ===========================
-   UI DECOR: small floating star dots
-   reduce on small screens
-   =========================== */
-(function(){
-  const container = document.getElementById('uiStarsContainer');
-  const count = innerWidth < 560 ? 4 : 8;
-  for (let i=0;i<count;i++){
-    const el = document.createElement('div');
-    el.className = 'ui-star';
-    el.style.left = (6 + Math.random()*88) + '%';
-    el.style.top = (6 + Math.random()*88) + '%';
-    el.style.opacity = (0.06 + Math.random()*0.24);
-    el.style.transform = `scale(${0.7 + Math.random()*1.4})`;
-    el.style.animationDelay = (Math.random()*6) + 's';
-    container.appendChild(el);
-  }
-})();
-
-/* ===========================
-   BREATHING LOGIC (unchanged)
-   =========================== */
-(function(){
-  const startBtn = document.getElementById('startBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const orb = document.getElementById('breathOrb');
-  const label = document.getElementById('breathLabel');
-  const meta = document.getElementById('cycleMeta');
-
-  // Cycle settings (adjustable)
-  const inhale = 4.5; // seconds
-  const hold = 2; // seconds
-  const exhale = 6; // seconds
-  let running = false;
-  let cycleCount = 0;
-  let phase = 'idle';
-  let timeLeft = 0;
-  let timerId = null;
-
-  function updateMeta(){
-    meta.textContent = `Cycle: ${cycleCount} • Phase: ${phase} • Time left: ${timeLeft ? timeLeft.toFixed(1) + 's' : '—'}`;
-  }
-
-  function start(){
-    if (running) return;
-    running = true;
-    startBtn.setAttribute('aria-pressed','true');
-    label.textContent = 'Inhale';
-    cycleCount = 0;
-    phase = 'inhale';
-    timeLeft = inhale;
-    orb.classList.remove('small'); orb.classList.add('big');
-    updateMeta();
-    step();
-  }
-
-  function stop(){
-    running = false;
-    startBtn.setAttribute('aria-pressed','false');
-    label.textContent = 'Stopped';
-    orb.classList.remove('big'); orb.classList.add('small');
-    phase = 'idle'; timeLeft = 0; updateMeta();
-    if (timerId) { clearTimeout(timerId); timerId = null; }
-  }
-
-  function step(){
-    if (!running) return;
-    if (phase === 'inhale'){
-      label.textContent = 'Inhale';
-      timeLeft = inhale; updateMeta();
-      orb.classList.remove('small'); orb.classList.add('big');
-      timerId = setTimeout(()=>{ phase = 'hold'; step(); }, inhale*1000);
-    }
-    else if (phase === 'hold'){
-      label.textContent = 'Hold';
-      timeLeft = hold; updateMeta();
-      timerId = setTimeout(()=>{ phase = 'exhale'; step(); }, hold*1000);
-    }
-    else if (phase === 'exhale'){
-      label.textContent = 'Exhale';
-      timeLeft = exhale; updateMeta();
+    function stop(){
+      running = false;
+      label.textContent = 'Stopped';
       orb.classList.remove('big'); orb.classList.add('small');
-      timerId = setTimeout(()=>{ cycleCount += 1; phase = 'inhale'; step(); }, exhale*1000);
+      phase = 'idle'; timeLeft = 0; updateMeta();
+      if (phaseTimer) clearTimeout(phaseTimer); phaseTimer = null;
+      if (countdownInterval) clearInterval(countdownInterval); countdownInterval = null;
     }
 
-    let interval = setInterval(()=>{
-      if (!running){ clearInterval(interval); return; }
-      timeLeft = Math.max(0, timeLeft - 0.1);
+    function startPhase(){
       updateMeta();
-    }, 100);
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(()=>{
+        if (!running) { clearInterval(countdownInterval); return; }
+        timeLeft = Math.max(0, timeLeft - 0.1);
+        updateMeta();
+      }, 100);
 
-    setTimeout(()=>{ clearInterval(interval); }, ((phase === 'inhale' ? inhale : phase === 'hold' ? hold : exhale) * 1000) + 80);
-  }
+      if (phase === 'inhale'){
+        label.textContent = 'Inhale';
+        orb.classList.remove('small'); orb.classList.add('big');
+        phaseTimer = setTimeout(()=>{ phase = 'hold'; timeLeft = hold; startPhase(); }, inhale*1000);
+      } else if (phase === 'hold'){
+        label.textContent = 'Hold';
+        phaseTimer = setTimeout(()=>{ phase = 'exhale'; timeLeft = exhale; startPhase(); }, hold*1000);
+      } else if (phase === 'exhale'){
+        label.textContent = 'Exhale';
+        orb.classList.remove('big'); orb.classList.add('small');
+        phaseTimer = setTimeout(()=>{ cycleCount += 1; phase = 'inhale'; timeLeft = inhale; startPhase(); }, exhale*1000);
+      }
+    }
 
-  startBtn.addEventListener('click', start);
-  stopBtn.addEventListener('click', stop);
+    startBtn.addEventListener('click', start);
+    stopBtn.addEventListener('click', stop);
 
-  document.addEventListener('keydown',(e)=>{
-    if (e.key === ' '){ e.preventDefault(); if (running) stop(); else start(); }
-  });
-  document.addEventListener('visibilitychange', ()=>{ if (document.hidden) stop(); });
-})();
+    // spacebar toggle
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ') { e.preventDefault(); if (running) stop(); else start(); }
+    });
 
-/* ===========================
-   AFFIRMATIONS rotation (unchanged but accessible)
-   =========================== */
-(function(){
-  const AFFIRMATIONS = [
-    "You are doing amazing, Divanshi 💛",
-    "Breathe in starlight, breathe out worries ✨",
-    "Soft heart. Strong soul. Gentle days.",
-    "You are loved, seen and enough — always.",
-    "May your dreams be vast and kind.",
-    "A universe of calm is always within you.",
-    "Your presence is a gift — breathe it in.",
-    "Small steps. Deep breaths. Golden days."
-  ];
+    // visibility
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
 
-  const display = document.getElementById('affirmText');
-  const prevBtn = document.getElementById('prevAffirm');
-  const nextBtn = document.getElementById('nextAffirm');
-  const pauseBtn = document.getElementById('pauseAffirm');
+  })();
 
-  let idx = 0, paused = false, timer = null;
+  /* ===== AFFIRMATIONS ===== */
+  (function(){
+    const AFFIRMATIONS = [
+      "You are doing amazing, Divanshi 💛",
+      "Breathe in starlight, breathe out worries ✨",
+      "Soft heart. Strong soul. Gentle days.",
+      "You are loved, seen and enough — always.",
+      "May your dreams be vast and kind.",
+      "A universe of calm is always within you.",
+      "Your presence is a gift — breathe it in.",
+      "Small steps. Deep breaths. Golden days."
+    ];
 
-  function show(i){
-    i = (i + AFFIRMATIONS.length) % AFFIRMATIONS.length;
-    idx = i;
-    display.style.opacity = 0;
-    setTimeout(()=>{ display.textContent = AFFIRMATIONS[i]; display.style.opacity = 1; }, 260);
-  }
+    const display = document.getElementById('affirmText');
+    const prevBtn = document.getElementById('prevAffirm');
+    const nextBtn = document.getElementById('nextAffirm');
+    const pauseBtn = document.getElementById('pauseAffirm');
 
-  function schedule(){
-    if (timer) clearInterval(timer);
-    if (!paused) timer = setInterval(()=>{ show(idx+1); }, 5000);
-  }
+    let idx = 0, paused = false, timer = null;
 
-  prevBtn.addEventListener('click', ()=>{ show(idx-1); schedule(); });
-  nextBtn.addEventListener('click', ()=>{ show(idx+1); schedule(); });
-  pauseBtn.addEventListener('click', ()=>{
-    paused = !paused;
-    pauseBtn.textContent = paused ? 'Resume' : 'Pause';
-    if (paused){ if (timer) clearInterval(timer); timer = null; } else schedule();
-  });
+    function show(i){
+      i = (i + AFFIRMATIONS.length) % AFFIRMATIONS.length;
+      idx = i;
+      display.style.opacity = 0;
+      setTimeout(()=> {
+        display.textContent = AFFIRMATIONS[i];
+        display.style.opacity = 1;
+      }, 220);
+    }
 
-  show(0);
-  schedule();
-})();
+    function schedule(){
+      if (timer) clearInterval(timer);
+      if (!paused) timer = setInterval(()=> { show(idx+1); }, 5000);
+    }
+
+    prevBtn.addEventListener('click', ()=>{ show(idx-1); schedule(); });
+    nextBtn.addEventListener('click', ()=>{ show(idx+1); schedule(); });
+    pauseBtn.addEventListener('click', ()=>{
+      paused = !paused;
+      pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+      if (paused) { if (timer) clearInterval(timer); timer = null; } else schedule();
+    });
+
+    show(0);
+    schedule();
+
+    // make affirmation editable quickly by double-click (optional small feature)
+    display.addEventListener('dblclick', () => {
+      const custom = prompt('Edit affirmation (visible only locally):', display.textContent);
+      if (custom !== null && custom.trim() !== '') {
+        AFFIRMATIONS[idx] = custom.trim();
+        show(idx);
+      }
+    });
+  })();
+
+}); // DOMContentLoaded end
 </script>
 
 </body>
