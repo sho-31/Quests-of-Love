@@ -334,20 +334,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ===== UI decorative stars ===== */
   (function(){
-    const container = document.getElementById('uiStarsContainer');
-    if (!container) return;
-    const count = innerWidth < 560 ? 4 : 8;
-    for (let i=0;i<count;i++){
-      const el = document.createElement('div');
-      el.className = 'ui-star';
-      el.style.left = (6 + Math.random()*88) + '%';
-      el.style.top = (6 + Math.random()*88) + '%';
-      el.style.opacity = (0.06 + Math.random()*0.24);
-      el.style.transform = `scale(${0.7 + Math.random()*1.4})`;
-      el.style.animationDelay = (Math.random()*6) + 's';
-      container.appendChild(el);
-    }
-  })();
+  const container = document.getElementById('uiStarsContainer');
+  if (!container) return;
+
+  // More stars for desktop & mobile
+  const count = innerWidth < 560 ? 80 : 150;
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'ui-star';
+    el.style.left = (Math.random() * 100) + '%';
+    el.style.top = (Math.random() * 100) + '%';
+    el.style.opacity = (0.4 + Math.random() * 0.6);
+    el.style.transform = `scale(${0.4 + Math.random() * 1.2})`;
+    el.style.animationDelay = (Math.random() * 5) + 's';
+    el.style.animationDuration = (2 + Math.random() * 3) + 's';
+    container.appendChild(el);
+  }
+})();
 
   /* ===== BREATHING LOGIC ===== */
   (function(){
