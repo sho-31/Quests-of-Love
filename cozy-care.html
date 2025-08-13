@@ -1,1 +1,127 @@
-.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🐾 Cozy Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(180deg, #ffe6e6, #fff5e1);
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    font-family: 'Pacifico', cursive;
+    text-align: center;
+    font-size: 2.5em;
+    animation: heartbeat 2s infinite;
+    margin: 20px 0;
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin: 20px auto;
+    max-width: 400px;
+    padding: 20px;
+    transition: transform 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+  }
+  /* Playlist */
+  .playlist audio {
+    width: 100%;
+    border-radius: 10px;
+  }
+  /* Breathing animation */
+  .breathing-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #ffd1dc;
+    margin: 0 auto;
+    animation: breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+  /* Affirmations */
+  .affirmation {
+    font-size: 1.2em;
+    text-align: center;
+    min-height: 40px;
+    animation: fade 5s infinite;
+  }
+  @keyframes fade {
+    0%, 100% { opacity: 0; }
+    10%, 90% { opacity: 1; }
+  }
+  /* Kitty gif */
+  .kitty img {
+    max-width: 100%;
+    border-radius: 15px;
+    display: block;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+  <h1>🐾 Cozy Care</h1>
+
+  <!-- Playlist Card -->
+  <div class="card playlist">
+    <h2>🎵 Soothing Playlist</h2>
+    <audio controls>
+      <source src="your-song.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <!-- Breathing Animation Card -->
+  <div class="card breathing">
+    <h2>🌬 Breathing Exercise</h2>
+    <div class="breathing-circle"></div>
+  </div>
+
+  <!-- Affirmations Card -->
+  <div class="card affirmations">
+    <h2>💬 Positive Affirmations</h2>
+    <div class="affirmation" id="affirmationText">You are doing amazing, Divanshi 💛</div>
+  </div>
+
+  <!-- Kitty Gif Card -->
+  <div class="card kitty">
+    <h2>🐱 Cozy Kitty</h2>
+    <img src="kitty.gif" alt="Cute Kitty" id="kittyImg">
+    <audio id="purrSound" src="purr.mp3"></audio>
+  </div>
+
+<script>
+  // Affirmations rotation
+  const affirmations = [
+    "You are doing amazing, Divanshi 💛",
+    "You are loved and cherished 🌸",
+    "Every breath you take brings peace 🌬",
+    "Your smile lights up the room ☀️"
+  ];
+  let affIndex = 0;
+  setInterval(() => {
+    affIndex = (affIndex + 1) % affirmations.length;
+    document.getElementById('affirmationText').textContent = affirmations[affIndex];
+  }, 5000);
+
+  // Kitty gif purr sound
+  document.getElementById('kittyImg').addEventListener('click', () => {
+    document.getElementById('purrSound').play();
+  });
+</script>
+</body>
+</html>
