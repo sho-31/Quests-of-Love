@@ -1,379 +1,258 @@
-
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>🐾 Cozy Care — Kitty Divi</title>
 
-  <!-- Header font (soft handwritten) -->
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Handwritten header font -->
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --pink-1: #fff0f5;
-      --pink-2: #ffe6f0;
-      --accent: #ff69b4;
-      --card-bg: rgba(255,255,255,0.95);
-      --shadow: 0 10px 20px rgba(255,182,193,0.25);
-      --rounded: 18px;
-    }
-
-    html,body{height:100%;margin:0;}
-    body{
-      font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-      background: linear-gradient(180deg, #ffe6f0 0%, #ffd1e8 45%, #fff0f5 100%);
-      color: #d63384;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding: 18px 12px 40px;
-      box-sizing:border-box;
-    }
-
-    header{
-      width:100%;
-      max-width:920px;
+    /* extra small utilities not in tailwind for the breathing transition control */
+    .breath-circle {
+      border-radius: 9999px;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:12px;
-      margin-bottom:10px;
-      background: linear-gradient(180deg, rgba(255, 240, 245, 0.9), rgba(255, 230, 240, 0.8));
-      border-radius: 12px;
-      padding: 10px 16px;
-      box-shadow: 0 6px 18px rgba(255,182,193,0.12);
+      box-shadow: 0 10px 30px rgba(255, 182, 193, 0.22);
+      will-change: transform, opacity;
+      position: relative;
+      overflow: visible;
     }
 
-    h1{
-      margin:0;
-      font-family: 'Pacifico', cursive;
-      font-size: clamp(1.6rem, 4.2vw, 2.8rem);
-      color: #222;
-      letter-spacing: 0.6px;
-      transform-origin:center;
-      animation: heartbeat 2500ms infinite;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    @keyframes heartbeat{
-      0%,100%{ transform: scale(1); }
-      50% { transform: scale(1.04); }
+    /* center paw on circle */
+    .paw-overlay {
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%, -50%);
+      pointer-events:none;
     }
 
-    /* page container */
-    .page {
-      width:100%;
-      max-width:920px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      align-items:stretch;
-    }
-
-    /* Card shared styles */
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--rounded);
-      padding: 18px;
-      box-shadow: var(--shadow);
-      transition: transform 220ms ease, box-shadow 220ms ease;
-      min-height: 80px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-    .card:hover{ transform: translateY(-6px); box-shadow: 0 16px 36px rgba(255,182,193,0.18); }
-
-    .card h2{
-      margin:0;
-      font-size: clamp(1.05rem, 3.5vw, 1.4rem);
-      display:flex;
-      align-items:center;
-      gap:10px;
-      color:#222;
-    }
-
-    .card p{ margin:0; color:#8a3b6e; font-size: 0.98rem; }
-
-    /* Playlist */
-    .playlist .player-box{
-      background: linear-gradient(90deg,#fff,#fff);
-      border-radius:12px;
-      padding:10px;
-      display:flex;
-      align-items:center;
-      gap:12px;
-      flex-direction:column;
-    }
-    .playlist iframe{
-      width:100%;
-      height:80px;
-      border-radius:12px;
-      border: none;
-    }
-    .playlist .audio-fallback{
-      width:100%;
-      max-width:720px;
-    }
-    .small-btn{
-      background: linear-gradient(45deg,#ff99cc,#ff66b2);
-      border:none;
-      color:white;
-      padding:8px 14px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:700;
-      box-shadow:0 6px 14px rgba(255,105,180,0.18);
-    }
-
-    /* Breathing */
-    .breathing {
-      align-items:center;
-      justify-content:center;
-    }
-    .breath-wrap{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:12px;
-      width:100%;
-    }
-    .breathing-circle{
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 20%, rgba(255,220,230,0.9), #ffd1dc 50%, #ffbfd2 100%);
-      box-shadow: 0 8px 22px rgba(255,182,193,0.22);
-      transition: transform 1s ease, opacity 1s ease;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .breathing-circle.small{ transform: scale(.75); opacity:0.85;}
-    .breathing-circle.big{ transform: scale(1.12); opacity:1;}
-    .breath-controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
-
-    /* paw prints container for exhale */
-    .paw-layer{ position:relative; width:100%; height:0; pointer-events:none; }
-
-    .paw {
+    /* small paw prints floating on exhale */
+    .floating-paw {
       position: absolute;
-      font-size: 20px;
+      font-size: 18px;
+      pointer-events: none;
+      transform: translateY(0) scale(0.75);
       opacity: 0;
-      transform: translateY(0) scale(0.6);
-      transition: transform 1.2s ease, opacity 1.2s ease;
+      transition: transform 1.2s ease-out, opacity 1.2s ease-out;
       will-change: transform, opacity;
     }
 
-    /* Affirmations */
-    .affirmation {
-      text-align:center;
-      font-size: clamp(1.0rem, 3.2vw, 1.12rem);
-      min-height:46px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:12px;
-      padding:8px;
-      background: linear-gradient(90deg, rgba(255,245,250,0.9), rgba(255,240,245,0.9));
-      cursor:pointer;
-      user-select:none;
-    }
-    .affirmation .fade{
-      transition: opacity .6s ease, transform .6s ease;
-    }
-    .affirmation .hide{ opacity:0; transform: translateY(6px); }
-    .affirmation .show{ opacity:1; transform: translateY(0); }
+    /* affirmation fade classes (controlled from JS) */
+    .aff-fade-in { opacity: 1; transform: translateY(0); transition: opacity .45s ease, transform .45s ease; }
+    .aff-fade-out { opacity: 0; transform: translateY(6px); transition: opacity .45s ease, transform .45s ease; }
 
-    /* Kitty */
-    .kitty {
-      align-items:center;
+    /* subtle page background sparkle-ish (keeps main page feel) */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.08) 0px, transparent 10px),
+                        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.06) 0px, transparent 8px),
+                        radial-gradient(circle at 50% 80%, rgba(255,255,255,0.03) 0px, transparent 6px);
+      mix-blend-mode: screen;
     }
-    .kitty img {
-      width: 160px;
-      max-width: 46%;
-      border-radius: 14px;
-      display:block;
-      margin: 0 auto;
-      cursor:pointer;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.08);
-    }
-    .kitty .note{ font-size:0.95rem; color:#8a3b6e; }
-
-    /* Responsive tuning */
-    @media (max-width:520px){
-      .breathing-circle{ width:140px; height:140px; }
-      .kitty img{ width:210px; max-width:80%; }
-    }
-    @media (max-width:360px){
-      .breathing-circle{ width:120px; height:120px; }
-    }
-
-    /* subtle page footer spacing */
-    footer{ height:18px; }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center bg-gradient-to-b from-[#ffe6f0] via-[#ffd1e8] to-[#fff0f5] text-[#d63384]">
 
-  <header>
-    <h1>🐾 Cozy Care</h1>
+  <!-- Header -->
+  <header class="w-full max-w-3xl px-4 mt-6">
+    <div class="bg-gradient-to-b from-[#fff6fb] to-[#fff0f6] rounded-xl shadow-md p-3 flex justify-center items-center">
+      <h1 class="font-[Pacifico] text-[#222] text-3xl sm:text-4xl">🐾 Cozy Care</h1>
+    </div>
   </header>
 
-  <main class="page" role="main">
+  <!-- Page container -->
+  <main class="page w-full max-w-3xl px-4 mt-6 mb-10 flex flex-col gap-6">
 
     <!-- Playlist Card -->
-    <section class="card playlist" aria-labelledby="pl-h">
-      <h2 id="pl-h">🎵 Soothing Playlist</h2>
-      <div class="player-box">
-        <!-- Spotify embed (open in Spotify app if available) -->
-        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    <section class="card bg-white/95 rounded-2xl p-4 shadow-lg">
+      <div class="flex flex-col gap-2">
+        <h2 class="text-xl font-semibold text-[#222] flex items-center gap-3">🎵 Soothing Playlist</h2>
+        <p class="text-sm text-[#8a3b6e]">Gentle tunes to calm the heart. Play in Spotify or use the built-in player below.</p>
 
-        <!-- fallback / optional local audio player -->
-        <div class="audio-fallback" style="width:100%;">
-          <!-- Replace 'sample.mp3' with your hosted mp3 if you want an inline player -->
-          <audio controls style="width:100%; border-radius:10px;">
+        <div class="mt-2 flex flex-col gap-3">
+          <!-- Spotify embed (you can replace with your playlist id) -->
+          <iframe class="w-full rounded-lg" style="min-height:84px;" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+
+          <!-- Fallback local audio (optional) -->
+          <audio controls class="w-full rounded-md" id="localAudio">
+            <!-- replace sample.mp3 with your own hosted mp3 if preferred -->
             <source src="sample.mp3" type="audio/mpeg">
-            Your browser doesn't support audio playback — you can open the playlist instead.
+            Your browser doesn't support audio playback.
           </audio>
-        </div>
 
-        <div style="display:flex; gap:10px; justify-content:center; width:100%; margin-top:6px;">
-          <button class="small-btn" onclick="openPlaylist()">Open in Spotify</button>
-          <button class="small-btn" onclick="togglePlayerFocus()">Focus Player</button>
+          <div class="flex gap-3 justify-center mt-1">
+            <button class="px-4 py-2 rounded-full bg-gradient-to-r from-[#ff99cc] to-[#ff66b2] text-white font-semibold shadow-sm" onclick="openPlaylist()">Open in Spotify</button>
+            <button class="px-3 py-2 rounded-full bg-white border border-pink-200 text-[#ff4d9e] font-semibold shadow-sm" onclick="flashPlayer()">Focus</button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Breathing Card -->
-    <section class="card breathing" aria-labelledby="br-h">
-      <h2 id="br-h">🌬 Breathing Exercise</h2>
+    <section class="card bg-white/95 rounded-2xl p-4 shadow-lg flex flex-col items-center">
+      <h2 class="w-full text-left text-xl font-semibold text-[#222] flex items-center gap-3">🌬 Breathing Exercise</h2>
+      <p class="w-full text-left text-sm text-[#8a3b6e]">Follow the circle. Inhale 7s → Hold 8s → Exhale 4s. Repeat gently.</p>
 
-      <div class="breath-wrap" aria-hidden="false">
-        <div class="breathing-circle" id="breathCircle" aria-hidden="true"></div>
+      <div class="mt-4 w-full flex flex-col items-center gap-3 relative">
+        <!-- breathing circle wrapper -->
+        <div id="breathWrapper" class="breath-circle" style="width:220px; height:220px;">
+          <!-- static paw overlay centered on circle (blue paw like your image) -->
+          <div class="paw-overlay" aria-hidden="true">
+            <!-- Inline SVG paw — replace with your PNG if preferred -->
+            <svg id="pawSVG" width="88" height="88" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+              <g fill="#3E5C9A">
+                <ellipse cx="120" cy="80" rx="56" ry="72"/>
+                <ellipse cx="200" cy="60" rx="58" ry="74"/>
+                <ellipse cx="285" cy="80" rx="56" ry="72"/>
+                <ellipse cx="360" cy="120" rx="48" ry="64"/>
+                <path d="M256 160c-66 0-160 84-160 160 0 88 90 192 160 192s160-104 160-192c0-76-94-160-160-160z"/>
+              </g>
+            </svg>
+          </div>
+          <!-- placeholder content (keeps circle visually centered) -->
+        </div>
 
-        <div class="paw-layer" id="pawLayer" aria-hidden="true"></div>
+        <!-- layer for floating paw prints during exhale -->
+        <div id="pawLayer" class="w-full h-0 relative pointer-events-none" aria-hidden="true"></div>
 
-        <div class="breath-controls">
-          <button class="small-btn" id="breathToggle">Start</button>
-          <button class="small-btn" id="breathGuide" onclick="alert('Breathe in for 4s → hold 2s → out 6s. Repeat 4–6 times.')">How to</button>
+        <div class="flex gap-3 mt-2">
+          <button id="breathStart" class="px-4 py-2 rounded-full bg-gradient-to-r from-[#ff99cc] to-[#ff66b2] text-white font-semibold shadow-sm">Start</button>
+          <button id="breathGuide" class="px-4 py-2 rounded-full bg-white border border-pink-200 text-[#ff4d9e] font-semibold shadow-sm">How to</button>
         </div>
       </div>
     </section>
 
     <!-- Affirmations Card -->
-    <section class="card affirmations" aria-labelledby="af-h">
-      <h2 id="af-h">💬 Positive Affirmations</h2>
-
-      <div class="affirmation" id="affirmation" role="button" tabindex="0" title="Tap to see next affirmation">
-        <div id="affirmText" class="fade show">You are doing amazing, Divanshi 💛</div>
+    <section class="card bg-white/95 rounded-2xl p-4 shadow-lg">
+      <h2 class="text-xl font-semibold text-[#222] flex items-center gap-3">💬 Positive Affirmations</h2>
+      <div class="mt-3">
+        <div id="affirmationBox" class="w-full rounded-lg bg-gradient-to-r from-[#fff6fb] to-[#fff0f6] p-3">
+          <div id="affirmText" class="text-center text-[#6a2b5a] text-base aff-fade-in">You are doing amazing, Divanshi 💛</div>
+        </div>
+        <div class="mt-2 text-xs text-[#a64a87] text-center opacity-90">(automatically changes every 5 seconds)</div>
       </div>
-      <div style="text-align:center; font-size:0.86rem; color:#a64a87; opacity:0.9;">(t ap the box to advance)</div>
     </section>
 
-    <!-- Kitty Card -->
-    <section class="card kitty" aria-labelledby="kt-h">
-      <h2 id="kt-h">🐱 Cozy Kitty</h2>
+    <!-- REMOVED Cozy Kitty as requested - nothing here -->
 
-      <img id="kittyImg" src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Cozy kitty sipping cocoa" />
-
-      <div class="note">Tap the kitty to hear a warm purr 💗</div>
-    </section>
   </main>
 
-  <footer></footer>
+  <footer class="w-full max-w-3xl px-4 mb-8"></footer>
 
 <script>
-  /* ========= Playlist helpers ========= */
+  /* ============ Helpers for playlist ============ */
   function openPlaylist(){
-    // opens Spotify playlist in new tab / app
     window.open('https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj','_blank');
   }
-  function togglePlayerFocus(){
-    // a little micro-interaction to 'focus' the player visually
-    const iframe = document.querySelector('.playlist iframe');
-    iframe.style.boxShadow = '0 18px 48px rgba(255, 182, 193, 0.26)';
-    setTimeout(()=> iframe.style.boxShadow = '', 1200);
+  function flashPlayer(){
+    const p = document.querySelector('iframe');
+    if(!p) return;
+    p.style.boxShadow = '0 24px 48px rgba(255,105,180,0.22)';
+    setTimeout(()=> p.style.boxShadow = '', 700);
   }
 
-  /* ========= Breathing logic ========= */
-  const breathCircle = document.getElementById('breathCircle');
-  const breathBtn = document.getElementById('breathToggle');
+  /* ============ Breathing logic (7s inhale, 8s hold, 4s exhale) ============ */
+  const breathStartBtn = document.getElementById('breathStart');
+  const breathWrapper = document.getElementById('breathWrapper');
   const pawLayer = document.getElementById('pawLayer');
 
+  // durations in ms
+  const inhaleMs = 7000;
+  const holdMs = 8000;
+  const exhaleMs = 4000;
+  const cycleMs = inhaleMs + holdMs + exhaleMs;
+
   let breathing = false;
-  let breathInterval = null;
-  let breathPhase = 0; // track timing
-  const cycleMs = 5000; // single breathe cycle (ms) (inhale+hold+exhale simplified)
-  // We'll animate circle between small and big at 0%/50% using class toggles
-  function startBreathing(){
-    if (breathing) return;
-    breathing = true;
-    breathBtn.textContent = 'Stop';
-    breathCircle.classList.remove('small','big');
-    // start with small -> big cycle
-    breathCircle.classList.add('big');
-    breathPhase = 0;
-    // every half-cycle toggle classes and at exhale (50%) spawn paws
-    breathInterval = setInterval(() => {
-      breathPhase = (breathPhase + 1) % 2;
-      if (breathPhase === 0){
-        breathCircle.classList.remove('big'); breathCircle.classList.add('small');
-        // inhale -> nothing
-      } else {
-        breathCircle.classList.remove('small'); breathCircle.classList.add('big');
-        // exhale -> spawn paw prints
-        spawnPawBurst();
-      }
-    }, cycleMs / 2);
+  let breathTimeout = null;
+
+  // Set initial compact appearance
+  breathWrapper.style.transform = 'scale(0.84)';
+
+  function setScale(scale, durationMs){
+    // Apply transform and transition duration dynamically
+    breathWrapper.style.transition = `transform ${durationMs}ms cubic-bezier(.2,.9,.2,1), opacity ${durationMs}ms`;
+    breathWrapper.style.transform = `scale(${scale})`;
   }
 
-  function stopBreathing(){
-    breathing = false;
-    breathBtn.textContent = 'Start';
-    clearInterval(breathInterval);
-    breathInterval = null;
-    breathCircle.classList.remove('small','big');
-  }
-
-  breathBtn.addEventListener('click', () => {
-    if (!breathing) startBreathing(); else stopBreathing();
-  });
-
-  // paw spawn
-  function spawnPawBurst(){
-    // create 4 little paws that float up
-    const count = 4;
-    for (let i=0;i<count;i++){
+  // spawn floating paw prints on exhale
+  function spawnFloatingPaws(){
+    const count = 5;
+    for(let i=0;i<count;i++){
       const span = document.createElement('span');
-      span.className = 'paw';
+      span.className = 'floating-paw';
       span.textContent = '🐾';
-      // random horizontal position inside container width
-      const left = (30 + Math.random()*60); // %
+      // choose random left within 30%..70% of container width
+      const left = 20 + Math.random() * 60;
       span.style.left = left + '%';
-      span.style.top = '12px';
-      span.style.opacity = '1';
-      span.style.transform = 'translateY(0) scale(1)';
+      // start near circle vertical position
+      span.style.top = '30px';
       pawLayer.appendChild(span);
 
-      // animate to float upward and fade
-      requestAnimationFrame(() => {
-        span.style.transition = 'transform 1400ms ease-out, opacity 1400ms ease-out';
-        // random upwards & slight drift
-        const dy = -(80 + Math.random()*60);
-        const dx = (-30 + Math.random()*60);
-        span.style.transform = `translate(${dx}px, ${dy}px) scale(.9)`;
+      // force reflow then animate
+      requestAnimationFrame(()=>{
+        const dx = (-30 + Math.random() * 60); // horizontal drift
+        const dy = -(80 + Math.random() * 40); // upward
+        span.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
         span.style.opacity = '0';
       });
 
-      setTimeout(() => { span.remove(); }, 1600 + Math.random()*200);
+      // remove after animation
+      setTimeout(()=> {
+        try{ span.remove(); } catch(e){}
+      }, 1500 + Math.random()*300);
     }
   }
 
-  /* ========= Affirmations rotation ========= */
+  async function breathingCycle(){
+    if(!breathing) return;
+    try{
+      // inhale -> expand
+      setScale(1.18, inhaleMs);
+      await new Promise(r => breathTimeout = setTimeout(r, inhaleMs));
+
+      // hold -> keep expanded (we can reduce micro movement)
+      setScale(1.18, 200); // tiny immediate
+      await new Promise(r => breathTimeout = setTimeout(r, holdMs));
+
+      // exhale -> contract and spawn paw prints
+      setScale(0.78, exhaleMs);
+      spawnFloatingPaws();
+      await new Promise(r => breathTimeout = setTimeout(r, exhaleMs));
+
+      // loop
+      if(breathing) breathingCycle();
+    }catch(e){}
+  }
+
+  breathStartBtn.addEventListener('click', () => {
+    if (!breathing){
+      breathing = true;
+      breathStartBtn.textContent = 'Stop';
+      breathingCycle();
+    } else {
+      breathing = false;
+      breathStartBtn.textContent = 'Start';
+      clearTimeout(breathTimeout);
+      // return to restful scale
+      setScale(0.84, 400);
+    }
+  });
+
+  document.getElementById('breathGuide').addEventListener('click', () => {
+    alert('Inhale for 7 seconds → Hold for 8 seconds → Exhale for 4 seconds. Repeat gently.');
+  });
+
+  /* ============ Affirmations autoroate (no click required) ============ */
+  const affirmText = document.getElementById('affirmText');
   const affirmList = [
     "You are doing amazing, Divanshi 💛",
     "You are loved and cherished 🌸",
@@ -381,19 +260,18 @@
     "You make tiny moments feel like magic ✨",
     "You are exactly where you need to be 🐱💖"
   ];
-  const affTextEl = document.getElementById('affirmText');
-  const affWrap = document.getElementById('affirmation');
   let affIndex = 0;
   let affTimer = null;
 
   function showAff(index){
-    // fade out -> change -> fade in
-    affTextEl.classList.add('hide');
-    setTimeout(() => {
-      affTextEl.textContent = affirmList[index];
-      affTextEl.classList.remove('hide');
-      affTextEl.classList.add('show');
-    }, 320);
+    // fade-out, change, fade-in
+    affirmText.classList.remove('aff-fade-in');
+    affirmText.classList.add('aff-fade-out');
+    setTimeout(()=> {
+      affirmText.textContent = affirmList[index];
+      affirmText.classList.remove('aff-fade-out');
+      affirmText.classList.add('aff-fade-in');
+    }, 420);
   }
 
   function nextAff(){
@@ -401,87 +279,13 @@
     showAff(affIndex);
   }
 
-  // click to go to next
-  affWrap.addEventListener('click', nextAff);
-  affWrap.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') nextAff(); });
-
-  // auto-rotate every 5s
+  // start auto-rotation
   affTimer = setInterval(nextAff, 5000);
 
-  /* ========= Kitty purr with WebAudio ========= */
-  const kittyImg = document.getElementById('kittyImg');
-  let audioContext, gainNode, purrOsc1, purrOsc2, purrLFO;
+  // initialize visible state
+  affirmText.classList.add('aff-fade-in');
 
-  function makePurr(){
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    gainNode = audioContext.createGain();
-    gainNode.gain.value = 0;
-    gainNode.connect(audioContext.destination);
-
-    // two low oscillators detuned slightly to create warm vibe
-    purrOsc1 = audioContext.createOscillator();
-    purrOsc1.type = 'sine';
-    purrOsc1.frequency.value = 60; // low
-    purrOsc1.connect(gainNode);
-
-    purrOsc2 = audioContext.createOscillator();
-    purrOsc2.type = 'sine';
-    purrOsc2.frequency.value = 65;
-    purrOsc2.connect(gainNode);
-
-    // LFO for amplitude modulation (purr effect)
-    purrLFO = audioContext.createOscillator();
-    purrLFO.type = 'sine';
-    purrLFO.frequency.value = 8; // purr rate (Hz)
-    const lfoGain = audioContext.createGain();
-    lfoGain.gain.value = 0.12; // depth
-    purrLFO.connect(lfoGain);
-    lfoGain.connect(gainNode.gain);
-
-    // start
-    purrOsc1.start();
-    purrOsc2.start();
-    purrLFO.start();
-
-    // ramp gain up then down
-    const now = audioContext.currentTime;
-    gainNode.gain.cancelScheduledValues(now);
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.15, now + 0.02);
-    // stop after 2.8s
-    gainNode.gain.linearRampToValueAtTime(0.0, now + 3.2);
-
-    // stop oscillators after done
-    setTimeout(() => {
-      try {
-        purrOsc1.stop(); purrOsc2.stop(); purrLFO.stop();
-      } catch(e) {}
-      // disconnect to free resources
-      purrOsc1.disconnect(); purrOsc2.disconnect(); purrLFO.disconnect();
-      gainNode.disconnect();
-      audioContext.close();
-    }, 3600);
-  }
-
-  kittyImg.addEventListener('click', async () => {
-    // resume audio context on user gesture if needed, then play purr
-    try {
-      if (!audioContext || audioContext.state === 'closed') {
-        makePurr();
-      } else {
-        makePurr();
-      }
-    } catch(err){
-      // fallback: brief beep if WebAudio not available
-      console.warn('purr failed', err);
-    }
-    // gentle micro-interaction on the kitty
-    kittyImg.style.transform = 'translateY(-6px)';
-    setTimeout(()=> kittyImg.style.transform = '', 300);
-  });
-
-  /* ========= accessibility / small niceties ========= */
-  // stop intervals when page becomes hidden to save CPU
+  /* ============ Accessibility / tab visibility optimizations ============ */
   document.addEventListener('visibilitychange', () => {
     if (document.hidden){
       if (affTimer) clearInterval(affTimer);
@@ -490,8 +294,11 @@
     }
   });
 
-  // initial setup: show first affirmation
-  showAff(0);
+  // ensure breath stops when leaving
+  window.addEventListener('pagehide', () => {
+    breathing = false;
+    clearTimeout(breathTimeout);
+  });
 
 </script>
 </body>
