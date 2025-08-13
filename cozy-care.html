@@ -1,404 +1,499 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>🐾 Cozy Care — Kitty Divi</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>🐾 Cozy Care — Dream Room</title>
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-  <style>
-    /* Dreamy custom styles on top of Tailwind */
-    :root{
-      --p1: #fff0f5;
-      --p2: #ffe6f0;
-      --accentA: #ff79b4;
-      --accentB: #ff5fa3;
-      --muted: #8a3b6e;
-    }
+<style>
+  :root{
+    --accent1:#ff99cc; --accent2:#ff66b2;
+    --deep:#2b1422; --muted:#7b2f5b;
+  }
+  html,body{height:100%; margin:0;}
+  body{
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(180deg,#ffe9f3 0%,#fff4fb 45%, #fffafc 100%);
+    color:var(--deep);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex; justify-content:center; padding:20px;
+  }
 
-    html,body{height:100%; margin:0;}
-    body{
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: radial-gradient(circle at 20% 10%, rgba(255,245,250,0.6), transparent 8%),
-                  radial-gradient(circle at 80% 70%, rgba(255,230,240,0.55), transparent 10%),
-                  linear-gradient(180deg, var(--p2) 0%, #ffd9eb 40%, var(--p1) 100%);
-      color:#57123d;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding:18px;
-      box-sizing:border-box;
-    }
+  /* page shell */
+  .stage {
+    width:100%;
+    max-width:1100px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:18px;
+  }
+  @media(min-width:920px){
+    .stage { grid-template-columns: 360px 1fr; align-items:start; }
+  }
 
-    /* header */
-    header {
-      width:100%;
-      max-width:920px;
-      margin-bottom:12px;
-    }
-    .header-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,246,250,0.95));
-      border-radius: 16px;
-      padding: 12px 14px;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      box-shadow: 0 14px 36px rgba(255,140,190,0.14);
-      border: 1px solid rgba(255,220,230,0.8);
-    }
-    h1 {
-      margin:0;
-      font-family: 'Pacifico', cursive;
-      color:#2b1422;
-      font-size: clamp(1.4rem, 4vw, 2.4rem);
-      letter-spacing:0.4px;
-    }
+  /* left: cozy shelf / controls */
+  .left {
+    display:flex; flex-direction:column; gap:18px;
+  }
 
-    /* page container */
-    .page {
-      width:100%;
-      max-width:920px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      align-items:stretch;
-    }
+  .panel {
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,250,253,0.98));
+    border-radius: 18px;
+    padding:14px;
+    box-shadow: 0 16px 40px rgba(255,150,185,0.12);
+    border:1px solid rgba(255,220,230,0.7);
+  }
 
-    /* glassy card style */
-    .card {
-      border-radius: 18px;
-      padding: 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,250,253,0.96));
-      box-shadow: 0 18px 44px rgba(255,150,185,0.12);
-      border: 1px solid rgba(255,220,230,0.6);
-      transition: transform .28s ease, box-shadow .28s ease;
-    }
-    .card:hover{ transform: translateY(-6px); box-shadow: 0 26px 60px rgba(255,150,185,0.16); }
+  header h1 { font-family: 'Pacifico', cursive; font-size:1.6rem; margin:0; color:var(--deep); text-align:center;}
+  .sub { color:var(--muted); }
 
-    .muted { color: var(--muted); }
+  /* Shelf/Book */
+  .room-illustration { width:100%; height:auto; display:block; }
 
-    /* playlist */
-    .player-iframe { width:100%; min-height:86px; border-radius:12px; border:none; }
+  .book {
+    width:140px; height:100px; border-radius:10px;
+    background: linear-gradient(180deg,#ffdfe9,#ffd1e3);
+    box-shadow: 0 10px 22px rgba(255,150,185,0.12);
+    border:1px solid rgba(255,200,220,0.9);
+    position:relative; margin:auto; cursor:pointer;
+    transform-origin: left center; transition: transform .5s cubic-bezier(.2,.9,.2,1);
+  }
+  .book.open { transform: rotateY(-18deg) translateX(-6px) scale(1.02); }
+  .book::before{ content:''; position:absolute; left:8px; top:10px; width:6px; bottom:10px; background: linear-gradient(180deg,#fff0f6,#ffe6f0); border-radius:3px; }
+  .book-label { position:absolute; right:10px; top:32px; font-weight:700; color:var(--deep); font-size:0.95rem; }
 
-    /* fancy pill buttons */
-    .pill-primary {
-      background: linear-gradient(90deg, var(--accentA), var(--accentB));
-      color:white;
-      padding:10px 18px;
-      border-radius:999px;
-      font-weight:700;
-      box-shadow: 0 8px 26px rgba(255,105,180,0.16);
-      border:none;
-    }
-    .pill-ghost {
-      padding:9px 14px;
-      border-radius:999px;
-      background:white;
-      border:1px solid rgba(255,200,220,0.7);
-      color:var(--accentB);
-      font-weight:700;
-    }
+  /* flipbook pages container */
+  .flipbook {
+    width:300px; max-width:100%;
+    height:220px; margin:auto; position:relative;
+    perspective:1200px;
+  }
+  .page {
+    position:absolute; inset:0; border-radius:12px;
+    background:linear-gradient(180deg,#fff,#fffefc);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+    transition: transform .7s cubic-bezier(.2,.9,.2,1), opacity .35s;
+    display:flex; flex-direction:column; gap:10px; padding:12px;
+    overflow:hidden;
+  }
+  .page.page-1 { transform-origin:left center; z-index:40; }
+  .page.page-2 { transform-origin:left center; z-index:30; left:6px; top:6px; width:calc(100% - 6px); }
+  .page.page-3 { transform-origin:left center; z-index:20; left:12px; top:12px; width:calc(100% - 12px); opacity:0.95; }
 
-    /* breathing circle */
-    .breath-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; }
-    .breath-circle {
-      width: 240px;
-      height: 240px;
-      border-radius:50%;
-      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,1), rgba(255,240,245,0.8) 35%, rgba(255,230,240,1) 70%);
-      box-shadow: inset 0 10px 30px rgba(255,255,255,0.7), 0 18px 48px rgba(255,170,200,0.12);
-      display:flex; align-items:center; justify-content:center;
-      position:relative;
-      transition: transform 7000ms cubic-bezier(.2,.9,.2,1), opacity 300ms ease;
-      will-change: transform, opacity;
-      overflow: visible;
-    }
-    .breath-small { transform: scale(0.78); }
-    .breath-big { transform: scale(1.18); transition-duration:7000ms; }
-    .breath-contract { transform: scale(0.78); transition-duration:4000ms; }
+  .page.flipped { transform: rotateY(-150deg) translateX(-60px); opacity:0; }
 
-    /* centered paw image on top of circle */
-    .paw-overlay {
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:120px; height:120px; display:flex; align-items:center; justify-content:center;
-      pointer-events:none;
-      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.07));
-    }
-    .paw-overlay img { width:100%; height:100%; object-fit:contain; display:block; }
+  /* center: room & window */
+  .room {
+    position:relative;
+    display:flex; gap:18px; flex-direction:column;
+  }
 
-    /* floating tiny sparkles */
-    .sparkle {
-      position: absolute;
-      width:6px; height:6px; border-radius:50%;
-      background: rgba(255,255,255,0.85);
-      filter: blur(0.4px);
-      opacity: 0.7;
-      box-shadow: 0 0 8px rgba(255,220,240,0.8);
-      will-change: transform, opacity;
-    }
+  .window {
+    background: radial-gradient(ellipse at 50% 40%, rgba(255,245,250,0.8), rgba(255,235,245,0.6) 40%, rgba(255,220,235,0.6));
+    border-radius: 18px; padding:18px;
+    box-shadow: inset 0 10px 40px rgba(255,230,240,0.35), 0 18px 44px rgba(255,150,185,0.08);
+    position:relative; overflow:visible;
+  }
 
-    /* floating paw prints during exhale */
-    .floating-paw {
-      position:absolute;
-      pointer-events:none;
-      font-size:18px;
-      transform: translateY(0) scale(0.8);
-      opacity:0;
-      transition: transform 1200ms ease-out, opacity 1200ms ease-out;
-      will-change: transform, opacity;
-      filter: drop-shadow(0 6px 12px rgba(255,150,185,0.14));
-    }
+  /* nighttime canvas inside window */
+  .sky {
+    width:100%; min-height:320px; border-radius:12px; background: radial-gradient(ellipse at 50% 20%, #fff8fb 0%, #ffeef6 5%, #ffd8ec 35%, #ffd9f4 100%);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
 
-    /* affirmation fade */
-    .aff-in { opacity:1; transform: translateY(0); transition: all .45s ease; }
-    .aff-out { opacity:0; transform: translateY(8px); transition: all .45s ease; }
+  /* star / constellation */
+  .star { position:absolute; width:6px; height:6px; background:white; border-radius:50%; box-shadow: 0 0 8px rgba(255,240,250,0.9); opacity:0.9; }
+  .node {
+    position:absolute; width:48px; height:48px; border-radius:999px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(180deg, #fff, #ffe6f0);
+    box-shadow: 0 8px 20px rgba(255,140,185,0.18);
+    cursor:pointer; user-select:none;
+    transition: transform .36s ease, box-shadow .36s ease;
+  }
+  .node:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 18px 44px rgba(255,140,185,0.22); }
+  .node .label{ font-size:0.86rem; color:var(--deep); font-weight:700; }
 
-    /* responsive */
-    @media (max-width:420px){
-      .breath-circle { width:170px; height:170px; }
-      .paw-overlay { width:90px; height:90px; }
-    }
-  </style>
+  /* orbit animations (CSS keyframes but JS sets positions) */
+  .orbit-wrap{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:480px; height:480px; pointer-events:none; }
+
+  /* breathing circle sitting at center (on top of orbit) */
+  .breath {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:220px; height:220px; border-radius:999px;
+    background: radial-gradient(circle at 40% 30%, #fff, #ffeef6 40%, #ffddec 100%);
+    box-shadow: inset 0 6px 18px rgba(255,255,255,0.7), 0 18px 44px rgba(255,150,185,0.12);
+    display:flex; align-items:center; justify-content:center; transition: transform 7000ms cubic-bezier(.2,.9,.2,1);
+    will-change: transform;
+    overflow:visible;
+  }
+  .breath.small{ transform: scale(0.78); }
+  .breath.big{ transform: scale(1.18); }
+  .breath.contract{ transform: scale(0.78); transition-duration:4000ms; }
+
+  .paw-center { width:110px; height:110px; pointer-events:none; display:block; }
+  .paw-center img{ width:100%; height:100%; object-fit:contain; display:block; filter: drop-shadow(0 14px 24px rgba(0,0,0,0.06)); }
+
+  /* floating paw prints */
+  .float-paw { position:absolute; font-size:18px; transform: translateY(0) scale(.8); opacity:1; transition: transform 1200ms ease-out, opacity 1200ms ease-out; pointer-events:none; }
+
+  /* Affirmation box */
+  .affirm {
+    background: linear-gradient(90deg,#fff6fb,#fff0f6);
+    padding:12px; border-radius:12px; border:1px solid rgba(255,220,230,0.6);
+    text-align:center; color:var(--muted); font-weight:600;
+  }
+
+  /* responsive tuning */
+  @media(max-width:640px){
+    .orbit-wrap{ width:320px; height:320px; }
+    .breath{ width:170px; height:170px; }
+    .paw-center{ width:84px; height:84px; }
+    .book { width:120px; height:84px; }
+    .flipbook { width:260px; height:200px; }
+  }
+</style>
 </head>
 <body>
 
-  <header class="header-card">
-    <h1>🐾 Cozy Care</h1>
-  </header>
+<div class="stage">
 
-  <main class="page">
+  <!-- LEFT COLUMN: room shelf + flipbook + small controls -->
+  <div class="left">
 
-    <!-- Playlist -->
-    <section class="card">
-      <h2 class="text-lg font-semibold">🎵 Soothing Playlist</h2>
-      <p class="text-sm muted mt-1">A small collection of calm songs — open in Spotify or use the player below.</p>
+    <div class="panel">
+      <header><h1>🐾 Cozy Room</h1></header>
+      <p class="sub mt-2">Click items in the room — shelf radio, the little book, or window stars.</p>
+    </div>
 
-      <div class="mt-4 flex flex-col gap-3">
-        <iframe class="player-iframe rounded-lg" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-
-        <audio id="localAudio" controls class="w-full rounded-md">
-          <source src="sample.mp3" type="audio/mpeg">
-          Your browser doesn't support audio playback.
-        </audio>
-
-        <div class="mt-2 flex items-center justify-center gap-3">
-          <button class="pill-primary" onclick="openPlaylist()">Open in Spotify</button>
-          <button class="pill-ghost" onclick="flashPlayer()">Focus</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Breathing -->
-    <section class="card">
-      <h2 class="text-lg font-semibold">🌬 Breathing Exercise</h2>
-      <p class="text-sm muted mt-1">Follow the circle — inhale 7s → hold 8s → exhale 4s. Repeat gently.</p>
-
-      <div class="mt-6 breath-wrap">
-        <div id="breathCircle" class="breath-circle breath-small" role="img" aria-label="Breathing circle">
-          <!-- paw image centered on the circle -->
-          <div class="paw-overlay">
-            <img src="paw.png" id="centerPaw" alt="paw"/>
+    <!-- room illustration simplified with hotspots -->
+    <div class="panel">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <!-- stylized shelf & book -->
+        <div style="width:100%;display:flex;justify-content:center;align-items:center;">
+          <div class="book" id="bookToggle" role="button" aria-pressed="false" title="Open Dreambook">
+            <div class="book-label">Dreambook</div>
           </div>
         </div>
 
-        <!-- layer for paw floats & sparkles -->
-        <div id="animLayer" class="w-full relative" style="height:0;"></div>
+        <!-- flipbook pages (hidden until book open) -->
+        <div class="flipbook mt-3" id="flipbook">
+          <div class="page page-3" id="page3">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:700">Surprises</div>
+              <div style="font-size:0.9rem;color:var(--muted)">Swipe</div>
+            </div>
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; font-size:0.95rem; color:var(--muted)">
+              A little surprise waits here ✨
+            </div>
+          </div>
 
-        <div class="mt-4 flex gap-3">
-          <button id="btnStart" class="pill-primary">Start</button>
-          <button id="btnGuide" class="pill-ghost">How to</button>
+          <div class="page page-2" id="page2">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:700">Affirmations</div>
+              <div style="font-size:0.9rem;color:var(--muted)">Auto</div>
+            </div>
+            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+              <div class="affirm" id="flipAff">You are loved and cherished 🌸</div>
+            </div>
+          </div>
+
+          <div class="page page-1" id="page1">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:700">Playlist</div>
+              <div style="font-size:0.9rem;color:var(--muted)">Play</div>
+            </div>
+            <div style="margin-top:8px;">
+              <iframe id="miniSpotify" style="width:100%; height:78px; border-radius:10px; border:none;" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Affirmations -->
-    <section class="card">
-      <h2 class="text-lg font-semibold">💬 Positive Affirmations</h2>
-      <div class="mt-3">
-        <div class="rounded-lg bg-gradient-to-r from-[#fff6fb] to-[#fff0f6] p-3">
-          <div id="affirmText" class="text-center text-[#6a2b5a] text-base aff-in">You are doing amazing, Divanshi 💛</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;gap:8px;align-items:center;justify-content:center;">
+          <button class="pill" onclick="openPlaylist()" style="background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:white; padding:10px 14px; border-radius:999px; font-weight:700; box-shadow:0 10px 28px rgba(255,120,170,0.12)">Open Full Playlist</button>
         </div>
-        <div class="mt-2 text-xs text-[#a64a87] text-center">(automatically changes every 5 seconds)</div>
+        <div style="text-align:center;" class="sub">Or tap the stars in the window to bring up features.</div>
       </div>
-    </section>
+    </div>
 
-  </main>
+  </div>
 
-  <script>
-    /* ===== Helpers for playlist ===== */
-    function openPlaylist(){
-      window.open('https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj', '_blank');
-    }
-    function flashPlayer(){
-      const iframe = document.querySelector('iframe');
-      if(!iframe) return;
-      iframe.style.boxShadow = '0 18px 48px rgba(255,140,190,0.22)';
-      setTimeout(()=> iframe.style.boxShadow = '', 900);
-    }
+  <!-- RIGHT: main Room + window stage -->
+  <div class="room">
 
-    /* ===== Dreamy sparkles (background micro-animations) ===== */
-    const animLayer = document.getElementById('animLayer');
-    // small subtle sparkles distributed around circle
-    for(let i=0;i<12;i++){
-      const s = document.createElement('div');
-      s.className = 'sparkle';
-      const left = 20 + Math.random()*60; // percent within card
-      const top = 10 + Math.random()*40;
-      s.style.left = left + '%';
-      s.style.top = top + '%';
-      const size = 4 + Math.random()*6;
-      s.style.width = s.style.height = size + 'px';
-      s.style.opacity = 0.5 + Math.random()*0.5;
-      animLayer.appendChild(s);
-      // float animation
-      (function(el){
-        const dx = (Math.random()-0.5)*40;
-        const dy = (Math.random()-0.5)*40;
-        function tick(){
-          el.animate([
-            { transform: 'translate(0,0)', opacity: el.style.opacity },
-            { transform: `translate(${dx}px, ${dy}px)`, opacity: 0.2 }
-          ], { duration: 4000 + Math.random()*6000, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
-        }
-        tick();
-      })(s);
-    }
+    <!-- window card -->
+    <div class="panel window">
+      <div class="sky" id="sky">
 
-    /* ===== Breathing logic (Inhale 7s, Hold 8s, Exhale 4s) ===== */
-    const inhaleMs = 7000, holdMs = 8000, exhaleMs = 4000;
-    const breathCircle = document.getElementById('breathCircle');
-    const btnStart = document.getElementById('btnStart');
-    const btnGuide = document.getElementById('btnGuide');
+        <!-- orbit wrap (nodes) -->
+        <div class="orbit-wrap" id="orbitWrap">
+          <!-- nodes generated by JS -->
+        </div>
 
-    let breathing = false;
-    let breathTimer = null;
+        <!-- breathing circle (center) -->
+        <div class="breath small" id="breath">
+          <div class="paw-center" id="pawCenter">
+            <img src="paw.png" alt="paw" onerror="console.warn('paw.png missing — place paw.png next to this file')"/>
+          </div>
+        </div>
 
-    function setStateExpand(duration){
-      // set transition duration to match inhale
-      breathCircle.style.transitionDuration = duration + 'ms';
-      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
-      breathCircle.classList.add('breath-big');
-    }
-    function setStateHold(){
-      // keep same (no change)
-      breathCircle.style.transitionDuration = '200ms';
-      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
-      breathCircle.classList.add('breath-big');
-    }
-    function setStateExhale(duration){
-      breathCircle.style.transitionDuration = duration + 'ms';
-      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
-      breathCircle.classList.add('breath-contract');
-    }
-    function setStateRest(){
-      breathCircle.style.transitionDuration = '400ms';
-      breathCircle.classList.remove('breath-small','breath-contract','breath-big');
-      breathCircle.classList.add('breath-small');
-    }
+        <!-- anim layer for paw floaters & sparkles -->
+        <div id="animLayer" style="position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;"></div>
 
-    function spawnFloatingPaws(){
-      // spawn 5 small paw emojis that float upward & fade
-      for(let i=0;i<5;i++){
-        const p = document.createElement('div');
-        p.className = 'floating-paw';
-        p.textContent = '🐾';
-        // random around center
-        p.style.left = (45 + (Math.random()-0.5)*20) + '%';
-        p.style.top = '18px';
-        animLayer.appendChild(p);
-        // animate in next frame
-        requestAnimationFrame(() => {
-          const dx = (-40 + Math.random()*80); // px
-          const dy = -(90 + Math.random()*40);
-          p.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
-          p.style.opacity = '0';
-        });
-        setTimeout(()=> { try{ p.remove(); }catch(e){} }, 1500 + Math.random()*400);
-      }
-    }
+      </div>
 
-    async function breatheLoop(){
-      if(!breathing) return;
-      // inhale
-      setStateExpand(inhaleMs);
-      await new Promise(r => breathTimer = setTimeout(r, inhaleMs));
-      if(!breathing) return;
-      // hold
-      setStateHold();
-      await new Promise(r => breathTimer = setTimeout(r, holdMs));
-      if(!breathing) return;
-      // exhale
-      setStateExhale(exhaleMs);
-      spawnFloatingPaws();
-      await new Promise(r => breathTimer = setTimeout(r, exhaleMs));
-      if(!breathing) return;
-      // tiny rest
-      setStateRest();
-      await new Promise(r => breathTimer = setTimeout(r, 300));
-      if(!breathing) return;
-      breatheLoop();
-    }
+      <!-- controls beneath the window -->
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;">
+        <button id="btnBreathe" style="background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:white; padding:10px 18px; border-radius:999px; font-weight:700; box-shadow:0 10px 28px rgba(255,120,170,0.12)">Start Breathing</button>
+        <button id="btnGuide" style="background:white;border:1px solid rgba(255,200,220,0.7); padding:9px 14px; border-radius:999px; color:var(--accent2); font-weight:700">How to</button>
+      </div>
 
-    btnStart.addEventListener('click', () => {
-      if(!breathing){
-        breathing = true;
-        btnStart.textContent = 'Stop';
-        breatheLoop();
-      } else {
-        breathing = false;
-        btnStart.textContent = 'Start';
-        clearTimeout(breathTimer);
-        setStateRest();
-      }
+    </div>
+
+    <!-- affirmation footer / small notes -->
+    <div style="display:flex;justify-content:center;">
+      <div class="panel" style="width:100%; max-width:720px; display:flex;flex-direction:column;align-items:center;">
+        <div style="width:100%;"><h3 style="margin:0;font-size:1.05rem;">💬 Gentle Affirmion</h3></div>
+        <div style="margin-top:10px; width:100%;"><div class="affirm" id="mainAff">Every breath you take brings peace 🌬</div></div>
+        <div style="margin-top:8px;color:var(--muted);font-size:0.85rem;">(changes every 5s)</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* -------------------------
+  Utility & small helpers
+   ------------------------- */
+function openPlaylist(){
+  window.open('https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj','_blank');
+}
+
+/* -------------------------
+  Flipbook behavior
+   ------------------------- */
+const bookToggle = document.getElementById('bookToggle');
+const page1 = document.getElementById('page1');
+const page2 = document.getElementById('page2');
+const page3 = document.getElementById('page3');
+let bookOpen = false;
+bookToggle.addEventListener('click', () => {
+  bookOpen = !bookOpen;
+  bookToggle.classList.toggle('open', bookOpen);
+  // when open show pages by removing flipped class
+  if (bookOpen) {
+    page1.classList.remove('flipped');
+    page2.classList.remove('flipped');
+    page3.classList.remove('flipped');
+    // brief nudges
+    setTimeout(()=> page1.classList.add('flipped'), 1600);
+    setTimeout(()=> page2.classList.add('flipped'), 2400);
+    setTimeout(()=> page3.classList.add('flipped'), 3000);
+  } else {
+    // close -> reset
+    page1.classList.remove('flipped');
+    page2.classList.remove('flipped');
+    page3.classList.remove('flipped');
+  }
+});
+
+/* -------------------------
+  Affirmations rotation (two places)
+   ------------------------- */
+const mainAff = document.getElementById('mainAff');
+const flipAff = document.getElementById('flipAff');
+const affirmations = [
+  "Every breath you take brings peace 🌬",
+  "You are doing amazing, Divanshi 💛",
+  "You are loved and cherished 🌸",
+  "You make tiny moments feel like magic ✨",
+  "You are exactly where you need to be 💗"
+];
+let aIdx = 0;
+function rotateAff() {
+  aIdx = (aIdx + 1) % affirmations.length;
+  // cross-fade main
+  mainAff.classList.remove('aff-in'); mainAff.classList.add('aff-out');
+  setTimeout(()=> {
+    mainAff.textContent = affirmations[aIdx];
+    mainAff.classList.remove('aff-out'); mainAff.classList.add('aff-in');
+  }, 380);
+  // also update flipbook mini
+  flipAff.textContent = affirmations[(aIdx+2) % affirmations.length];
+}
+let affInterval = setInterval(rotateAff, 5000);
+
+/* -------------------------
+  Constellation nodes (orbiting + hotspots)
+   ------------------------- */
+const orbitWrap = document.getElementById('orbitWrap');
+const nodesData = [
+  {id:'n-play', label:'Play', angle: -30, r:140},
+  {id:'n-breathe', label:'Breathe', angle: 70, r:160},
+  {id:'n-affirm', label:'Affirm', angle: 170, r:140},
+  {id:'n-surprise', label:'Surprise', angle: 270, r:160}
+];
+// create nodes
+nodesData.forEach(d => {
+  const n = document.createElement('div');
+  n.className = 'node';
+  n.id = d.id;
+  n.style.left = '50%'; n.style.top = '50%';
+  n.style.width = '56px'; n.style.height='56px';
+  n.style.pointerEvents = 'auto';
+  n.innerHTML = `<div class="label">${d.label}</div>`;
+  orbitWrap.appendChild(n);
+  // attach click handlers
+  n.addEventListener('click', ()=> {
+    focusNode(d.id);
+  });
+});
+
+// orbit motion (simple JS-driven circular motion for soft orbit effect)
+let orbitAngle = 0;
+function updateOrbit(ts){
+  orbitAngle += 0.0006 * (ts||16); // slow rotation
+  nodesData.forEach((d,i)=>{
+    const node = document.getElementById(d.id);
+    const base = d.angle * Math.PI/180;
+    const a = base + orbitAngle + (i*0.08);
+    const r = (d.r || 140);
+    const cx = orbitWrap.clientWidth/2, cy = orbitWrap.clientHeight/2;
+    const x = cx + Math.cos(a) * r;
+    const y = cy + Math.sin(a) * r;
+    node.style.left = x + 'px';
+    node.style.top = y + 'px';
+  });
+  requestAnimationFrame(updateOrbit);
+}
+requestAnimationFrame(updateOrbit);
+
+/* focus node: small micro-interaction */
+function focusNode(id){
+  // highlight selected node quickly
+  const n = document.getElementById(id);
+  const original = n.style.transform;
+  n.style.transform = 'scale(1.12) translateY(-6px)';
+  setTimeout(()=> n.style.transform = original, 700);
+
+  if (id === 'n-play') openPlaylist();
+  if (id === 'n-breathe') {
+    // scroll to window and start breathing
+    document.getElementById('breath').scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(()=> startBreathing(), 700);
+  }
+  if (id === 'n-affirm') {
+    rotateAff(); // show next affirmation
+  }
+  if (id === 'n-surprise') {
+    // open book and flash surprise page
+    if (!bookToggle.classList.contains('open')) bookToggle.click();
+    // reveal surprise page (simulate)
+    page3.style.transform = 'translateY(6px)';
+    setTimeout(()=> page3.style.transform='', 1200);
+  }
+}
+
+/* -------------------------
+  Breathing ritual (7s inhale, 8s hold, 4s exhale)
+   ------------------------- */
+const breathEl = document.getElementById('breath');
+const btnBreathe = document.getElementById('btnBreathe');
+const animLayer = document.getElementById('animLayer');
+
+const inhaleMs = 7000, holdMs = 8000, exhaleMs = 4000;
+let breathing = false, breathTimer = null;
+
+function spawnFloatPaws(){
+  // spawn 6 small paw emojis floating upward
+  for(let i=0;i<6;i++){
+    const el = document.createElement('div');
+    el.className = 'float-paw';
+    el.textContent = '🐾';
+    const left = (50 + (Math.random()-0.5)*28);
+    const top = (50 + (Math.random()-0.5)*28);
+    el.style.left = left + '%';
+    el.style.top = top + '%';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0) scale(.9)';
+    animLayer.appendChild(el);
+    requestAnimationFrame(()=> {
+      const dx = (-80 + Math.random()*160);
+      const dy = -(90 + Math.random()*60);
+      el.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
+      el.style.opacity = '0';
     });
+    setTimeout(()=> el.remove(), 1500 + Math.random()*400);
+  }
+}
 
-    btnGuide.addEventListener('click', () => {
-      alert('Breathe gently:\nInhale — 7 seconds\nHold — 8 seconds\nExhale — 4 seconds\nRepeat.');
-    });
+async function breatheCycle(){
+  if (!breathing) return;
+  // inhale -> expand
+  breathEl.style.transition = `transform ${inhaleMs}ms cubic-bezier(.2,.9,.2,1)`;
+  breathEl.classList.add('big'); breathEl.classList.remove('small','contract');
+  await new Promise(res => breathTimer = setTimeout(res, inhaleMs));
+  if (!breathing) return;
+  // hold -> no change
+  await new Promise(res => breathTimer = setTimeout(res, holdMs));
+  if (!breathing) return;
+  // exhale -> contract and spawn paws
+  breathEl.style.transition = `transform ${exhaleMs}ms cubic-bezier(.2,.9,.2,1)`;
+  breathEl.classList.add('contract'); breathEl.classList.remove('big','small');
+  spawnFloatPaws();
+  await new Promise(res => breathTimer = setTimeout(res, exhaleMs));
+  if (!breathing) return;
+  breathEl.classList.remove('contract'); breathEl.classList.add('small');
+  await new Promise(res => breathTimer = setTimeout(res, 300));
+  if (!breathing) return;
+  breatheCycle();
+}
 
-    /* ===== Affirmations auto-rotate ===== */
-    const affirmText = document.getElementById('affirmText');
-    const affirmList = [
-      "You are doing amazing, Divanshi 💛",
-      "You are loved and cherished 🌸",
-      "Every breath you take brings peace 🌬",
-      "You make tiny moments feel like magic ✨",
-      "You are exactly where you need to be 💗"
-    ];
-    let ai = 0;
-    setInterval(()=> {
-      ai = (ai + 1) % affirmList.length;
-      // fade out/in
-      affirmText.classList.remove('aff-in');
-      affirmText.classList.add('aff-out');
-      setTimeout(()=> {
-        affirmText.textContent = affirmList[ai];
-        affirmText.classList.remove('aff-out');
-        affirmText.classList.add('aff-in');
-      }, 420);
-    }, 5000);
+function startBreathing(){
+  if (breathing) return;
+  breathing = true;
+  btnBreathe.textContent = 'Stop Breathing';
+  breatheCycle();
+}
+function stopBreathing(){
+  breathing = false;
+  btnBreathe.textContent = 'Start Breathing';
+  clearTimeout(breathTimer);
+  breathEl.classList.remove('big','contract'); breathEl.classList.add('small');
+}
 
-    /* ===== Ensure paw image exists & scale nicely ===== */
-    const centerPaw = document.getElementById('centerPaw');
-    centerPaw.addEventListener('error', ()=> {
-      console.warn('paw.png failed to load — ensure paw.png sits next to cozy-care.html and is named exactly paw.png');
-    });
+btnBreathe.addEventListener('click', ()=> {
+  if (!breathing) startBreathing(); else stopBreathing();
+});
+document.getElementById('btnGuide').addEventListener('click', ()=> {
+  alert('Breathe slowly:\nInhale — 7 seconds\nHold — 8 seconds\nExhale — 4 seconds\nRepeat gently.');
+});
 
-    // on load set restful scale
-    window.addEventListener('load', ()=> {
-      setStateRest();
-    });
+/* Safety: stop breathing loop on page hide */
+document.addEventListener('visibilitychange', ()=> {
+  if (document.hidden) { breathing=false; clearTimeout(breathTimer); }
+});
 
-    // cleanup when leaving
-    window.addEventListener('pagehide', ()=> {
-      breathing = false;
-      clearTimeout(breathTimer);
-    });
-  </script>
+/* -------------------------
+  small polish: initial states
+   ------------------------- */
+window.addEventListener('load', ()=> {
+  // set small resting
+  breathEl.classList.add('small');
+  // hide flipbook pages until book is clicked
+  page1.classList.add('flipped'); page2.classList.add('flipped'); page3.classList.add('flipped');
+});
+
+</script>
 </body>
 </html>
