@@ -83,26 +83,6 @@ body { animation: galaxyPulse 18s ease-in-out infinite; }
   to   { transform: translate(420px, -420px) rotate(45deg); opacity:0; }
 }
 
-.controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.music-embed {
-  width: calc(100% - 4px); /* Matches button group width */
-  height: 80px;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(255, 90, 160, 0.24);
-  background: rgba(255, 255, 255, 0.08);
-  transition: box-shadow 0.3s ease;
-}
-
-.music-embed:hover {
-  box-shadow: 0 6px 28px rgba(255, 140, 190, 0.36);
-}
-
 /* ---------- Breathing linked star expansion class ---------- */
 .breathing-star {
   transition: transform 1200ms cubic-bezier(.2,.9,.2,1);
@@ -256,6 +236,16 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
   100% { transform: translateY(0) scale(1); opacity:0.9; }
 }
 
+/* ---------- constellation line visuals ---------- */
+.constellation-line {
+  position: absolute;
+  pointer-events: none;
+  z-index: 4;
+  stroke: rgba(255, 220, 255, 0.14); /* used for SVG lines */
+  stroke-width: 1.25;
+  filter: drop-shadow(0 0 4px rgba(255,200,230,0.06));
+}
+
 /* ---------- utility helpers (hidden but used) ---------- */
 .hide { display:none !important; visibility:hidden !important; }
 
@@ -296,32 +286,37 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
         </div>
       </div>
 
-     <div class="controls" role="group" aria-label="breathing controls">
-  <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
-  <button class="btn secondary" id="stopBtn">Stop</button>
-  <button id="musicBtn">🎵 Play Music</button>
-</div>
+      <div class="controls" role="group" aria-label="breathing controls">
+        <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
+        <button class="btn secondary" id="stopBtn">Stop</button>
+      </div>
 
-<!-- Hidden YouTube player -->
-<div id="player" style="display:none;"></div>
-
-<div class="meta" id="cycleMeta" aria-live="polite">
-  Cycle: 0 • Phase: idle • Time left: —
-</div>
-<div class="footer-cta small-muted">
-  Tip: tap the starlit background to add a soft sparkle.
-</div>
+      <div class="meta" id="cycleMeta" aria-live="polite">Cycle: 0 • Phase: idle • Time left: —</div>
+      <div class="footer-cta small-muted">Tip: tap the starlit background to add a soft sparkle.</div>
+    </div>
 
     <!-- Affirmations right -->
     <aside class="affirm-wrap" aria-hidden="false">
       <div class="affirm-card" role="region" aria-label="Gentle affirmations for Divanshi">
         <div class="affirm-text" id="affirmText">You are doing amazing, Divanshi 💛</div>
-        <div class="small-muted">Just Relax my love ❤️</div>
+        <div class="small-muted">(changes every 5 seconds)</div>
+      </div>
+
+      <!-- Controls for affirmations (added so JS references exist) -->
+      <div class="affirm-card" style="min-height:80px; display:flex; align-items:center; justify-content:center;">
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+          <button class="btn secondary" id="prevAffirm">Previous</button>
+          <button class="btn" id="pauseAffirm">Pause</button>
+          <button class="btn secondary" id="nextAffirm">Next</button>
+        </div>
       </div>
     </aside>
 
   </section>
 </main>
+
+<!-- Extra container for constellation SVG elements -->
+<div id="constellationLayer" aria-hidden="true" style="position:fixed; inset:0; pointer-events:none; z-index:4;"></div>
 
 <script>
 /* ========================================================================
@@ -776,16 +771,14 @@ document.addEventListener('DOMContentLoaded', function () {
      ============================ */
   (function(){
     const AFFIRMATIONS = [
-      "I can do it, and I will do it 💫",
-      "Breathe in starlight, breathe out these noise ✨",
-      "I am a warrior, one of the strongest ones",
-      "I am enough and loved just the way I am",
-      "I am Shakti, I am the universe itself",
-      "I am proud of myself, I am a warrior",
-      "I am loved unconditionally and endlessly 💕",
-      "Relax, I am doing good enough",
-      "I am doing beautifully",
-      "I have power, I have control over myself and my thoughts"
+      "You are doing amazing, Divanshi 💛",
+      "Breathe in starlight, breathe out worries ✨",
+      "Soft heart. Strong soul. Gentle days.",
+      "You are loved, seen and enough — always.",
+      "May your dreams be vast and kind.",
+      "A universe of calm is always within you.",
+      "Your presence is a gift — breathe it in.",
+      "Small steps. Deep breaths. Golden days."
     ];
 
     const display = document.getElementById('affirmText');
@@ -851,39 +844,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })();
 
-let player;
-let isPlaying = false;
-
-// Called by the YouTube IFrame API when ready
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    height: '0',
-    width: '0',
-    videoId: '9vh9-r4wtfM', // Your video ID
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      modestbranding: 1,
-      rel: 0
-    }
-  });
-}
-
-document.getElementById('musicBtn').addEventListener('click', () => {
-  if (!player) return;
-  
-  if (isPlaying) {
-    player.pauseVideo();
-    document.getElementById('musicBtn').textContent = '🎵 Play Music';
-  } else {
-    player.playVideo();
-    document.getElementById('musicBtn').textContent = '⏸ Pause Music';
-  }
-  
-  isPlaying = !isPlaying;
-});
-
-
   /* ============================
      small compatibility fixes (original code had a line targeting h2)
      - we ensure .title has the cozy class (done in HTML but ensure here too)
@@ -910,8 +870,7 @@ document.getElementById('musicBtn').addEventListener('click', () => {
   })();
 
 }); // DOMContentLoaded end
-<script src="https://www.youtube.com/iframe_api"></script>
-<script src="main.js"></script> <!-- your main JS file -->
+</script>
 
 </body>
 </html>
