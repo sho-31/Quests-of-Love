@@ -85,28 +85,22 @@ body { animation: galaxyPulse 18s ease-in-out infinite; }
 
 .controls {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
-#musicBtn {
-  flex: 1 1 100%; /* full width under the two buttons */
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid white;
-  color: white;
-  padding: 10px 15px;
+.music-embed {
+  width: calc(100% - 4px); /* Matches button group width */
+  height: 80px;
   border-radius: 8px;
-  cursor: pointer;
-  z-index: 100;
-  font-size: 16px;
-  text-align: center;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 90, 160, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+  transition: box-shadow 0.3s ease;
 }
 
-#musicBtn:hover {
-  background: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+.music-embed:hover {
+  box-shadow: 0 6px 28px rgba(255, 140, 190, 0.36);
 }
 
 /* ---------- Breathing linked star expansion class ---------- */
@@ -302,15 +296,27 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
         </div>
       </div>
 
-      <div class="controls" role="group" aria-label="breathing controls">
+     <div class="controls" role="group" aria-label="breathing controls">
   <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
   <button class="btn secondary" id="stopBtn">Stop</button>
 
-  <button id="musicBtn">🎵 Play Music</button>
+  <!-- Spotify Embed Player -->
+  <iframe
+    src="https://open.spotify.com/embed/track/2RMGvhecLSA9eI6TbEuBTO?utm_source=generator"
+    frameborder="0"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+    class="music-embed"
+    title="Spotify player for relaxation music"
+  ></iframe>
 </div>
-      <div class="meta" id="cycleMeta" aria-live="polite">Cycle: 0 • Phase: idle • Time left: —</div>
-      <div class="footer-cta small-muted">Tip: tap the starlit background to add a soft sparkle.</div>
-    </div>
+
+<div class="meta" id="cycleMeta" aria-live="polite">
+  Cycle: 0 • Phase: idle • Time left: —
+</div>
+<div class="footer-cta small-muted">
+  Tip: tap the starlit background to add a soft sparkle.
+</div>
+
 
     <!-- Affirmations right -->
     <aside class="affirm-wrap" aria-hidden="false">
