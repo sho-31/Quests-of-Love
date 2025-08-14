@@ -236,16 +236,6 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
   100% { transform: translateY(0) scale(1); opacity:0.9; }
 }
 
-/* ---------- constellation line visuals ---------- */
-.constellation-line {
-  position: absolute;
-  pointer-events: none;
-  z-index: 4;
-  stroke: rgba(255, 220, 255, 0.14); /* used for SVG lines */
-  stroke-width: 1.25;
-  filter: drop-shadow(0 0 4px rgba(255,200,230,0.06));
-}
-
 /* ---------- utility helpers (hidden but used) ---------- */
 .hide { display:none !important; visibility:hidden !important; }
 
@@ -299,15 +289,12 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
     <aside class="affirm-wrap" aria-hidden="false">
       <div class="affirm-card" role="region" aria-label="Gentle affirmations for Divanshi">
         <div class="affirm-text" id="affirmText">You are doing amazing, Divanshi 💛</div>
-        <div class="small-muted">(changes every 5 seconds)</div>
+        <div class="small-muted">Just Relax my love ❤️</div>
       </div>
 
       <!-- Controls for affirmations (added so JS references exist) -->
       <div class="affirm-card" style="min-height:80px; display:flex; align-items:center; justify-content:center;">
-        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-          <button class="btn secondary" id="prevAffirm">Previous</button>
-          <button class="btn" id="pauseAffirm">Pause</button>
-          <button class="btn secondary" id="nextAffirm">Next</button>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;"
         </div>
       </div>
     </aside>
