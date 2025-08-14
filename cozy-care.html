@@ -299,20 +299,22 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
      <div class="controls" role="group" aria-label="breathing controls">
   <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
   <button class="btn secondary" id="stopBtn">Stop</button>
+  <button id="musicBtn">🎵 Play Music</button>
 </div>
 
-<!-- YouTube Embed -->
-<div class="music-player">
-  <iframe 
-    width="100%" 
-    height="80" 
-    src="https://www.youtube.com/embed/9vh9-r4wtfM?autoplay=0&loop=1&playlist=9vh9-r4wtfM" 
-    title="Hare Krishna Hare Rama Mahamantra - Flutewala" 
-    frameborder="0" 
-    allow="autoplay; encrypted-media" 
-    allowfullscreen>
-  </iframe>
+<!-- Hidden YouTube player -->
+<div id="player" style="display:none;"></div>
+
+<div class="meta" id="cycleMeta" aria-live="polite">
+  Cycle: 0 • Phase: idle • Time left: —
 </div>
+<div class="footer-cta small-muted">
+  Tip: tap the starlit background to add a soft sparkle.
+</div>
+
+<!-- Load YouTube IFrame API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
 
 <div class="meta" id="cycleMeta" aria-live="polite">Cycle: 0 • Phase: idle • Time left: —</div>
 <div class="footer-cta small-muted">Tip: tap the starlit background to add a soft sparkle.</div>
@@ -855,6 +857,39 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
   })();
+
+let player;
+let isPlaying = false;
+
+// Called by the YouTube IFrame API when ready
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '0',
+    width: '0',
+    videoId: '9vh9-r4wtfM', // Your video ID
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      modestbranding: 1,
+      rel: 0
+    }
+  });
+}
+
+document.getElementById('musicBtn').addEventListener('click', () => {
+  if (!player) return;
+  
+  if (isPlaying) {
+    player.pauseVideo();
+    document.getElementById('musicBtn').textContent = '🎵 Play Music';
+  } else {
+    player.playVideo();
+    document.getElementById('musicBtn').textContent = '⏸ Pause Music';
+  }
+  
+  isPlaying = !isPlaying;
+});
+
 
   /* ============================
      small compatibility fixes (original code had a line targeting h2)
