@@ -827,19 +827,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }, 220);
     }
 
-const music = document.getElementById('bgMusic');
-const btn = document.getElementById('musicBtn');
-
-btn.addEventListener('click', () => {
-  if (music.paused) {
-    music.play();
-    btn.textContent = '⏸ Pause Music';
-  } else {
-    music.pause();
-    btn.textContent = '🎵 Play Music';
-  }
-});
-
     function schedule(){
       if (timer) clearInterval(timer);
       if (!paused) timer = setInterval(()=> { show(idx+1); }, 5000);
