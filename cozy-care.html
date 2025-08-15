@@ -574,6 +574,39 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       return res;
     }
+ function drawConstellation() {
+      const points = pickRandomStars(3 + Math.floor(Math.random()*3)); // 3-5 stars
+      if (points.length < 3) return;
+      const svg = createSVG();
+      const svgNS = "http://www.w3.org/2000/svg";
+      // draw lines connecting them softly
+      const path = document.createElementNS(svgNS, 'path');
+      const d = points.map((p,i)=> `${i===0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+      path.setAttribute('d', d);
+      path.setAttribute('stroke', 'rgba(255,230,255,0.12)');
+      path.setAttribute('stroke-width', '1.2');
+      path.setAttribute('fill', 'none');
+      path.style.opacity = '0';
+      path.style.transition = 'opacity 700ms ease, transform 900ms ease';
+      svg.appendChild(path);
+      layer.appendChild(svg);
+      // animate fade in -> hold -> fade out
+      requestAnimationFrame(()=>{
+        path.style.opacity = '1';
+        path.style.transform = 'translateY(-6px)';
+      });
+      setTimeout(()=> {
+        path.style.opacity = '0';
+        path.style.transform = 'translateY(-16px)';
+        setTimeout(()=> svg.remove(), 1200);
+      }, 1400 + Math.random()*1600);
+    }
+
+    // occasionally show constellation hints (not too frequent)
+    setInterval(()=> {
+      if (Math.random() < 0.45) drawConstellation();
+    }, 4200 + Math.random()*3400);
+  })();
 
   /* ============================
      Tap-to-sparkle particle burst
