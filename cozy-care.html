@@ -252,20 +252,13 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
 </head>
 <body>
 
-<!-- star canvas (full page) -->
 <canvas id="starfield" aria-hidden="true"></canvas>
-
-<!-- overlays -->
 <div class="nebula" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
-
-<!-- decorative UI stars container (for crisp star dots) -->
 <div id="uiStarsContainer" aria-hidden="true"></div>
 
 <main class="stage" role="main">
   <section class="card" aria-label="Relaxation card with breathing and affirmations">
-
-    <!-- Breathing left -->
     <div class="breath-wrap" aria-hidden="false">
       <h1 class="title cozy-title">🐾 Cozy Care 💕</h1>
       <p class="lead">A tiny universe made just for my angel. Inhale starlight, exhale all the noise my love 💫</p>
@@ -279,60 +272,58 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
       <div class="controls" role="group" aria-label="breathing controls">
         <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
         <button class="btn secondary" id="stopBtn">Stop</button>
-         <audio id="myAudio" src=""C:\Users\OMEN\Downloads\SpotiDownloader.com - Hare Krishna Hare Rama Mahamantra - Flutewala.mp3""></audio>
+        <!-- Audio (fixed malformed quotes, lazy loaded) -->
+        <audio id="myAudio" preload="none">
+          <source src="hare-krishna-flute.mp3" type="audio/mpeg">
+        </audio>
+        <button class="btn secondary" id="audioToggle" aria-label="Toggle background audio" title="Toggle audio">🎵</button>
       </div>
 
       <div class="meta" id="cycleMeta" aria-live="polite">Cycle: 0 • Phase: idle • Time left: —</div>
       <div class="footer-cta small-muted">Tap anywhere for little stars to magically appear</div>
     </div>
 
-    <!-- Affirmations right -->
     <aside class="affirm-wrap" aria-hidden="false">
       <div class="affirm-card" role="region" aria-label="Gentle affirmations for Divanshi">
         <div class="affirm-text" id="affirmText">You are doing amazing, Divanshi 💛</div>
         <div class="small-muted">Relax my love, your moment it is to be</div>
       </div>
     </aside>
-
   </section>
 </main>
 
-<!-- Extra container for constellation SVG elements -->
 <div id="constellationLayer" aria-hidden="true" style="position:fixed; inset:0; pointer-events:none; z-index:4;"></div>
 
 <script>
 /* ========================================================================
-   Starry Night — Full JS
-   - preserves existing breathing + affirmation logic
-   - extends star UI: more stars, twinkle, parallax, shooting stars
-   - adds constellation hints & tap sparkles (non-notes)
-   - connects breathing phases to subtle star scaling
+   Starry Night — Refined JS (CSS untouched)
+   Adjustments:
+   - Unified animation loops (less setInterval)
+   - Reduced global leaks, clearer modular blocks
+   - Smoothed parallax & timers via rAF
+   - More robust scheduling & cleanup
+   - Fixed malformed audio tag, simple toggle
    ======================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
 
-/* Wrap everything in DOMContentLoaded (like your original) */
-document.addEventListener('DOMContentLoaded', function () {
+  /* Utilities */
+  const rand = (min, max) => Math.random() * (max - min) + min;
+  const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
+  const $ = sel => document.querySelector(sel);
 
-  /* ============================
-     Utility helpers
-     ============================ */
-  function rand(min, max){ return Math.random() * (max - min) + min; }
-  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
-  function css(el, prop, val){ el.style[prop] = val; }
-
-  /* ============================
-     STARFIELD (your original canvas logic preserved & robust)
-     ============================ */
-  (function(){
-    const canvas = document.getElementById('starfield');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d', { alpha: true });
-    let width = 0, height = 0, dpr = 1;
+  /* ================= STARFIELD CANVAS ================= */
+  (function starfieldModule(){
+    const canvas = $('#starfield');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha:true });
+    let width=0, height=0, dpr=1;
     let stars = [];
-    let raf = null;
-    // settings (kept same behavior)
-    const STAR_BASE_DIV = () => (innerWidth < 560 ? 8000 : innerWidth < 920 ? 7000 : 6000);
+    let mx = innerWidth/2, my = innerHeight/2;
+    let running = true;
 
-    function resize() {
+    const baseDiv = () => (innerWidth < 560 ? 8000 : innerWidth < 920 ? 7000 : 6000);
+
+    const resize = () => {
       dpr = Math.max(1, window.devicePixelRatio || 1);
       width = innerWidth;
       height = innerHeight;
@@ -340,89 +331,85 @@ document.addEventListener('DOMContentLoaded', function () {
       canvas.style.height = height + 'px';
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
       const area = width * height;
-      const count = Math.max(80, Math.round(area / STAR_BASE_DIV())); // slightly more dense
-      makeStars(count);
-    }
+      const count = Math.max(80, Math.round(area / baseDiv()));
+      createStars(count);
+    };
 
-    function makeStars(count){
-      stars = [];
-      for (let i = 0; i < count; i++){
-        stars.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          r: Math.pow(Math.random(), 2) * (1.9 + Math.random()*0.6) + 0.35,
-          baseAlpha: rand(0.28, 0.95),
-          twinkleSpeed: rand(0.002, 0.014),
-          phase: Math.random() * Math.PI * 2,
-          hueShift: rand(-8, 18),
-          breathingScale: 1
-        });
-      }
-    }
+    const createStars = count => {
+      stars = Array.from({length:count}, () => ({
+        x: Math.random()*width,
+        y: Math.random()*height,
+        r: Math.pow(Math.random(),2)*(1.9+Math.random()*0.6)+0.35,
+        baseAlpha: rand(0.28,0.95),
+        twinkleSpeed: rand(0.002,0.014),
+        phase: Math.random()*Math.PI*2,
+        hueShift: rand(-8,18),
+        breathingScale: 1
+      }));
+    };
 
     let lastTime = performance.now();
-    function draw(time) {
-      const dt = Math.min(40, time - lastTime);
-      lastTime = time;
+    let parallaxAccum = 0;
 
-      // background tint (kept)
-      ctx.clearRect(0, 0, width, height);
-      const g = ctx.createLinearGradient(0, 0, 0, height);
-      g.addColorStop(0, 'rgba(5,12,30,0.22)');
-      g.addColorStop(1, 'rgba(0,3,12,0.48)');
+    const frame = (now) => {
+      if(!running) return;
+      const dt = Math.min(50, now - lastTime);
+      lastTime = now;
+
+      ctx.clearRect(0,0,width,height);
+      const g = ctx.createLinearGradient(0,0,0,height);
+      g.addColorStop(0,'rgba(5,12,30,0.22)');
+      g.addColorStop(1,'rgba(0,3,12,0.48)');
       ctx.fillStyle = g;
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0,0,width,height);
 
-      // draw stars
-      for (let s of stars){
+      // Parallax every ~50ms for a softer, cheaper shift
+      parallaxAccum += dt;
+      if (parallaxAccum > 50) {
+        const cx = width/2, cy = height/2;
+        const dx = (mx - cx)/cx;
+        const dy = (my - cy)/cy;
+        const adj = 0.12;
+        stars.forEach(s => {
+          const factor = adj - Math.min(0.10, s.r/16);
+            s.x += dx * factor;
+            s.y += dy * factor;
+            if (s.x < -20) s.x = width + 20;
+            else if (s.x > width + 20) s.x = -20;
+            if (s.y < -20) s.y = height + 20;
+            else if (s.y > height + 20) s.y = -20;
+        });
+        parallaxAccum = 0;
+      }
+
+      stars.forEach(s => {
         s.phase += s.twinkleSpeed * (dt/16);
         const a = s.baseAlpha * (0.6 + 0.4 * Math.sin(s.phase));
-        const cx = s.x, cy = s.y, r = s.r * s.breathingScale;
-        // soft glow
+        const r = s.r * s.breathingScale;
+        const cx = s.x, cy = s.y;
+
         const rad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r*8);
-        rad.addColorStop(0, `rgba(255,${240 + Math.round(s.hueShift)},${255},${(a*0.92).toFixed(3)})`);
+        rad.addColorStop(0, `rgba(255,${240+Math.round(s.hueShift)},255,${(a*0.92).toFixed(3)})`);
         rad.addColorStop(0.5, `rgba(255,255,255,${(a*0.45).toFixed(3)})`);
-        rad.addColorStop(1, `rgba(255,255,255,0)`);
+        rad.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.beginPath();
         ctx.fillStyle = rad;
-        ctx.arc(cx, cy, r*8, 0, Math.PI*2);
+        ctx.arc(cx,cy,r*8,0,Math.PI*2);
         ctx.fill();
 
-        // core
         ctx.beginPath();
         ctx.fillStyle = `rgba(255,255,255,${Math.min(1,a+0.14).toFixed(3)})`;
-        ctx.arc(cx, cy, r, 0, Math.PI*2);
+        ctx.arc(cx,cy,r,0,Math.PI*2);
         ctx.fill();
-      }
+      });
 
-      raf = requestAnimationFrame(draw);
-    }
+      requestAnimationFrame(frame);
+    };
 
-    // parallax: pointer movement adjusts positions subtly
-    let mx = width / 2, my = height / 2;
-    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; });
-    window.addEventListener('touchmove', (e) => { if (e.touches && e.touches[0]) { mx = e.touches[0].clientX; my = e.touches[0].clientY; } }, { passive: true });
-
-    setInterval(function parallaxStep(){
-      const cx = width/2, cy = height/2;
-      const dx = (mx - cx)/cx, dy = (my - cy)/cy;
-      for (let s of stars){
-        s.x += dx * (0.12 - Math.min(0.10, s.r / 16));
-        s.y += dy * (0.12 - Math.min(0.10, s.r / 16));
-        // wrap-around so stars remain in view naturally
-        if (s.x < -20) s.x = width + 20;
-        if (s.x > width + 20) s.x = -20;
-        if (s.y < -20) s.y = height + 20;
-        if (s.y > height + 20) s.y = -20;
-      }
-    }, 800);
-
-    // spawn sparkles on click/tap — now produces crisp star particles (non-text)
-    window.addEventListener('click', (e) => {
-      // create a small group of temporary bright particles
-      for (let i=0;i<8;i++){
+    const addClickSparkles = e => {
+      for (let i=0;i<8;i++) {
         stars.push({
           x: e.clientX + rand(-12,12),
           y: e.clientY + rand(-12,12),
@@ -431,429 +418,369 @@ document.addEventListener('DOMContentLoaded', function () {
           twinkleSpeed: rand(0.02,0.07),
           phase: Math.random()*Math.PI*2,
           hueShift: rand(-6,18),
-          breathingScale: 1.0
+          breathingScale: 1
         });
       }
-      // trim after a small time to avoid runaway growth
-      setTimeout(()=> {
-        const cap = Math.max(80, Math.round((width * height) / STAR_BASE_DIV()));
-        if (stars.length > cap) stars = stars.slice(0, cap);
+      setTimeout(() => {
+        const cap = Math.max(80, Math.round((width*height)/baseDiv()));
+        if (stars.length > cap) stars.length = cap;
       }, 2600);
-    });
-
-    // lifecycle management
-    function start() {
-      if (raf) cancelAnimationFrame(raf);
-      lastTime = performance.now();
-      raf = requestAnimationFrame(draw);
-    }
-    function cancelAnimation(){
-      if (raf) cancelAnimationFrame(raf);
-      raf = null;
-    }
-
-    window.addEventListener('resize', () => { resize(); start(); });
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) cancelAnimation(); else start();
-    });
-
-    // initial setup
-    resize();
-    start();
-
-    // expose minimal API to other parts (breathing link, constellation helper)
-    window.__Starfield = {
-      starsArray: stars,
-      setBreathScaleForAll: function(scale){
-        for (let s of stars){ s.breathingScale = scale; }
-      },
-      getStarsRef: () => stars
     };
 
-  })(); // end starfield IIFE
+    window.addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, {passive:true});
+    window.addEventListener('touchmove', e => {
+      if(e.touches?.[0]) { mx = e.touches[0].clientX; my = e.touches[0].clientY; }
+    }, {passive:true});
+    window.addEventListener('click', addClickSparkles);
 
-  /* ============================
-     UI decorative stars (DOM elements) - crisp dots
-     (keeps your logic but expanded to more stars)
-     ============================ */
-  (function(){
-    const container = document.getElementById('uiStarsContainer');
-    if (!container) return;
+    const onVisibility = () => { running = !document.hidden; if (running) { lastTime = performance.now(); requestAnimationFrame(frame); } };
+    document.addEventListener('visibilitychange', onVisibility);
 
-    // pick a comfortable count but keep mobile reductions
+    let resizeRaf;
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => { resize(); });
+    });
+
+    resize();
+    requestAnimationFrame(frame);
+
+    window.__Starfield = {
+      starsArray: stars,
+      setBreathScaleForAll(scale){ stars.forEach(s => s.breathingScale = scale); },
+      getStarsRef: () => stars
+    };
+  })();
+
+  /* ========== UI Decorative Stars ========== */
+  (function uiStars(){
+    const container = $('#uiStarsContainer');
+    if(!container) return;
     const count = innerWidth < 560 ? 90 : (innerWidth < 920 ? 140 : 210);
-
-    // create stars with random twinkle offsets & subtle drift speed variations
-    for (let i = 0; i < count; i++) {
+    const frag = document.createDocumentFragment();
+    for (let i=0;i<count;i++){
       const el = document.createElement('div');
       el.className = 'ui-star';
-      el.style.left = (Math.random() * 100) + '%';
-      el.style.top = (Math.random() * 100) + '%';
-      el.style.opacity = (0.45 + Math.random() * 0.55).toFixed(2);
-      const sc = (0.5 + Math.random() * 1.6).toFixed(2);
-      el.style.width = (2 + Math.random() * 4) + 'px';
-      el.style.height = el.style.width;
-      el.style.transform = `scale(${sc})`;
-      el.style.animationDelay = (Math.random() * 6) + 's';
-      // variable drift so they don't move identically
+      el.style.left = (Math.random()*100) + '%';
+      el.style.top = (Math.random()*100) + '%';
+      el.style.opacity = (0.45 + Math.random()*0.55).toFixed(2);
+      const size = (2 + Math.random()*4);
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.transform = `scale(${(0.5 + Math.random()*1.6).toFixed(2)})`;
+      el.style.animationDelay = (Math.random()*6) + 's';
       el.style.animationDuration = (20 + Math.random()*28) + 's';
-      container.appendChild(el);
+      frag.appendChild(el);
     }
+    container.appendChild(frag);
   })();
 
-  /* ============================
-     Shooting stars (rare, feel special)
-     - we keep the existing shooting star setInterval but add randomness
-     ============================ */
-  (function(){
-    // spawn a shooting star sometimes when page is idle
-    function fireShootingStar() {
+  /* ========== Shooting Stars ========== */
+  (function shootingStars(){
+    const spawn = () => {
       const star = document.createElement('div');
       star.className = 'shooting-star';
-      // start inside upper-left half so it travels across
-      const left = Math.random() * window.innerWidth * 0.7;
-      const top = Math.random() * window.innerHeight * 0.35;
-      star.style.left = `${left}px`;
-      star.style.top = `${top}px`;
-      // scale length & opacity to vary brightness
+      star.style.left = (Math.random()*innerWidth*0.7) + 'px';
+      star.style.top = (Math.random()*innerHeight*0.35) + 'px';
       const len = 60 + Math.random()*180;
-      star.style.height = `${len}px`;
-      star.style.opacity = `${0.6 + Math.random()*0.4}`;
+      star.style.height = len + 'px';
+      star.style.opacity = (0.6 + Math.random()*0.4).toString();
       document.body.appendChild(star);
       setTimeout(()=> star.remove(), 1600 + Math.random()*800);
-    }
-
-    // schedule shooting stars rarely but unpredictably
-    (function scheduleShooting(){
-      const delay = 4200 + Math.random() * 8000; // between ~4s and ~12s
+    };
+    const schedule = () => {
+      const delay = 4200 + Math.random()*8000;
       setTimeout(() => {
-        // fire between 1 and 2
         const count = Math.random() < 0.18 ? 2 : 1;
-        for (let i=0;i<count;i++){
-          setTimeout(fireShootingStar, i*150 + Math.random()*300);
-        }
-        scheduleShooting();
+        for (let i=0;i<count;i++) setTimeout(spawn, i*150 + Math.random()*300);
+        schedule();
       }, delay);
-    })();
+    };
+    schedule();
   })();
 
-  /* ============================
-     Constellation hints
-     - occasionally draw faint lines between small clusters
-     - uses SVG lines placed in #constellationLayer
-     ============================ */
-  (function(){
-    const layer = document.getElementById('constellationLayer');
-    if (!layer) return;
+  /* ========== Constellations ========== */
+  (function constellations(){
+    const layer = $('#constellationLayer');
+    if(!layer) return;
+    const svgNS = "http://www.w3.org/2000/svg";
 
-    function createSVG() {
-      const svgNS = "http://www.w3.org/2000/svg";
-      const svg = document.createElementNS(svgNS, 'svg');
-      svg.setAttribute('width', '100%');
-      svg.setAttribute('height', '100%');
-      svg.setAttribute('viewBox', `0 0 ${innerWidth} ${innerHeight}`);
-      svg.style.position = 'absolute';
-      svg.style.left = 0;
-      svg.style.top = 0;
-      svg.setAttribute('preserveAspectRatio', 'none');
-      svg.classList.add('constellation-svg');
-      return svg;
-    }
-
-    function pickRandomStars(n) {
-      // use the canvas star positions if available for visual consistency
+    const pickRandomStars = n => {
       const sf = window.__Starfield;
-      if (!sf || !sf.getStarsRef) return [];
+      if(!sf?.getStarsRef) return [];
       const arr = sf.getStarsRef();
-      const res = [];
-      const len = arr.length;
-      if (!len) return res;
+      const out = [];
       for (let i=0;i<n;i++){
-        const idx = Math.floor(Math.random() * len);
-        res.push({ x: arr[idx].x, y: arr[idx].y });
+        const st = arr[Math.floor(Math.random()*arr.length)];
+        if (st) out.push({x: st.x, y: st.y});
       }
-      return res;
-    }
- function drawConstellation() {
-      const points = pickRandomStars(3 + Math.floor(Math.random()*3)); // 3-5 stars
-      if (points.length < 3) return;
-      const svg = createSVG();
-      const svgNS = "http://www.w3.org/2000/svg";
-      // draw lines connecting them softly
-      const path = document.createElementNS(svgNS, 'path');
-      const d = points.map((p,i)=> `${i===0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-      path.setAttribute('d', d);
-      path.setAttribute('stroke', 'rgba(255,230,255,0.12)');
-      path.setAttribute('stroke-width', '1.2');
-      path.setAttribute('fill', 'none');
-      path.style.opacity = '0';
-      path.style.transition = 'opacity 700ms ease, transform 900ms ease';
+      return out;
+    };
+
+    const draw = () => {
+      const pts = pickRandomStars(3 + Math.floor(Math.random()*3));
+      if (pts.length < 3) return;
+      const svg = document.createElementNS(svgNS,'svg');
+      svg.setAttribute('width','100%');
+      svg.setAttribute('height','100%');
+      svg.setAttribute('viewBox',`0 0 ${innerWidth} ${innerHeight}`);
+      svg.style.position='absolute';
+      svg.style.left='0';
+      svg.style.top='0';
+      svg.setAttribute('preserveAspectRatio','none');
+
+      const path = document.createElementNS(svgNS,'path');
+      path.setAttribute('d', pts.map((p,i)=> (i?'L ':'M ') + p.x + ' ' + p.y).join(' '));
+      path.setAttribute('stroke','rgba(255,230,255,0.12)');
+      path.setAttribute('stroke-width','1.2');
+      path.setAttribute('fill','none');
+      path.style.opacity='0';
+      path.style.transition='opacity 700ms ease, transform 900ms ease';
       svg.appendChild(path);
       layer.appendChild(svg);
-      // animate fade in -> hold -> fade out
+
       requestAnimationFrame(()=>{
-        path.style.opacity = '1';
-        path.style.transform = 'translateY(-6px)';
+        path.style.opacity='1';
+        path.style.transform='translateY(-6px)';
       });
-      setTimeout(()=> {
-        path.style.opacity = '0';
-        path.style.transform = 'translateY(-16px)';
+
+      setTimeout(()=>{
+        path.style.opacity='0';
+        path.style.transform='translateY(-16px)';
         setTimeout(()=> svg.remove(), 1200);
       }, 1400 + Math.random()*1600);
-    }
+    };
 
-    // occasionally show constellation hints (not too frequent)
-    setInterval(()=> {
-      if (Math.random() < 0.45) drawConstellation();
-    }, 4200 + Math.random()*3400);
+    let constellationTimer = 0;
+    const tick = (t)=>{
+      if (document.hidden) { requestAnimationFrame(tick); return; }
+      if (!constellationTimer) constellationTimer = t;
+      if (t - constellationTimer > 4200 + Math.random()*3400) {
+        constellationTimer = t;
+        if (Math.random() < 0.45) draw();
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   })();
 
-  /* ============================
-     Tap-to-sparkle particle burst
-     - creates several small star dots that fade & fall
-     - replaces previous 'heart-sparkle' textual idea with subtle particles
-     ============================ */
-  (function(){
-    function createSparkle(x, y, hueShift){
+  /* ========== Tap Sparkles ========== */
+  (function tapSparkles(){
+    const createSparkle = (x,y,hueShift) => {
       const el = document.createElement('div');
       el.className = 'heart-sparkle';
       el.style.left = (x - 6) + 'px';
       el.style.top = (y - 6) + 'px';
-      // slight color variance
       el.style.filter = `hue-rotate(${hueShift}deg)`;
       document.body.appendChild(el);
       setTimeout(()=> el.remove(), 950 + Math.random()*300);
-    }
-
-    window.addEventListener('pointerdown', (e) => {
-      // don't spam if user interacts with controls
-      if (e.target.closest('.btn') || e.target.closest('button') || e.target.closest('.controls')) return;
-      // burst of particles
+    };
+    window.addEventListener('pointerdown', e=>{
+      if (e.target.closest('.btn,.controls,button')) return;
       const burst = 8 + Math.floor(Math.random()*6);
       for (let i=0;i<burst;i++){
         setTimeout(()=> createSparkle(e.pageX + rand(-10,10), e.pageY + rand(-10,10), rand(-6,10)), i*18);
       }
-    }, { passive: true });
+    }, {passive:true});
   })();
 
-  /* ============================
-     BREATHING LOGIC (kept your logic with a small hook)
-     - changed inhale/hold/exhale values per your last copy
-     - on each phase change we notify starfield to scale stars subtly
-     ============================ */
-  (function(){
-    const startBtn = document.getElementById('startBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const orb = document.getElementById('breathOrb');
-    const label = document.getElementById('breathLabel');
-    const meta = document.getElementById('cycleMeta');
+  /* ========== Breathing Logic ========== */
+  (function breathing(){
+    const startBtn = $('#startBtn');
+    const stopBtn  = $('#stopBtn');
+    const orb      = $('#breathOrb');
+    const label    = $('#breathLabel');
+    const meta     = $('#cycleMeta');
 
-    // timings you specified earlier
-    const inhale = 7, hold = 8, exhale = 4; // seconds
-    let running = false, cycleCount = 0, phase = 'idle', timeLeft = 0;
-    let phaseTimer = null, countdownInterval = null;
+    const inhale = 7, hold = 8, exhale = 4;
+    let running=false, cycle=0, phase='idle', timeLeft=0;
+    let phaseTimeout=null, countdownRaf=null, lastCountdown=0;
 
     function updateMeta(){
-      meta.textContent = `Cycle: ${cycleCount} • Phase: ${phase} • Time left: ${timeLeft ? timeLeft.toFixed(1) + 's' : '—'}`;
+      meta.textContent = `Cycle: ${cycle} • Phase: ${phase} • Time left: ${timeLeft ? timeLeft.toFixed(1)+'s' : '—'}`;
     }
 
-    // helper: inform starfield of breathing scale
-    function applyBreathToStars(scale) {
-      // scale affects both canvas star radii and ui DOM star scale for subtle coherence
-      try {
-        // canvas stars
-        const sf = window.__Starfield;
-        if (sf && sf.setBreathScaleForAll) sf.setBreathScaleForAll(scale);
-      } catch(e){ /* fail silently */ }
-
-      // DOM ui stars
-      document.querySelectorAll('.ui-star').forEach(s => {
+    function applyBreathToStars(scale){
+      window.__Starfield?.setBreathScaleForAll(scale);
+      document.querySelectorAll('.ui-star').forEach(s=>{
         s.style.transform = `scale(${scale})`;
         s.classList.add('breathing-star');
-        // remove breathing-star after transition
         setTimeout(()=> s.classList.remove('breathing-star'), 1400);
       });
     }
 
-    function onBreathPhaseChange(localPhase) {
-      // keep existing global function name (you referenced it earlier)
-      // set subtle scales: inhale -> expand, exhale -> relax, hold -> steady
-      if (localPhase === 'inhale') { applyBreathToStars(1.18); }
-      else if (localPhase === 'hold') { applyBreathToStars(1.05); }
-      else if (localPhase === 'exhale') { applyBreathToStars(0.92); }
-      else { applyBreathToStars(1.0); }
+    function onPhaseChange(p){
+      if (p==='inhale') applyBreathToStars(1.18);
+      else if (p==='hold') applyBreathToStars(1.05);
+      else if (p==='exhale') applyBreathToStars(0.92);
+      else applyBreathToStars(1.0);
+    }
+    window.onBreathPhaseChange = onPhaseChange;
+
+    function setPhase(next){
+      phase = next;
+      if (next==='inhale'){
+        timeLeft = inhale;
+        label.textContent = 'Inhale';
+        orb.classList.remove('small'); orb.classList.add('big');
+      } else if (next==='hold'){
+        timeLeft = hold;
+        label.textContent = 'Hold';
+      } else if (next==='exhale'){
+        timeLeft = exhale;
+        label.textContent = 'Exhale';
+        orb.classList.remove('big'); orb.classList.add('small');
+      } else {
+        timeLeft = 0;
+        label.textContent = 'Stopped';
+      }
+      onPhaseChange(next);
+      updateMeta();
+      schedulePhaseAdvance();
     }
 
-    // initial exposure for any external code
-    window.onBreathPhaseChange = onBreathPhaseChange;
+    function schedulePhaseAdvance(){
+      clearTimeout(phaseTimeout);
+      if (!running) return;
+      const duration = (phase==='inhale'? inhale : phase==='hold'? hold : exhale) * 1000;
+      phaseTimeout = setTimeout(()=>{
+        if (!running) return;
+        if (phase==='inhale') setPhase('hold');
+        else if (phase==='hold') setPhase('exhale');
+        else if (phase==='exhale'){ cycle++; setPhase('inhale'); }
+      }, duration);
+    }
+
+    function countdown(now){
+      if (!running){ countdownRaf=null; return; }
+      if (!lastCountdown) lastCountdown = now;
+      const delta = now - lastCountdown;
+      if (delta >= 100) {
+        if (timeLeft > 0) {
+          timeLeft = Math.max(0, timeLeft - delta/1000);
+          updateMeta();
+        }
+        lastCountdown = now;
+      }
+      countdownRaf = requestAnimationFrame(countdown);
+    }
 
     function start(){
       if (running) return;
-      running = true; cycleCount = 0; phase = 'inhale'; timeLeft = inhale;
-      label.textContent = 'Inhale'; orb.classList.remove('small'); orb.classList.add('big');
-      onBreathPhaseChange('inhale');
-      startPhase();
+      running = true; cycle = 0;
+      setPhase('inhale');
+      lastCountdown = 0;
+      countdownRaf = requestAnimationFrame(countdown);
     }
 
     function stop(){
       running = false;
+      clearTimeout(phaseTimeout);
       label.textContent = 'Stopped';
-      orb.classList.remove('big'); orb.classList.add('small');
-      phase = 'idle'; timeLeft = 0; updateMeta();
-      if (phaseTimer) clearTimeout(phaseTimer); phaseTimer = null;
-      if (countdownInterval) clearInterval(countdownInterval); countdownInterval = null;
-      onBreathPhaseChange('idle');
-    }
-
-    function startPhase(){
-      updateMeta();
-      if (countdownInterval) clearInterval(countdownInterval);
-      countdownInterval = setInterval(()=>{
-        if (!running) { clearInterval(countdownInterval); return; }
-        timeLeft = Math.max(0, timeLeft - 0.1);
-        updateMeta();
-      }, 100);
-
-      if (phase === 'inhale'){
-        label.textContent = 'Inhale';
-        orb.classList.remove('small'); orb.classList.add('big');
-        onBreathPhaseChange('inhale');
-        phaseTimer = setTimeout(()=>{ phase = 'hold'; timeLeft = hold; startPhase(); }, inhale*1000);
-      } else if (phase === 'hold'){
-        label.textContent = 'Hold';
-        onBreathPhaseChange('hold');
-        phaseTimer = setTimeout(()=>{ phase = 'exhale'; timeLeft = exhale; startPhase(); }, hold*1000);
-      } else if (phase === 'exhale'){
-        label.textContent = 'Exhale';
-        orb.classList.remove('big'); orb.classList.add('small');
-        onBreathPhaseChange('exhale');
-        phaseTimer = setTimeout(()=>{ cycleCount += 1; phase = 'inhale'; timeLeft = inhale; startPhase(); }, exhale*1000);
-      }
+      phase='idle'; timeLeft=0; updateMeta();
+      onPhaseChange('idle');
     }
 
     startBtn.addEventListener('click', start);
     stopBtn.addEventListener('click', stop);
-
-    // spacebar toggle
-    document.addEventListener('keydown', (e) => {
-      if (e.key === ' ') { e.preventDefault(); if (running) stop(); else start(); }
+    document.addEventListener('keydown', e=>{
+      if (e.key === ' ') { e.preventDefault(); running ? stop() : start(); }
     });
+    document.addEventListener('visibilitychange', ()=> { if (document.hidden) stop(); });
 
-    // visibility pause
-    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
-
-    // expose for debug if needed
-    window.__BreathControls = { start, stop, getState: ()=> ({ running, phase, cycleCount }) };
+    window.__BreathControls = { start, stop, getState:()=>({running, phase, cycle}) };
   })();
 
-  /* ============================
-     AFFIRMATIONS (kept and fixed)
-     - earlier code referenced elements that were missing; we add them and wire up safely
-     ============================ */
-  (function(){
+  /* ========== Affirmations ========== */
+  (function affirmations(){
     const AFFIRMATIONS = [
       "I am cherished, and I will cherish my life with love and affection 💝",
-          "I can do it, and I will do it 💫",
-    "Breathe in starlight, breathe out these noise ✨",
-    "I am a warrior, one of the strongest ones ✨",
-    "I am enough and loved just the way I am 💞",
-    "I am Shakti, I am the universe itself 💖",
-    "I am proud of myself, I am a warrior 💓",
-    "I am loved unconditionally and endlessly 💕",
-    "Relax, I am doing good enough ❣️",
-    "I am doing beautifully 💌",
-    "I have power, I have control over myself and my thoughts 🌟"
+      "I can do it, and I will do it 💫",
+      "Breathe in starlight, breathe out these noise ✨",
+      "I am a warrior, one of the strongest ones ✨",
+      "I am enough and loved just the way I am 💞",
+      "I am Shakti, I am the universe itself 💖",
+      "I am proud of myself, I am a warrior 💓",
+      "I am loved unconditionally and endlessly 💕",
+      "Relax, I am doing good enough ❣️",
+      "I am doing beautifully 💌",
+      "I have power, I have control over myself and my thoughts 🌟"
     ];
-
-    const display = document.getElementById('affirmText');
-    const prevBtn = document.getElementById('prevAffirm');
-    const nextBtn = document.getElementById('nextAffirm');
-    const pauseBtn = document.getElementById('pauseAffirm');
-
-    // if any control missing, create minimal hidden ones so code can still operate
-    if (!prevBtn) {
-      const b = document.createElement('button'); b.id = 'prevAffirm'; b.className = 'hide'; document.body.appendChild(b);
-    }
-    if (!nextBtn) {
-      const b = document.createElement('button'); b.id = 'nextAffirm'; b.className = 'hide'; document.body.appendChild(b);
-    }
-    if (!pauseBtn) {
-      const b = document.createElement('button'); b.id = 'pauseAffirm'; b.className = 'hide'; document.body.appendChild(b);
-    }
-
-    // reclaim references (now guaranteed)
-    const prev = document.getElementById('prevAffirm');
-    const next = document.getElementById('nextAffirm');
-    const pause = document.getElementById('pauseAffirm');
-
-    let idx = 0, paused = false, timer = null;
+    const display = $('#affirmText');
+    if (!display) return;
+    let idx = 0;
+    let nextChange = performance.now() + 5000;
+    let paused = false;
 
     function show(i){
-      i = (i + AFFIRMATIONS.length) % AFFIRMATIONS.length;
-      idx = i;
-      if (!display) return;
+      idx = (i + AFFIRMATIONS.length) % AFFIRMATIONS.length;
       display.style.opacity = 0;
-      setTimeout(()=> {
-        display.textContent = AFFIRMATIONS[i];
+      setTimeout(()=>{
+        display.textContent = AFFIRMATIONS[idx];
         display.style.opacity = 1;
       }, 220);
     }
 
-    function schedule(){
-      if (timer) clearInterval(timer);
-      if (!paused) timer = setInterval(()=> { show(idx+1); }, 5000);
+    function loop(now){
+      if (!document.hidden && !paused && now >= nextChange){
+        show(idx+1);
+        nextChange = now + 5000;
+      }
+      requestAnimationFrame(loop);
     }
-
-    prev.addEventListener('click', ()=>{ show(idx-1); schedule(); });
-    next.addEventListener('click', ()=>{ show(idx+1); schedule(); });
-    pause.addEventListener('click', ()=>{
-      paused = !paused;
-      pause.textContent = paused ? 'Resume' : 'Pause';
-      if (paused) { if (timer) clearInterval(timer); timer = null; } else schedule();
-    });
-
-    // init
     show(0);
-    schedule();
+    requestAnimationFrame(loop);
 
-    // make affirmation editable quickly by double-click (optional small feature)
-    if (display) {
-      display.addEventListener('dblclick', () => {
-        const custom = prompt('Edit affirmation (visible only locally):', display.textContent);
-        if (custom !== null && custom.trim() !== '') {
-          AFFIRMATIONS[idx] = custom.trim();
-          show(idx);
-        }
-      });
-    }
+    display.addEventListener('dblclick', ()=>{
+      const custom = prompt('Edit affirmation (local only):', display.textContent);
+      if (custom && custom.trim()){
+        AFFIRMATIONS[idx] = custom.trim();
+        show(idx);
+      }
+    });
   })();
 
-  /* ============================
-     small compatibility fixes (original code had a line targeting h2)
-     - we ensure .title has the cozy class (done in HTML but ensure here too)
-     ============================ */
-  (function(){
-    const titleEl = document.querySelector('.title');
-    if (titleEl && !titleEl.classList.contains('cozy-title')) {
-      titleEl.classList.add('cozy-title');
-    }
+  /* ========== Title Safeguard ========== */
+  (function ensureTitle(){
+    const t = document.querySelector('.title');
+    if (t && !t.classList.contains('cozy-title')) t.classList.add('cozy-title');
   })();
 
-  /* ============================
-     Debug / safe guards
-     ============================ */
-  (function(){
-    // ensure window not overloaded, and provide small debug API
-    window.__TinyUniverse = window.__TinyUniverse || {};
-    window.__TinyUniverse.debugInfo = function(){
-      return {
-        starsDOM: document.querySelectorAll('.ui-star').length,
-        canvasStarsEstimate: (window.__Starfield && window.__Starfield.getStarsRef) ? window.__Starfield.getStarsRef().length : 'n/a'
-      };
+  /* ========== Audio Toggle (Optional) ========== */
+  (function audioControl(){
+    const audio = $('#myAudio');
+    const btn = $('#audioToggle');
+    if (!audio || !btn) return;
+    let playing = false;
+    const setState = () => {
+      btn.textContent = playing ? '🔇' : '🎵';
+      btn.setAttribute('aria-pressed', playing);
     };
+    btn.addEventListener('click', async () => {
+      try {
+        if (!playing){
+          await audio.play();
+          playing = true;
+        } else {
+          audio.pause();
+          playing = false;
+        }
+        setState();
+      } catch (e){
+        console.warn('Audio play prevented:', e);
+      }
+    });
+    setState();
   })();
 
-}); // DOMContentLoaded end
+  /* ========== Debug Helper ========== */
+  window.__TinyUniverse = window.__TinyUniverse || {};
+  window.__TinyUniverse.debugInfo = () => ({
+    starsDOM: document.querySelectorAll('.ui-star').length,
+    canvasStarsEstimate: window.__Starfield?.getStarsRef()?.length ?? 'n/a'
+  });
+
+});
 </script>
 
 </body>
