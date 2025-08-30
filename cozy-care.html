@@ -262,10 +262,8 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
   <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
   <button class="btn secondary" id="stopBtn">Stop</button>
 
-  <audio id="myAudio">
-    <source src="mahamantra.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
+  <audio id="myAudio" src="/mahamantra.mp3"></audio>
+<button class="btn secondary" id="audioToggle">🎵</button>
 </div>
 
 <!-- Play/Pause Button -->
@@ -739,18 +737,29 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 
   /* ========== Audio Toggle (Optional) ========== */
-  const audio = document.getElementById('myAudio');
-  const button = document.getElementById('audioToggle');
+const audio = document.getElementById('myAudio');
+const button = document.getElementById('audioToggle');
 
-  button.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play().catch(err => console.log("Autoplay blocked:", err));
-      button.textContent = '⏸️'; // Change button icon to pause
-    } else {
-      audio.pause();
-      button.textContent = '🎵'; // Change button icon to play
-    }
-  });
+button.addEventListener('click', () => {
+  if (!audio) {
+    console.error("Audio element not found");
+    return;
+  }
+
+  if (audio.paused) {
+    audio.play()
+      .then(() => {
+        button.textContent = '⏸️'; // Change to pause icon
+      })
+      .catch(err => {
+        console.error("Playback failed:", err);
+        button.textContent = '⚠️'; // Show error icon
+      });
+  } else {
+    audio.pause();
+    button.textContent = '🎵'; // Back to play icon
+  }
+});
 
   /* ========== Debug Helper ========== */
   window.__TinyUniverse = window.__TinyUniverse || {};
