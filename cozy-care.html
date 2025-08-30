@@ -259,12 +259,14 @@ p.lead { margin:0; color:var(--muted); font-weight:500; max-width:680px; text-al
       </div>
 
       <div class="controls" role="group" aria-label="breathing controls">
-        <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
-        <button class="btn secondary" id="stopBtn">Stop</button>
-        <audio controls>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-      </div>
+  <button class="btn" id="startBtn" aria-pressed="false">Start Breathing</button>
+  <button class="btn secondary" id="stopBtn">Stop</button>
+
+  <audio id="myAudio">
+    <source src="https://drive.google.com/uc?export=preview&id=1vc7dUhP0UwIBK7HbgcE6eBMnAF4toyvp" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+</div>
 
 <!-- Play/Pause Button -->
 <button class="btn secondary" id="audioToggle" aria-label="Toggle background audio" title="Toggle audio">🎵</button>
