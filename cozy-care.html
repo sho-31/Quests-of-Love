@@ -738,31 +738,18 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 
   /* ========== Audio Toggle (Optional) ========== */
-  (function audioControl(){
-    const audio = $('#myAudio');
-    const btn = $('#audioToggle');
-    if (!audio || !btn) return;
-    let playing = false;
-    const setState = () => {
-      btn.textContent = playing ? '🔇' : '🎵';
-      btn.setAttribute('aria-pressed', playing);
-    };
-    btn.addEventListener('click', async () => {
-      try {
-        if (!playing){
-          await audio.play();
-          playing = true;
-        } else {
-          audio.pause();
-          playing = false;
-        }
-        setState();
-      } catch (e){
-        console.warn('Audio play prevented:', e);
-      }
-    });
-    setState();
-  })();
+  const audio = document.getElementById('myAudio');
+  const button = document.getElementById('audioToggle');
+
+  button.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(err => console.log("Autoplay blocked:", err));
+      button.textContent = '⏸️'; // Change button icon to pause
+    } else {
+      audio.pause();
+      button.textContent = '🎵'; // Change button icon to play
+    }
+  });
 
   /* ========== Debug Helper ========== */
   window.__TinyUniverse = window.__TinyUniverse || {};
